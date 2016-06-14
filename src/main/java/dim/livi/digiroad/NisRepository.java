@@ -15,6 +15,7 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 import org.springframework.stereotype.Repository;
 
+
 @Repository
 public class NisRepository {
 	
@@ -36,8 +37,8 @@ public class NisRepository {
 	 
 
 
-	public List<Pair<Integer, String>> getAssetTypes() {
-		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE order by NAME", new RowMapperResultSetExtractor<Pair<Integer, String>>(assetType));
+	public List<idtext> getAssetTypes(String term) {
+		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(assetType2));
 	 }
 
 
@@ -54,6 +55,13 @@ public class NisRepository {
 	        @Override
 	        public Pair<Integer, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new ImmutablePair<Integer, String>(rs.getInt("ID"), rs.getString("NAME"));
+			} 
+	    };
+	    
+	    private static final RowMapper<idtext> assetType2 = new RowMapper<idtext>() {
+	        @Override
+	        public idtext mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new idtext(rs.getInt("ID"), rs.getString("NAME"));
 			} 
 	    };
 

@@ -54,8 +54,57 @@
 </div>
 <!--Service-->
 <div id="service" class="service">
-	 <div class="container">
-		 <h3>Raportointi</h3>	
+	 <div class="container-fluid">
+		 <h3>Raportointi</h3>
+	<div class="row reportrow">
+		<div class="col-md-1 col-md-offset-2">
+	 		<p>Valitse alkupvm:</p>
+		 </div>
+	      <div class='col-sm-3'>
+	          <div class="form-group">
+	              <div class='input-group date' id='datetimepicker1'>
+	                  <input type='text' class="form-control" />
+	                  <span class="input-group-addon">
+	                      <span class="glyphicon glyphicon-calendar"></span>
+	                  </span>
+	              </div>
+	          </div>
+	      </div>
+	      <script type="text/javascript">
+				$(function () {
+				    $('#datetimepicker1').datetimepicker();
+				});
+		</script>
+	     <div class="col-md-1 col-md-offset-1">
+			<p>Valitse tietolaji:</p>
+		</div>
+		<div class="col-md-3">
+		 	<select class="js-data-example-ajax" style="width: 100%" multiple="multiple"></select>
+		 </div>
+	</div>
+	
+	 <div class="row reportrow">
+		 <div class="col-md-1 col-md-offset-2">
+		 	<p>Valitse loppupvm:</p>
+		 </div>
+	      <div class='col-sm-3'>
+	          <div class="form-group">
+	              <div class='input-group date' id='datetimepicker2'>
+	                  <input type='text' class="form-control" />
+	                  <span class="input-group-addon">
+	                      <span class="glyphicon glyphicon-calendar"></span>
+	                  </span>
+	              </div>
+	          </div>
+	      </div>
+			<script type="text/javascript">
+				$(function () {
+				    $('#datetimepicker2').datetimepicker();
+				});
+			</script>
+	</div>   
+		 
+		 
 		 <!-- <div class="service-grids">
 		 <div class="icon-grids">
 			 <div class="col-md-6 futr-grid futr1">

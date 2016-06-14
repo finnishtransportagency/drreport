@@ -1,170 +1,128 @@
 <!DOCTYPE HTML>
 <html>
-<head>
-<title>Emplox a Personal Portfolio Flat Bootstrap Responsive Website Template | Home :: w3layouts</title>
+	<head>
+		<title>Emplox a Personal Portfolio Flat Bootstrap Responsive Website Template | Home :: w3layouts</title>
 
 
-<link rel="stylesheet" href="styles/style.css" type="text/css" media="all" />
+		<link rel="stylesheet" href="styles/style.css" type="text/css" media="all" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-<meta name="keywords" content="Emplox Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
-<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
+		<meta name="viewport" content="width=device-width, initial-scale=1"/>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<meta name="keywords" content="Emplox Responsive web template, Bootstrap Web Templates, Flat Web Templates, Andriod Compatible web template, Smartphone Compatible web template, free webdesigns for Nokia, Samsung, LG, SonyErricsson, Motorola web design" />
+		<script type="application/x-javascript"> addEventListener("load", function() { setTimeout(hideURLbar, 0); }, false); function hideURLbar(){ window.scrollTo(0,1); } </script>
 
-<script src="js/bundle.js"></script>
-<!--scrolling-->
-</head>
-<body>	
-<!--top-header-->
-<div id="home" class="top-header">
-	 <div class="container">
-		 <div class="logo">
-				<h1><a href="index.html">DigiRoad</a></h1>
-		 </div>
-		 <div class="top-menu">
-			 <span class="menu"><img src="images/nav-icon.png" alt=""/></span>
-			 <ul>
-				<li><a class="scroll" href="#home"></a></li>
-				<li><a class="scroll" href="#about"></a></li>
-				<li><a class="scroll" href="#service">Raportointi</a></li>
-				<li><a class="scroll" href="#gallery">Validointi</a></li>
-				<li><a class="scroll" href="#blog"></a></li>
-				<li><a class="scroll" href="#contact"></a></li>
-			 </ul>
-		     <!-- script-for-menu -->
-				 <script>					
+		<script src="js/bundle.js"></script>
+		<!--scrolling-->
+	</head>
+	<body>	
+		<!--top-header-->
+		<div id="home" class="top-header">
+			<div class="container">
+				<div class="logo">
+					<h1><a href="index.html">DigiRoad</a></h1>
+				</div>
+				<div class="top-menu">
+					<span class="menu"><img src="images/nav-icon.png" alt=""/></span>
+					<ul>
+						<li><a class="scroll" href="#home"></a>Listat1</li>
+						<li><a class="scroll" href="#about"></a>Listat2</li>
+						<li><a class="scroll" href="#service">Raportointi</a></li>
+						<li><a class="scroll" href="#gallery">Validointi</a></li>
+						<li><a class="scroll" href="#blog"></a>Käyttäjät</li>
+						<li><a class="scroll" href="#contact"></a>Jotain muuta</li>
+					</ul>
+					<!-- script-for-menu -->
+					<script>					
 
-				 </script>
-		     <!-- script-for-menu -->
-		  </div>
-	 </div>
-</div>	
-<!--header-->
-<div class="header">
-		<div class="container">
-			 <div class="banner-info">
-				 <h2>Raportointi- ja validointityökalu</h2>
-				 <p>Praesent a tortor ipsum. In ornare nibh urna, non hendrerit leo lacinia non. Proin malesuada blandit ex, 
-				 vitae placerat purus placerat non. Pellentesque habitant morbi tristique senectus et netus et malesuada 
-				 fames ac turpis egestas.</p>
-				 <!-- <a href="#">Click</a> -->
-			 </div>
-			 <div class="clearfix"></div>
+					</script>
+					<!-- script-for-menu -->
+				</div>
+			</div>
+		</div>	
+		<!--header-->
+		<div class="header">
+			<div class="container">
+				<div class="banner-info">
+					<h2>Raportointi- ja validointityökalu</h2>
+					<p>Praesent a tortor ipsum. In ornare nibh urna, non hendrerit leo lacinia non. Proin malesuada blandit ex, 
+						vitae placerat purus placerat non. Pellentesque habitant morbi tristique senectus et netus et malesuada 
+						fames ac turpis egestas.</p>
+					<!-- <a href="#">Click</a> -->
+				</div>
+				<div class="clearfix"></div>
+			</div>
 		</div>
-</div>
-<!--Service-->
-<div id="service" class="service">
-	 <div class="container-fluid">
-		 <h3>Raportointi</h3>
-	<div class="row reportrow">
-		<div class="col-md-1 col-md-offset-2">
-	 		<p>Valitse alkupvm:</p>
-		 </div>
-	      <div class='col-sm-3'>
-	          <div class="form-group">
-	              <div class='input-group date' id='datetimepicker1'>
-	                  <input type='text' class="form-control" />
-	                  <span class="input-group-addon">
-	                      <span class="glyphicon glyphicon-calendar"></span>
-	                  </span>
-	              </div>
-	          </div>
-	      </div>
-	      <script type="text/javascript">
-				$(function () {
-				    $('#datetimepicker1').datetimepicker();
-				});
-		</script>
-	     <div class="col-md-1 col-md-offset-1">
-			<p>Valitse tietolaji:</p>
+		<!--Service-->
+		<div id="service" class="service">
+			<div class="container-fluid">
+				<h3>Raportointi</h3>
+				<form role="form">
+					<div class="row reportrow">
+						<div class='col-md-6'>
+							<div class="form-group">
+								<div class="col-sm-2 col-sm-offset-4">
+									<p>Valitse alkupvm:</p>
+								</div>
+								<div class='input-group date col-sm-6' id='datetimepicker1'>
+									<input type='text' class="form-control" />
+									<span class="input-group-addon">
+										<span class="glyphicon glyphicon-calendar"></span>
+									</span>
+								</div>
+							</div>
+						</div>
+						<script type="text/javascript">
+							$(function () {
+							$('#datetimepicker1').datetimepicker();
+							});
+						</script>
+						<div class='col-md-6'>
+							<div class="form-group">
+								<div class="col-sm-2">
+									<p>Valitse tietolaji:</p>
+								</div>
+								<div class="col-sm-6">
+									<select class="js-data-tietolaji-ajax form-control" style="width: 100%" multiple="multiple"></select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="row reportrow">
+					<div class='col-md-6'>
+						<div class="form-group">
+							<div class="col-sm-2 col-sm-offset-4">
+								<p>Valitse loppupvm:</p>
+							</div>
+							<div class='input-group date' id='datetimepicker2'>
+								<input type='text' class="form-control" />
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
+							</div>
+						</div>
+					</div>
+					<script type="text/javascript">
+						$(function () {
+						$('#datetimepicker2').datetimepicker();
+						});
+					</script>
+					<div class='col-md-6'>
+						<div class="form-group">
+							<div class="col-sm-2">
+								<p>Valitse kunta:</p>
+							</div>
+							<div class="col-sm-6">
+								<select class="js-data-kunta-ajax form-control" style="width: 100%" multiple="multiple"></select>
+							</div>
+						</div>
+					</div>   
+		 		</form>
+			</div>
 		</div>
-		<div class="col-md-3">
-		 	<select class="js-data-example-ajax" style="width: 100%" multiple="multiple"></select>
-		 </div>
-	</div>
-	
-	 <div class="row reportrow">
-		 <div class="col-md-1 col-md-offset-2">
-		 	<p>Valitse loppupvm:</p>
-		 </div>
-	      <div class='col-sm-3'>
-	          <div class="form-group">
-	              <div class='input-group date' id='datetimepicker2'>
-	                  <input type='text' class="form-control" />
-	                  <span class="input-group-addon">
-	                      <span class="glyphicon glyphicon-calendar"></span>
-	                  </span>
-	              </div>
-	          </div>
-	      </div>
-			<script type="text/javascript">
-				$(function () {
-				    $('#datetimepicker2').datetimepicker();
-				});
-			</script>
-	</div>   
-		 
-		 
-		 <!-- <div class="service-grids">
-		 <div class="icon-grids">
-			 <div class="col-md-6 futr-grid futr1">
-				 <div class="icon-pic">
-						<div class="icon text-center">
-						 <span class="glyphicon glyphicon-phone" aria-hidden="true"></span>
-						 </div>
-				  </div>
-				 <div class="icon-info">
-						 <h4><a href="#">Vestibulum sagittis</a></h4>							
-						 <p>Aliquam erat volutpat. Nam egestas dapibus pellentesque. Nunc non luctus neque, non aliquet tortor. Suspendisse in faucibus dolor, commodo malesuada ipsum. Cras vel facilisis mi. In malesuada felis eu volutpat consequat.</p>
-				 </div>
-				 <div class="clearfix"></div>
-			 </div>
-			 <div class="col-md-6 futr-grid">
-				  <div class="icon-pic">
-							<div class="icon text-center">
-							<span class="glyphicon glyphicon-thumbs-up" aria-hidden="true"></span>
-						 </div>
-				  </div>
-				  <div class="icon-info">
-						<h4><a href="#">Vestibulum sagittis</a></h4>						 
-						<p>Aliquam erat volutpat. Nam egestas dapibus pellentesque. Nunc non luctus neque, non aliquet tortor. Suspendisse in faucibus dolor, commodo malesuada ipsum. Cras vel facilisis mi. In malesuada felis eu volutpat consequat.</p>
-				  </div>
-				  <div class="clearfix"></div>
-			 </div>
-			 <div class="clearfix"></div>
-		 </div>
-		 <div class="icon-grids grids2">
-			 <div class="col-md-6 futr-grid futr1">
-				 <div class="icon-pic">
-						<div class="icon text-center">
-						 <span class="glyphicon glyphicon-picture" aria-hidden="true"></span>
-						 </div>
-				  </div>
-				 <div class="icon-info">
-						 <h4><a href="#">Vestibulum sagittis</a></h4>							
-						 <p>Aliquam erat volutpat. Nam egestas dapibus pellentesque. Nunc non luctus neque, non aliquet tortor. Suspendisse in faucibus dolor, commodo malesuada ipsum. Cras vel facilisis mi. In malesuada felis eu volutpat consequat.</p>
-				 </div>
-				 <div class="clearfix"></div>
-			 </div>
-			 <div class="col-md-6 futr-grid">
-				  <div class="icon-pic">
-							<div class="icon text-center">
-							 <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-						 </div>
-				  </div>
-				  <div class="icon-info">
-						<h4><a href="#">Vestibulum sagittis</a></h4>						 
-						<p>Aliquam erat volutpat. Nam egestas dapibus pellentesque. Nunc non luctus neque, non aliquet tortor. Suspendisse in faucibus dolor, commodo malesuada ipsum. Cras vel facilisis mi. In malesuada felis eu volutpat consequat.</p>
-				  </div>
-				  <div class="clearfix"></div>
-			 </div>
-			 <div class="clearfix"></div>
-		 </div>
-		 </div> -->
-	 </div>
-</div>
-<!--about-->
-<!-- <div id="about" class="about">	 
+		<!--about-->
+		<!-- <div id="about" class="about">	 
 	 <div class="about-left"></div>
 	 <div class="about-right">
 		<h3>About Us</h3>
@@ -176,109 +134,108 @@
 		 consectetur, metus vel efficitur luctus, nisi nulla vestibulum arcu, at rhoncus ligula ligula non nisl. Cras porttitor vestibulum nulla.</p>		
 	 </div>
 	 <div class="clearfix"></div>
-</div> -->
-> 
-<!--gallery js-->
-<div id="gallery" class="gallery">
-	 <div class="container">
-		 <h3>Validointi</h3>
-         <div class="gallery-info">
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img15.jpg">
-						<img src="images/img15.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
+</div> -->		 
+		<!--gallery js-->
+		<div id="gallery" class="gallery">
+			<div class="container">
+				<h3>Validointi</h3>
+				<div class="gallery-info">
+					<div class="col-md-4 galry-grids moments-bottom">
+						<a class="b-link-stripe b-animate-go" href="images/img15.jpg">
+							<img src="images/img15.jpg" class="img-responsive" alt="">
+								<div class="b-wrapper">
+									<span class="b-animate b-from-left    b-delay03 ">
+										<img class="img-responsive" src="images/e.png" alt=""/>
+									</span>					
+								</div>
+							</a>				
 						</div>
-					</a>				
-				</div>
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img10.jpg">
-						<img src="images/img10.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img11.jpg">
-						<img src="images/img11.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>				
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img12.jpg">
-						<img src="images/img12.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img13.jpg">
-						<img src="images/img13.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img14.jpg">
-						<img src="images/img14.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img9.jpg">
-						<img src="images/img9.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img16.jpg">
-						<img src="images/img16.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>
-				<div class="col-md-4 galry-grids moments-bottom">
-					<a class="b-link-stripe b-animate-go" href="images/img17.jpg" >
-						<img src="images/img17.jpg" class="img-responsive" alt="">
-						<div class="b-wrapper">
-							<span class="b-animate b-from-left    b-delay03 ">
-								<img class="img-responsive" src="images/e.png" alt=""/>
-							</span>					
-						</div>
-					</a>				
-				</div>
-				<div class="clearfix"> </div>
-			</div>
-	 </div>
-</div>
-<!--blog-->
-<!-- <div id="blog" class="blog">
+						<div class="col-md-4 galry-grids moments-bottom">
+							<a class="b-link-stripe b-animate-go" href="images/img10.jpg">
+								<img src="images/img10.jpg" class="img-responsive" alt="">
+									<div class="b-wrapper">
+										<span class="b-animate b-from-left b-delay03 ">
+											<img class="img-responsive" src="images/e.png" alt=""/>
+										</span>					
+									</div>
+								</a>				
+							</div>
+							<div class="col-md-4 galry-grids moments-bottom">
+								<a class="b-link-stripe b-animate-go" href="images/img11.jpg">
+									<img src="images/img11.jpg" class="img-responsive" alt="">
+										<div class="b-wrapper">
+											<span class="b-animate b-from-left    b-delay03 ">
+												<img class="img-responsive" src="images/e.png" alt=""/>
+											</span>					
+										</div>
+									</a>				
+								</div>				
+								<div class="col-md-4 galry-grids moments-bottom">
+									<a class="b-link-stripe b-animate-go" href="images/img12.jpg">
+										<img src="images/img12.jpg" class="img-responsive" alt="">
+											<div class="b-wrapper">
+												<span class="b-animate b-from-left    b-delay03 ">
+													<img class="img-responsive" src="images/e.png" alt=""/>
+												</span>					
+											</div>
+										</a>				
+									</div>
+									<div class="col-md-4 galry-grids moments-bottom">
+										<a class="b-link-stripe b-animate-go" href="images/img13.jpg">
+											<img src="images/img13.jpg" class="img-responsive" alt="">
+												<div class="b-wrapper">
+													<span class="b-animate b-from-left    b-delay03 ">
+														<img class="img-responsive" src="images/e.png" alt=""/>
+													</span>					
+												</div>
+											</a>				
+										</div>
+										<div class="col-md-4 galry-grids moments-bottom">
+											<a class="b-link-stripe b-animate-go" href="images/img14.jpg">
+												<img src="images/img14.jpg" class="img-responsive" alt="">
+													<div class="b-wrapper">
+														<span class="b-animate b-from-left    b-delay03 ">
+															<img class="img-responsive" src="images/e.png" alt=""/>
+														</span>					
+													</div>
+												</a>				
+											</div>
+											<div class="col-md-4 galry-grids moments-bottom">
+												<a class="b-link-stripe b-animate-go" href="images/img9.jpg">
+													<img src="images/img9.jpg" class="img-responsive" alt="">
+														<div class="b-wrapper">
+															<span class="b-animate b-from-left    b-delay03 ">
+																<img class="img-responsive" src="images/e.png" alt=""/>
+															</span>					
+														</div>
+													</a>				
+												</div>
+												<div class="col-md-4 galry-grids moments-bottom">
+													<a class="b-link-stripe b-animate-go" href="images/img16.jpg">
+														<img src="images/img16.jpg" class="img-responsive" alt="">
+															<div class="b-wrapper">
+																<span class="b-animate b-from-left    b-delay03 ">
+																	<img class="img-responsive" src="images/e.png" alt=""/>
+																</span>					
+															</div>
+														</a>				
+													</div>
+													<div class="col-md-4 galry-grids moments-bottom">
+														<a class="b-link-stripe b-animate-go" href="images/img17.jpg" >
+															<img src="images/img17.jpg" class="img-responsive" alt="">
+																<div class="b-wrapper">
+																	<span class="b-animate b-from-left    b-delay03 ">
+																		<img class="img-responsive" src="images/e.png" alt=""/>
+																	</span>					
+																</div>
+															</a>				
+														</div>
+														<div class="clearfix"> </div>
+													</div>
+												</div>
+											</div>
+											<!--blog-->
+											<!-- <div id="blog" class="blog">
 	 <div class="container">
 		 <h3>Blog</h3>
 		 <div class="blog-grids">
@@ -305,12 +262,12 @@
 		 </div>
 	 </div>
 </div> -->
-<!---->		
-<!-- <div class="map">
+											<!---->		
+											<!-- <div class="map">
 	 <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d6632.248000703498!2d151.265683!3d-33.7832959!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x6b12abc7edcbeb07%3A0x5017d681632bfc0!2sManly+Vale+NSW+2093%2C+Australia!5e0!3m2!1sen!2sin!4v1433329298259" style="border:0"></iframe>
 </div> -->
-<!---->	
-<!-- <div id="contact" class="contact">
+											<!---->	
+											<!-- <div id="contact" class="contact">
 	 <div class="container">
 		 <h3>Contact</h3>
 		 <div class="touch-top">
@@ -340,28 +297,28 @@
 		  </div>
 	 </div>
 </div> -->
-<div class="footer">
-	 <div class="container">
-		 <p>Copyrights © 2015 Emplox. All rights reserved | Template by <a href="http://w3layouts.com/">W3layouts</a></p>
-		 <div class="social">							
-				<a href="#"><i class="facebook"></i></a>
-				<a href="#"><i class="twitter"></i></a>
-				<a href="#"><i class="dribble"></i></a>	
-				<a href="#"><i class="google"></i></a>	
-				<a href="#"><i class="youtube"></i></a>	
-		 </div>
-		 <div class="arrow">
-			 <a class="scroll" href="#home"><img src="images/top.png" alt=""></a>
-		 </div>
-	 </div>
-</div>
-<!---->
+											<div class="footer">
+												<div class="container">
+													<p>Copyrights © 2015 Emplox. All rights reserved | Template by <a href="http://w3layouts.com/">W3layouts</a></p>
+													<div class="social">							
+														<a href="#"><i class="facebook"></i></a>
+														<a href="#"><i class="twitter"></i></a>
+														<a href="#"><i class="dribble"></i></a>	
+														<a href="#"><i class="google"></i></a>	
+														<a href="#"><i class="youtube"></i></a>	
+													</div>
+													<div class="arrow">
+														<a class="scroll" href="#home"><img src="images/top.png" alt=""></a>
+														</div>
+													</div>
+												</div>
+												<!---->
 
-</script>
-<a href="#to-top" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
-<!----> 
+											</script>
+											<a href="#to-top" id="toTop" style="display: block;"> <span id="toTopHover" style="opacity: 1;"> </span></a>
+											<!----> 
 
 
-</body>
-</html>		
-	
+										</body>
+									</html>		
+									

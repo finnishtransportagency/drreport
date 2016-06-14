@@ -38,7 +38,11 @@ public class NisRepository {
 
 
 	public List<idtext> getAssetTypes(String term) {
-		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(assetType2));
+		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(assetType));
+	 }
+	
+	public List<idtext> getMunicipalitys(String term) {
+		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(Municipality));
 	 }
 
 
@@ -51,17 +55,25 @@ public class NisRepository {
 			} 
 	    };
 	    
-	    private static final RowMapper<Pair<Integer, String>> assetType = new RowMapper<Pair<Integer, String>>() {
+	    @Deprecated
+	    private static final RowMapper<Pair<Integer, String>> assetType_ = new RowMapper<Pair<Integer, String>>() {
 	        @Override
 	        public Pair<Integer, String> mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new ImmutablePair<Integer, String>(rs.getInt("ID"), rs.getString("NAME"));
 			} 
 	    };
 	    
-	    private static final RowMapper<idtext> assetType2 = new RowMapper<idtext>() {
+	    private static final RowMapper<idtext> assetType = new RowMapper<idtext>() {
 	        @Override
 	        public idtext mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new idtext(rs.getInt("ID"), rs.getString("NAME"));
+			} 
+	    };
+	    
+	    private static final RowMapper<idtext> Municipality = new RowMapper<idtext>() {
+	        @Override
+	        public idtext mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new idtext(rs.getInt("ID"), rs.getString("NAME_FI"));
 			} 
 	    };
 

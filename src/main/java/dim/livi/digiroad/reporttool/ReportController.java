@@ -20,9 +20,14 @@ public class ReportController {
 	@Autowired 
 	private NisRepository items;
 
-	@RequestMapping(value = "/report", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<idtext>> report(@RequestParam String q) {
+	@RequestMapping(value = "/koodistot/tietolajit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<idtext>> tietolajit(@RequestParam String q) {
 		return new ResponseEntity<List<idtext>>(items.getAssetTypes(q), HttpStatus.OK);
+	}
+	
+	@RequestMapping(value = "/koodistot/kunnat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<idtext>> kunnat(@RequestParam String q) {
+		return new ResponseEntity<List<idtext>>(items.getMunicipalitys(q), HttpStatus.OK);
 	}
 }
 

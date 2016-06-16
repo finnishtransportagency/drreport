@@ -38,11 +38,26 @@ public class NisRepository {
 
 
 	public List<idtext> getAssetTypes(String term) {
-		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(assetType));
+		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(assetTypeMapper));
 	 }
 	
 	public List<idtext> getMunicipalitys(String term) {
-		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(Municipality));
+		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(MunicipalityMapper));
+	 }
+	
+	public List<rawModifiedResult> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit) {
+		 return jdbc.query("select MOD_DATE, ASSET_TYPE_ID, MUNICIPALITYCODE, count(MOD_DATE) COUNT from ( " +
+		  "select ass.ASSET_TYPE_ID, rl.MUNICIPALITYCODE, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
+		  "inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
+		  "inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
+		  "inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
+		  "where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
+		  "and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
+		  "and ass.VALID_TO is null " +
+		  "and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between TO_DATE (?, 'DD-MM-YYYY') AND TO_DATE (?, 'DD-MM-YYYY') " +
+		  ") " +
+		"group by ASSET_TYPE_ID, MUNICIPALITYCODE, MOD_DATE " +
+		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper));
 	 }
 
 
@@ -63,17 +78,24 @@ public class NisRepository {
 			} 
 	    };
 	    
-	    private static final RowMapper<idtext> assetType = new RowMapper<idtext>() {
+	    private static final RowMapper<idtext> assetTypeMapper = new RowMapper<idtext>() {
 	        @Override
 	        public idtext mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new idtext(rs.getInt("ID"), rs.getString("NAME"));
 			} 
 	    };
 	    
-	    private static final RowMapper<idtext> Municipality = new RowMapper<idtext>() {
+	    private static final RowMapper<idtext> MunicipalityMapper = new RowMapper<idtext>() {
 	        @Override
 	        public idtext mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new idtext(rs.getInt("ID"), rs.getString("NAME_FI"));
+			} 
+	    };
+	    
+	    private static final RowMapper<rawModifiedResult> rawModifiedResultMapper = new RowMapper<rawModifiedResult>() {
+	        @Override
+	        public rawModifiedResult mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new rawModifiedResult(rs.getString("MOD_DATE"), rs.getInt("ASSET_TYPE_ID"), rs.getInt("MUNICIPALITYCODE"), rs.getInt("COUNT"));
 			} 
 	    };
 

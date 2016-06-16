@@ -71,11 +71,6 @@
 								</div>
 							</div>
 						</div>
-						<script type="text/javascript">
-							$(function () {
-							$('#datetimepicker1').datetimepicker();
-							});
-						</script>
 						<div class='col-md-6'>
 							<div class="form-group">
 								<div class="col-sm-2">
@@ -87,37 +82,42 @@
 							</div>
 						</div>
 					</div>
-				</div>
 
-				<div class="row reportrow">
-					<div class='col-md-6'>
-						<div class="form-group">
-							<div class="col-sm-2 col-sm-offset-4">
-								<p>Valitse loppupvm:</p>
+					<div class="row reportrow">
+						<div class='col-md-6'>
+							<div class="form-group">
+								<div class="col-sm-2 col-sm-offset-4">
+									<p>Valitse loppupvm:</p>
+								</div>
+								<div class='input-group date' id='datetimepicker2'>
+									<input type='text' class="form-control" />
+									<span class="input-group-addon">
+										<span class="glyphicon glyphicon-calendar"></span>
+									</span>
+								</div>
 							</div>
-							<div class='input-group date' id='datetimepicker2'>
-								<input type='text' class="form-control" />
-								<span class="input-group-addon">
-									<span class="glyphicon glyphicon-calendar"></span>
-								</span>
+						</div>
+						<div class='col-md-6'>
+							<div class="form-group">
+								<div class="col-sm-2">
+									<p>Valitse kunta:</p>
+								</div>
+								<div class="col-sm-6">
+									<select class="js-data-kunta-ajax form-control" style="width: 100%" multiple="multiple"></select>
+								</div>
 							</div>
 						</div>
 					</div>
-					<script type="text/javascript">
-						$(function () {
-						$('#datetimepicker2').datetimepicker();
-						});
-					</script>
-					<div class='col-md-6'>
+					<div class="row reportrow">
 						<div class="form-group">
-							<div class="col-sm-2">
-								<p>Valitse kunta:</p>
-							</div>
-							<div class="col-sm-6">
-								<select class="js-data-kunta-ajax form-control" style="width: 100%" multiple="multiple"></select>
-							</div>
-						</div>
-					</div>   
+					    	<div class="col-md-offset-5 col-md-8">
+					      		<button type="submit" class="btn btn-default">Hae graafi</button>
+					    	</div>
+					  	</div>
+					 </div>
+					 <div class="row reportrow chartcontainer">
+					 	<div id="chart"></div>
+					 </div> 
 		 		</form>
 			</div>
 		</div>

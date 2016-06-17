@@ -1,9 +1,12 @@
 package dim.livi.digiroad;
 
-public class d3jsData {
+import java.util.Map;
+
+public class c3jsData {
 	
 	private String[][] columns;
 	private String[][] groups;
+	private Map names;
 	
 	public String[][] getColumns() {
 		return columns;
@@ -16,6 +19,12 @@ public class d3jsData {
 	}
 	public void setGroups(String[][] groups) {
 		this.groups = groups;
+	}
+	public Map getNames() {
+		return names;
+	}
+	public void setNames(Map names) {
+		this.names = names;
 	}
 
 }

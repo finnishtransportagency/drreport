@@ -2,6 +2,7 @@ package dim.livi.digiroad;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,19 +46,33 @@ public class NisRepository {
 		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(MunicipalityMapper));
 	 }
 	
-	public List<rawModifiedResult> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit) {
-		 return jdbc.query("select MOD_DATE, ASSET_TYPE_ID, MUNICIPALITYCODE, count(MOD_DATE) COUNT from ( " +
-		  "select ass.ASSET_TYPE_ID, rl.MUNICIPALITYCODE, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
+	public ArrayList<rawModifiedResult> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit) {
+		 return (ArrayList<rawModifiedResult>) jdbc.query("select MOD_DATE, ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, count(MOD_DATE) COUNT from ( " +
+		  "select ass.ASSET_TYPE_ID, at.NAME, rl.MUNICIPALITYCODE, mu.NAME_FI, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
 		  "inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
 		  "inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
 		  "inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
+		  "inner join DR2USER.MUNICIPALITY mu on rl.MUNICIPALITYCODE = mu.ID " +
+		  "inner join DR2USER.ASSET_TYPE at on ass.ASSET_TYPE_ID = at.ID " +
 		  "where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
 		  "and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
 		  "and ass.VALID_TO is null " +
-		  "and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between TO_DATE (?, 'DD-MM-YYYY') AND TO_DATE (?, 'DD-MM-YYYY') " +
+		  "and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
 		  ") " +
-		"group by ASSET_TYPE_ID, MUNICIPALITYCODE, MOD_DATE " +
+		"group by ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, MOD_DATE " +
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper));
+	 }
+	
+	public List<String> getModDates(String startDate, String stopDate, String kunnat, String tietolajit) {
+		 return jdbc.query("select distinct to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
+		"inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
+		"inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
+		"inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
+		"where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
+		"and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
+		"and ass.VALID_TO is null " +
+		"and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
+		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<String>(modDateMapper));
 	 }
 
 
@@ -95,7 +110,15 @@ public class NisRepository {
 	    private static final RowMapper<rawModifiedResult> rawModifiedResultMapper = new RowMapper<rawModifiedResult>() {
 	        @Override
 	        public rawModifiedResult mapRow(ResultSet rs, int rowNum) throws SQLException {
-	        	return new rawModifiedResult(rs.getString("MOD_DATE"), rs.getInt("ASSET_TYPE_ID"), rs.getInt("MUNICIPALITYCODE"), rs.getInt("COUNT"));
+	        	return new rawModifiedResult(rs.getString("MOD_DATE"), rs.getInt("ASSET_TYPE_ID"), rs.getString("NAME"), rs.getInt("MUNICIPALITYCODE"), rs.getString("NAME_FI"), rs.getInt("COUNT"));
+			} 
+	    };
+	    
+	    private static final RowMapper<String> modDateMapper = new RowMapper<String>() {
+	        @Override
+	        public String mapRow(ResultSet rs, int rowNum) throws SQLException { 
+	            return rs.getString("MOD_DATE"); 
+
 			} 
 	    };
 

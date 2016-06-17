@@ -27,26 +27,30 @@ global.jQuery(document).ready(function($) {
 	
 
 	var chart = c3.generate({
+		size: {
+			  height: 800
+			},
 	    data: {
 	    	x: 'x',
+	    	xFormat: '%d-%m-%Y',
 	        columns: [
-	            ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-02-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
-	            ['data1', 30, 200, 100, 400, 150, 250, 310, 100, 200, 300, 190, 50],
-	            ['data2', 130, 100, 140, 200, 150, 50, 30, 200, 100, 400, 150, 250],
-	            ['data3', 310, 100, 200, 300, 190, 50, 130, 100, 140, 200, 150, 50],
-	            ['data4', 13, 190, 110, 300, 50, 150, 30, 200, 100, 400, 150, 250],
-	            ['data5', 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250],
-	            ['data6', 130, 100, 140, 200, 150, 50, 13, 190, 110, 300, 50, 150],
-	            ['data7', 310, 100, 200, 300, 190, 50, 30, 200, 100, 400, 150, 250],
-	            ['data8', 13, 190, 110, 300, 50, 150, 30, 200, 100, 400, 150, 250]
+//	            ['x', '01-01-2016'],
+//	            ['data1', '30']
+//	            ['data2', '130', 100, 140, 200, 150, 50],
+//	            ['data3', '310', 100, 200, 300, 190, 50],
+//	            ['data4', '13', 190, 110, 300, 50, 150],
+//	            ['data5', '30', 200, 100, 400, 150, 250],
+//	            ['data6', '130', 100, 140, 200, 150, 50],
+//	            ['data7', '310', 100, 200, 300, 190, 50],
+//	            ['data8', '13', 190, 110, 300, 50, 150]
 	        ],
    	        type: 'bar',
-	        groups: [
-	                 ['data1', 'data3'],
-	                 ['data2', 'data4'],
-	                 ['data5', 'data7'],
-	                 ['data6', 'data8']
-	                 ],
+//	        groups: [
+//	                 ['data1', 'data3'],
+//	                 ['data2', 'data4'],
+//	                 ['data5', 'data7'],
+//	                 ['data6', 'data8']
+//	                 ],
 	        names: {
 	        	data1: 'Kaarina esterakennelma',
 	        	data2: 'Lieto esterakennelma',
@@ -64,7 +68,7 @@ global.jQuery(document).ready(function($) {
 	    },
 	    bar: {
 	        width: {
-	            ratio: 0.8 // this makes bar width 50% of length between ticks
+	            ratio: 1.0 // this makes bar width 50% of length between ticks
 	        }
 	        // or
 //	        width: 10 // this makes bar width 100px
@@ -72,11 +76,12 @@ global.jQuery(document).ready(function($) {
 	    axis: {
 	        x: {
 	            type: 'timeseries',
+//	            type: 'category',
 	            tick: {
 //	                count: 12,
-	                format: '%Y-%m-%d',
-	                rotate: -45,
-	                culling: false
+	                format: '%d-%m-%Y',
+	                rotate: -90,
+	                culling: true
 	            },
 	            height: 100
 	        }
@@ -109,13 +114,15 @@ global.jQuery(document).ready(function($) {
 
 
 	setTimeout(function () {
-		ajaxrequest.get('/testi', "", aa);
+		ajaxrequest.get('/raportit/graafi1/25-10-2015/31-01-2016/853,179,837/20,30,120,200,220,280', "", aa);
 	}, 2000);
 	
 	function aa(response) {
 	    chart.load({
-	        columns: response.columns
-    })
+	        columns: response.columns,
+	        names: response.names
+	    });
+	    chart.groups(response.groups);
 	}
 });
 

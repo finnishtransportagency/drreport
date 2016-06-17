@@ -13,9 +13,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dim.livi.digiroad.NisRepository;
-import dim.livi.digiroad.d3jsData;
+import dim.livi.digiroad.c3jsData;
 import dim.livi.digiroad.idtext;
 import dim.livi.digiroad.rawModifiedResult;
+
+import dim.livi.digiroad.MiddleLayer;
 
 @RestController
 public class ReportController {
@@ -34,19 +36,23 @@ public class ReportController {
 	}
 	
 	@RequestMapping(value = "/raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<rawModifiedResult>> chart1(@PathVariable String startdate, @PathVariable String stopdate, @PathVariable String kunnat, @PathVariable String tietolajit) {
-		return new ResponseEntity<List<rawModifiedResult>>(items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit), HttpStatus.OK);
+	public ResponseEntity<c3jsData> chart1(@PathVariable String startdate, @PathVariable String stopdate, @PathVariable String kunnat, @PathVariable String tietolajit) {
+		MiddleLayer mid = new MiddleLayer();
+		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
+				mid.createArrayCombinations(kunnat, tietolajit), items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit));
+		chartData.setGroups(mid.createGroups(kunnat, tietolajit));
+		return new ResponseEntity<c3jsData>(chartData, HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/testi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<d3jsData> testi() {
-		d3jsData testi = new d3jsData();
+	public ResponseEntity<c3jsData> testi() {
+		c3jsData testi = new c3jsData();
 		String[] a = { "x", "2013-01-01", "2013-01-02", "2013-01-03" };
 		String[] b = { "data1", "3000", "2000", "1000" };
 		String[] c = { "data2", "5100", "1000", "1900" };
 		String[][] cols = {a, b, c};		
 		testi.setColumns(cols);
-		return new ResponseEntity<d3jsData>(testi, HttpStatus.OK);
+		return new ResponseEntity<c3jsData>(testi, HttpStatus.OK);
 	}
 }
 

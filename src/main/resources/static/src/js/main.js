@@ -37,12 +37,6 @@ global.jQuery(document).ready(function($) {
 //	            ['x', '01-01-2016'],
 //	            ['data1', '30']
 //	            ['data2', '130', 100, 140, 200, 150, 50],
-//	            ['data3', '310', 100, 200, 300, 190, 50],
-//	            ['data4', '13', 190, 110, 300, 50, 150],
-//	            ['data5', '30', 200, 100, 400, 150, 250],
-//	            ['data6', '130', 100, 140, 200, 150, 50],
-//	            ['data7', '310', 100, 200, 300, 190, 50],
-//	            ['data8', '13', 190, 110, 300, 50, 150]
 	        ],
    	        type: 'bar',
 //	        groups: [
@@ -52,14 +46,8 @@ global.jQuery(document).ready(function($) {
 //	                 ['data6', 'data8']
 //	                 ],
 	        names: {
-	        	data1: 'Kaarina esterakennelma',
-	        	data2: 'Lieto esterakennelma',
-	        	data3: 'Kaarina Nopeusrajoitukset',
-	        	data4: 'Lieto Nopeusrajoitukset',
-	        	data5: 'Paimio esterakennelma',
-	        	data6: 'Salo esterakennelma',
-	        	data7: 'Paimio Nopeusrajoitukset',
-	        	data8: 'Salo Nopeusrajoitukset'
+//	        	data1: 'Kaarina esterakennelma',
+//	        	data2: 'Lieto esterakennelma'
 	        },
 	        labels: false
 	    },
@@ -87,7 +75,6 @@ global.jQuery(document).ready(function($) {
 	        }
 	    }
 	});
-	
 //	function toggle(id) {
 //	    chart.toggle(id);
 //	}
@@ -123,6 +110,7 @@ global.jQuery(document).ready(function($) {
 	        names: response.names
 	    });
 	    chart.groups(response.groups);
+//	    chart.hide(response.hides, {withLegend: true});
 	}
 });
 

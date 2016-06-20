@@ -6,7 +6,7 @@ public class c3jsData {
 	
 	private String[][] columns;
 	private String[][] groups;
-	private Map names;
+	private Map<?, ?> names;
 	
 	public String[][] getColumns() {
 		return columns;
@@ -26,5 +26,4 @@ public class c3jsData {
 	public void setNames(Map names) {
 		this.names = names;
 	}
-
 }

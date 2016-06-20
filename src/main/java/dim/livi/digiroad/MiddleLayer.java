@@ -13,6 +13,7 @@ public class MiddleLayer {
 	public c3jsData buildC3JsChartData(List<String> modDates, List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData) {
 		c3jsData chartData = new c3jsData();
 		List<String> headerList = new ArrayList<String>();
+		List<String> hidesList = new ArrayList<String>();
 		headerList.add("x");
 		headerList.addAll(modDates);
 		String[] header = headerList.toArray(new String[0]);
@@ -20,30 +21,37 @@ public class MiddleLayer {
 		cols[0] = header;
 		Map<String,String> names = new HashMap<String,String>();
 		int i = 1;
-		for (String item : kombinaatiot) {
+		ListIterator<String> kombiterator = kombinaatiot.listIterator();
+		while (kombiterator.hasNext()) {
 			List<String> valueList = new ArrayList<String>();
+			String item = kombiterator.next();
 			valueList.add(item);
-			for (String mdate : modDates) {
+			ListIterator<String> modDiterator = modDates.listIterator();
+			while (modDiterator.hasNext()) {		
+				String mdate = modDiterator.next();
 				ListIterator<rawModifiedResult> rditerator = rawData.listIterator();
-				while (rditerator.hasNext()) {
-					boolean addName = false;
-					if (!rditerator.hasPrevious()) addName = true;
+				while (rditerator.hasNext()) {					
 					rawModifiedResult rditem = rditerator.next();
-					if (addName) names.put(item, rditem.getMunicipality() + " " + rditem.getAsset_type());
 					if (mdate.equals(rditem.getMod_Date()) && item.split("-")[0].equals(rditem.getMunicipalityCode().toString()) && item.split("-")[1].equals(rditem.getAsset_Type_Id().toString())) {
 							valueList.add(rditem.getCount().toString());
+							names.put(item, rditem.getMunicipality() + " " + rditem.getAsset_type());
 							break;
 						} else if (!rditerator.hasNext()) {
 							valueList.add("0");
 						}
 				}
 			}
-			cols[i] = valueList.toArray(new String[0]);
-			i++;
-		}		
-		chartData.setColumns(cols);
-		chartData.setNames(names);
+//			if (this.checkIfAllZeros(valueList)) hidesList.add(item);
+//			cols[i] = valueList.toArray(new String[0]);
+			if (!this.checkIfAllZeros(valueList)) {
+				cols[i] = valueList.toArray(new String[0]);
+				i++;
+			}	
+		}
 		
+		chartData.setColumns(Arrays.copyOf(cols, i));
+		chartData.setNames(names);
+//		chartData.setHides(hidesList.toArray(new String[0]));
 		return chartData;
 	}
 	
@@ -73,6 +81,16 @@ public class MiddleLayer {
 			i++;
 		}
 		return groups;
+	}
+	
+	private boolean checkIfAllZeros(List<String> valueList) {
+		ListIterator<String> valiterator = valueList.listIterator();
+		while (valiterator.hasNext()) {
+			boolean hasPrevious = valiterator.hasPrevious();
+			String val = valiterator.next();
+			if (hasPrevious && !"0".equals(val)) return false;
+		}
+		return true;
 	}
 
 }

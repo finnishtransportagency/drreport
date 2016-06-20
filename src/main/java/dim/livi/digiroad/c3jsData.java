@@ -20,10 +20,10 @@ public class c3jsData {
 	public void setGroups(String[][] groups) {
 		this.groups = groups;
 	}
-	public Map getNames() {
+	public Map<?, ?> getNames() {
 		return names;
 	}
-	public void setNames(Map names) {
+	public void setNames(Map<?, ?> names) {
 		this.names = names;
 	}
 }

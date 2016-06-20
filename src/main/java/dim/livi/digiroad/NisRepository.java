@@ -39,11 +39,11 @@ public class NisRepository {
 
 
 	public List<idtext> getAssetTypes(String term) {
-		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(assetTypeMapper));
+		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{term + "%"}, new RowMapperResultSetExtractor<idtext>(assetTypeMapper));
 	 }
 	
 	public List<idtext> getMunicipalitys(String term) {
-		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{"%" + term + "%"}, new RowMapperResultSetExtractor<idtext>(MunicipalityMapper));
+		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{term + "%"}, new RowMapperResultSetExtractor<idtext>(MunicipalityMapper));
 	 }
 	
 	public ArrayList<rawModifiedResult> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit) {

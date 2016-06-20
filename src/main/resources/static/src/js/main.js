@@ -28,7 +28,7 @@ global.jQuery(document).ready(function($) {
 
 	var chart = c3.generate({
 		size: {
-			  height: 800
+			  height: 500
 			},
 	    data: {
 	    	x: 'x',
@@ -56,7 +56,7 @@ global.jQuery(document).ready(function($) {
 	    },
 	    bar: {
 	        width: {
-	            ratio: 1.0 // this makes bar width 50% of length between ticks
+	            ratio: 0.6 // this makes bar width 60% of length between ticks
 	        }
 	        // or
 //	        width: 10 // this makes bar width 100px
@@ -69,7 +69,7 @@ global.jQuery(document).ready(function($) {
 //	                count: 12,
 	                format: '%d-%m-%Y',
 	                rotate: -90,
-	                culling: true
+	                culling: false
 	            },
 	            height: 100
 	        }
@@ -100,18 +100,26 @@ global.jQuery(document).ready(function($) {
 //chart.data.colors({data3: chart.data.colors().data1, data4: chart.data.colors().data2});
 
 
-	setTimeout(function () {
-		ajaxrequest.get('/raportit/graafi1/25-10-2015/31-01-2016/853,179,837/20,30,120,200,220,280', "", aa);
-	}, 2000);
+//	setTimeout(function () {
+//		ajaxrequest.get('/raportit/graafi1/25-10-2015/31-01-2016/853,179,837/20,30,120,200,220,280', "", aa);
+//	}, 2000);
 	
-	function aa(response) {
+	function updateChart(response) {
 	    chart.load({
 	        columns: response.columns,
 	        names: response.names
 	    });
 	    chart.groups(response.groups);
-//	    chart.hide(response.hides, {withLegend: true});
 	}
+	
+	$("#haeGraafiBtn").click(function(){
+		startdate = $("#startdate").val() != "" ? $("#startdate").val().replace(/\./g, "-") : "01-01-1970";
+		stopdate = $("#stopdate").val() != "" ? $("#stopdate").val().replace(/\./g, "-") : "01-01-1970";
+		kunnat = $(".js-data-kunta-ajax").val() != null ? $(".js-data-kunta-ajax").val() : "0";
+		tietolajit = $(".js-data-tietolaji-ajax").val() != null ? $(".js-data-tietolaji-ajax").val() : "0";
+		ajaxrequest.get("/raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit, "", updateChart);
+//		console.log("/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit);
+	});
 });
 
 
@@ -127,6 +135,7 @@ $("span.menu").click(function(){
 	$(".top-menu ul").slideToggle("slow" , function(){
 	});
 });
+
 
 //var stomp = require('stompjs');
 

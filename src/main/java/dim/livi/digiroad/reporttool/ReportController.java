@@ -1,11 +1,15 @@
 package dim.livi.digiroad.reporttool;
 
+import java.util.ArrayList;
 import java.util.List;
-import org.apache.commons.lang3.tuple.Pair;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,16 +17,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dim.livi.digiroad.NisRepository;
+import dim.livi.digiroad.ServiceUser;
+import dim.livi.digiroad.Utilities;
 import dim.livi.digiroad.c3jsData;
 import dim.livi.digiroad.idtext;
+import dim.livi.digiroad.jsonMessage;
 import dim.livi.digiroad.rawModifiedResult;
-
 import dim.livi.digiroad.MiddleLayer;
 
 @RestController
 public class ReportController {
 	
-	@Autowired 
+	@Autowired
 	private NisRepository items;
 
 	@RequestMapping(value = "/koodistot/tietolajit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -35,24 +41,58 @@ public class ReportController {
 		return new ResponseEntity<List<idtext>>(items.getMunicipalitys(q), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/koodistot/kayttajat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<ServiceUser>> kayttajat() {
+		return new ResponseEntity<List<ServiceUser>>(items.getServiceUsers(), HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<c3jsData> chart1(@PathVariable String startdate, @PathVariable String stopdate, @PathVariable String kunnat, @PathVariable String tietolajit) {
+	public ResponseEntity<c3jsData> chart1(@PathVariable String startdate, @PathVariable String stopdate, @PathVariable String kunnat, @PathVariable String tietolajit) throws InterruptedException, ExecutionException {
 		MiddleLayer mid = new MiddleLayer();
+//		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
+//				mid.createArrayCombinations(kunnat, tietolajit), items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit));
+		final Future<ArrayList<rawModifiedResult>> future = items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit);
+		int startTime = ScheduleTask.getCurrentTimer();
+		jsonMessage json = new jsonMessage();
+//		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
+//		accessor.setContentType(MimeTypeUtils.TEXT_PLAIN);
+//		accessor.setNativeHeader("foo", "bar");
+//		accessor.setLeaveMutable(true);
+//		MessageHeaders headers = accessor.getMessageHeaders();
+//		Message<String> message1 = MessageBuilder.withPayload("test")
+//		        .setHeader("foo", "bar")
+//		        .build();
+//		this.template.convertAndSend("/topic/message", "message1", headers);
+		this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.START.toString(), "Prosessoidaan"));
+		while (!future.isDone()) {
+//        	System.out.println("xx " + ScheduleTask.getCurrentTimer());
+			Thread.sleep(500L);
+			this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.CONTINUE.toString(),"Haetaan tuloksia graafia varten, aikaa kulunut " + (ScheduleTask.getCurrentTimer() - startTime) + " s."));
+			Thread.sleep(500L);
+        }
+		this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.STOP.toString(), "Haku valmis, piirretään graafi."));
 		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
-				mid.createArrayCombinations(kunnat, tietolajit), items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit));
+				mid.createArrayCombinations(kunnat, tietolajit), future.get());
 		chartData.setGroups(mid.createGroups(kunnat, tietolajit));
 		return new ResponseEntity<c3jsData>(chartData, HttpStatus.OK);
 	}
 	
+	@Autowired
+	private MailSender mailSender;
+	
+	@Autowired
+  private SimpMessagingTemplate template;
+	
 	@RequestMapping(value = "/testi", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<c3jsData> testi() {
-		c3jsData testi = new c3jsData();
-		String[] a = { "x", "2013-01-01", "2013-01-02", "2013-01-03" };
-		String[] b = { "data1", "3000", "2000", "1000" };
-		String[] c = { "data2", "5100", "1000", "1900" };
-		String[][] cols = {a, b, c};		
-		testi.setColumns(cols);
-		return new ResponseEntity<c3jsData>(testi, HttpStatus.OK);
+	public ResponseEntity<String> testi() throws InterruptedException, ExecutionException {
+
+        final Future<Boolean> future = mailSender.sendMail();
+        while (!future.isDone()) {
+//        	System.out.println("xx " + ScheduleTask.getCurrentTimer());
+        	Thread.sleep(1000L);
+        }
+        Boolean result = future.get();
+		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
 	}
 }
 

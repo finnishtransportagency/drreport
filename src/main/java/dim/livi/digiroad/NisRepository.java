@@ -3,9 +3,8 @@ package dim.livi.digiroad;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
@@ -14,19 +13,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.RowMapperResultSetExtractor;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Repository;
 
 
 @Repository
 public class NisRepository {
 	
-	@Autowired
+	
 	protected JdbcTemplate jdbc;
 	
-	 @Autowired
-	    public NisRepository(JdbcTemplate jbc) {
-	        this.jdbc=jdbc;
-	    }
+	@Autowired
+    public NisRepository(JdbcTemplate jbc, JdbcTemplate jdbc) {
+        this.jdbc=jdbc;
+    }
+	 
 	 
 
 	 public int getValidityManoeuvreCount(Integer[] typelist, String ToBeOrNotToBe) {
@@ -46,8 +48,9 @@ public class NisRepository {
 		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{term + "%"}, new RowMapperResultSetExtractor<idtext>(MunicipalityMapper));
 	 }
 	
-	public ArrayList<rawModifiedResult> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit) {
-		 return (ArrayList<rawModifiedResult>) jdbc.query("select MOD_DATE, ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, count(MOD_DATE) COUNT from ( " +
+	@Async
+	public Future<ArrayList<rawModifiedResult>> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit) {
+		 return new AsyncResult<ArrayList<rawModifiedResult>>((ArrayList<rawModifiedResult>) jdbc.query("select MOD_DATE, ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, count(MOD_DATE) COUNT from ( " +
 		  "select ass.ASSET_TYPE_ID, at.NAME, rl.MUNICIPALITYCODE, mu.NAME_FI, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
 		  "inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
 		  "inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
@@ -60,7 +63,7 @@ public class NisRepository {
 		  "and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
 		  ") " +
 		"group by ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, MOD_DATE " +
-		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper));
+		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper)));
 	 }
 	
 	public List<String> getModDates(String startDate, String stopDate, String kunnat, String tietolajit) {
@@ -73,6 +76,10 @@ public class NisRepository {
 		"and ass.VALID_TO is null " +
 		"and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<String>(modDateMapper));
+	 }
+	
+	public List<ServiceUser> getServiceUsers() {
+		 return jdbc.query("select USERNAME, CONFIGURATION from DR2USER.SERVICE_USER order by USERNAME", new Object[]{}, new RowMapperResultSetExtractor<ServiceUser>(serviceUserMapper));
 	 }
 
 
@@ -119,6 +126,13 @@ public class NisRepository {
 	        public String mapRow(ResultSet rs, int rowNum) throws SQLException { 
 	            return rs.getString("MOD_DATE"); 
 
+			} 
+	    };
+	    
+	    private static final RowMapper<ServiceUser> serviceUserMapper = new RowMapper<ServiceUser>() {
+	        @Override
+	        public ServiceUser mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new ServiceUser(rs.getString("USERNAME"), rs.getString("CONFIGURATION"));
 			} 
 	    };
 

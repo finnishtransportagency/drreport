@@ -3,7 +3,9 @@ package dim.livi.digiroad.reporttool;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import dim.livi.digiroad.NisRepository;
@@ -12,7 +14,9 @@ import dim.livi.digiroad.NisRepository;
 @SpringBootApplication
 @EnableAutoConfiguration
 @ComponentScan(basePackageClasses={NisRepository.class})
+//@ComponentScan("dim.livi.digiroad")
 @EnableScheduling
+@EnableAsync
 public class DrReportApplication {
 
 	public static void main(String[] args) {

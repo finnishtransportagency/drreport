@@ -1,4 +1,5 @@
 var $ = require('jquery');
+require('jquery-ui');
 global.jQuery = global.$ = $;
 require('../../modules/move-top.js');
 require('jquery-ui/custom');
@@ -8,14 +9,22 @@ require('bootstrap');
 require('eonasdan-bootstrap-datetimepicker-custom');
 var select2 = require('../../modules/select2controller.js');
 var dateTime = require('../../modules/dateTimeController.js');
+var noty = require('../../modules/notyController.js');
 
 var d3 = require('d3');
 var c3 = require('c3');
 
 var ajaxrequest = require('../../modules/ajaxrequest.js');
 
+var stomp = require('stompjs');
+
+var sockjs = require('sockjs-client');
+global.SockJS = global.sockjs = sockjs;
+
+var jqgrid = require('free-jqgrid');
 
 global.jQuery(document).ready(function($) {
+	
 	$(".scroll").click(function(event){		
 		event.preventDefault();
 		$('html,body').animate({scrollTop:$(this.hash).offset().top},1200);
@@ -103,14 +112,18 @@ global.jQuery(document).ready(function($) {
 //	setTimeout(function () {
 //		ajaxrequest.get('/raportit/graafi1/25-10-2015/31-01-2016/853,179,837/20,30,120,200,220,280', "", aa);
 //	}, 2000);
-	
+	var nid = "";
 	function updateChart(response) {
 	    chart.load({
 	        columns: response.columns,
 	        names: response.names
 	    });
 	    chart.groups(response.groups);
+	    if (response.columns[0].length < 2) noty.createNoty("Ei tuloksia!", "alert");
+	    nid.close();
 	}
+	
+	
 	
 	$("#haeGraafiBtn").click(function(){
 		startdate = $("#startdate").val() != "" ? $("#startdate").val().replace(/\./g, "-") : "01-01-1970";
@@ -118,9 +131,85 @@ global.jQuery(document).ready(function($) {
 		kunnat = $(".js-data-kunta-ajax").val() != null ? $(".js-data-kunta-ajax").val() : "0";
 		tietolajit = $(".js-data-tietolaji-ajax").val() != null ? $(".js-data-tietolaji-ajax").val() : "0";
 		ajaxrequest.get("/raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit, "", updateChart);
+//		ajaxrequest.get("/testi", function() {console.log;});
 //		console.log("/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit);
 	});
+	
+    // defined a connection to a new socket endpoint
+    var socket = new SockJS('/stomp');
+
+    var stompClient = Stomp.over(socket);
+
+    stompClient.connect({ }, function(frame) {
+        stompClient.subscribe("/topic/message", function(data) {
+            var rawmessage = data.body;
+            var message = JSON.parse(rawmessage);
+            if (message.status == "start") {
+            	nid = noty.createNoty(message.message, "warning");
+            } else {
+            	nid.setText(message.message);
+            }
+            
+        });
+    });
+    
+    function parseRole(cellvalue, options, rowObject) {
+    	var configurationJSON = JSON.parse(cellvalue);
+    	switch(configurationJSON.roles[0]) {
+        case undefined:
+            return "Pysäkkikäyttäjä";
+        case "premium":
+        	return "Muokkaaja";
+        case "operator":
+            return "Operaattori";
+        case "viewer":
+        	return "Katselija (poistettu rooli)";
+        default:
+            return "n/a";
+    	} 
+    }
+    
+    function parseMunicipalities(cellvalue, options, rowObject) {
+    	var configurationJSON = JSON.parse(cellvalue);
+    	return configurationJSON.authorizedMunicipalities;
+    }
+    
+    
+    $("#grid1").jqGrid({
+        colModel: [
+                   { name: "username", label: "Käyttäjätunnus", width: 200 },
+                   { name: "configuration", label: "Käyttäjärooli", width: 200, formatter:parseRole },
+                   { name: "configuration", label: "Käyttäjän kunnat", width: 600, formatter:parseMunicipalities }
+//            { name: "name", label: "Client", width: 53 },
+//            { name: "invdate", label: "Date", width: 75, align: "center", sorttype: "date",
+//                formatter: "date", formatoptions: { newformat: "d-M-Y" } },
+//            { name: "amount", label: "Amount", width: 65, template: "number" },
+//            { name: "tax", label: "Tax", width: 41, template: "number" },
+//            { name: "total", label: "Total", width: 51, template: "number" },
+//            { name: "closed", label: "Closed", width: 59, template: "booleanCheckboxFa", firstsortorder: "desc" },
+//            { name: "ship_via", label: "Shipped via", width: 87, align: "center", formatter: "select",
+//                formatoptions: { value: "FE:FedEx;TN:TNT;DH:DHL", defaultValue: "DH" } }
+        ],
+        url:'/koodistot/kayttajat',
+        datatype: "json",
+        loadonce: true,
+        iconSet: "fontAwesome",
+        guiStyle: "bootstrap",
+        idPrefix: "g1_",
+//        rownumbers: true,
+        sortname: "username",
+        sortorder: "asc",
+        caption: "DigiRoad käyttäjät tuotannossa",
+        pager: true,
+        rowNum: 15,
+        viewrecords: true,
+//        pginput: true
+//        pager : '#gridpager'
+    });
+    
 });
+
+
 
 
 //var bootstrap = require('bootstrap');
@@ -135,26 +224,4 @@ $("span.menu").click(function(){
 	$(".top-menu ul").slideToggle("slow" , function(){
 	});
 });
-
-
-//var stomp = require('stompjs');
-
-//var sockjs = require('sockjs-client');
-//global.SockJS = global.sockjs = sockjs;
-//
-//$(document).ready(function() {
-//	var messageList = $("#messages");
-//    // defined a connection to a new socket endpoint
-//    var socket = new SockJS('/stomp');
-//
-//    var stompClient = Stomp.over(socket);
-//
-//    stompClient.connect({ }, function(frame) {
-//        // subscribe to the /topic/message endpoint
-//        stompClient.subscribe("/topic/message", function(data) {
-//            var message = data.body;
-//            messageList.append("<li>" + message + "</li>");
-//        });
-//    });
-//});
 

@@ -10,14 +10,25 @@ import org.springframework.stereotype.Service;
 @Service
 public class ScheduleTask {
 
-    @Autowired
-    private SimpMessagingTemplate template;
+//    @Autowired
+//    private SimpMessagingTemplate template;
 
     // this will send a message to an endpoint on which a client can subscribe
-    @Scheduled(fixedRate = 5000)
-    public void trigger() {
-        // sends the message to /topic/message
-        this.template.convertAndSend("/topic/message", "Date: " + new Date());
-    }
+//    @Scheduled(fixedRate = 5000)
+//    public void trigger() {
+//        // sends the message to /topic/message
+//        this.template.convertAndSend("/topic/message", "Date: " + new Date());
+//    }
+	
+	private static int timer = 0;
+	
+	@Scheduled(fixedRate = 1000)
+	public static void trigger() {
+		timer++;
+	}
+	
+	public static int getCurrentTimer() {
+		return timer;
+	}
 
 }

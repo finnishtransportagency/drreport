@@ -177,22 +177,15 @@ global.jQuery(document).ready(function($) {
     
     $("#grid1").jqGrid({
         colModel: [
-                   { name: "username", label: "Käyttäjätunnus", width: 200 },
-                   { name: "configuration", label: "Käyttäjärooli", width: 200, formatter:parseRole },
-                   { name: "configuration", label: "Käyttäjän kunnat", width: 600, formatter:parseMunicipalities }
-//            { name: "name", label: "Client", width: 53 },
-//            { name: "invdate", label: "Date", width: 75, align: "center", sorttype: "date",
-//                formatter: "date", formatoptions: { newformat: "d-M-Y" } },
-//            { name: "amount", label: "Amount", width: 65, template: "number" },
-//            { name: "tax", label: "Tax", width: 41, template: "number" },
-//            { name: "total", label: "Total", width: 51, template: "number" },
-//            { name: "closed", label: "Closed", width: 59, template: "booleanCheckboxFa", firstsortorder: "desc" },
-//            { name: "ship_via", label: "Shipped via", width: 87, align: "center", formatter: "select",
-//                formatoptions: { value: "FE:FedEx;TN:TNT;DH:DHL", defaultValue: "DH" } }
+                   { name: "username", label: "Käyttäjätunnus", width: 200, search: false },
+                   { name: "configuration", label: "Käyttäjärooli", width: 200, formatter:parseRole, sortable: false,
+                	   stype: "select", searchoptions: { value: ":Any;FE:FedEx;TN:TNT;DH:DHL" }
+                   },
+                   { name: "configuration", label: "Käyttäjän kunnat", width: 600, formatter:parseMunicipalities, sortable: false, search: false}
         ],
         url:'/koodistot/kayttajat',
         datatype: "json",
-        loadonce: true,
+//        loadonce: true,
         iconSet: "fontAwesome",
         guiStyle: "bootstrap",
         idPrefix: "g1_",
@@ -203,9 +196,16 @@ global.jQuery(document).ready(function($) {
         pager: true,
         rowNum: 15,
         viewrecords: true,
+        onSortCol:
+            function () {
+
+                var postpage = $("#grid1").getGridParam('postData');
+                $("#grid1").setGridParam({ page: postpage.page });
+           },
+           refresh: true
 //        pginput: true
 //        pager : '#gridpager'
-    });
+    }).jqGrid("filterToolbar");
     
 });
 

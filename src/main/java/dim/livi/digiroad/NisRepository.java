@@ -3,6 +3,7 @@ package dim.livi.digiroad;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Future;
 
@@ -78,9 +79,19 @@ public class NisRepository {
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<String>(modDateMapper));
 	 }
 	
-	public List<ServiceUser> getServiceUsers() {
-		 return jdbc.query("select USERNAME, CONFIGURATION from DR2USER.SERVICE_USER order by USERNAME", new Object[]{}, new RowMapperResultSetExtractor<ServiceUser>(serviceUserMapper));
+	public List<jqGridJsonTypeRow> getServiceUsers(Integer rows, Integer page, String sidx, String sord) {
+		int start = (page - 1) * rows;
+		int stop = start + rows;
+		 return jdbc.query("select USERNAME, CONFIGURATION from (" +
+							  "select a.*, ROWNUM rnum from (" +
+							    "select * from DR2USER.SERVICE_USER ORDER BY " + sidx + " " + sord +
+							  ") a where rownum <= ?" +
+							") where rnum > ?", new Object[]{stop, start}, new RowMapperResultSetExtractor<jqGridJsonTypeRow>(serviceRowMapper));
 	 }
+	
+	 public int getServiceUserCount() {
+	        return jdbc.queryForObject("select count(*) count from DR2USER.SERVICE_USER", itemMapper ); 
+	    }
 
 
 	    private static final RowMapper<Integer> itemMapper = new RowMapper<Integer>() {
@@ -129,10 +140,19 @@ public class NisRepository {
 			} 
 	    };
 	    
+	    @Deprecated
 	    private static final RowMapper<ServiceUser> serviceUserMapper = new RowMapper<ServiceUser>() {
 	        @Override
 	        public ServiceUser mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new ServiceUser(rs.getString("USERNAME"), rs.getString("CONFIGURATION"));
+			} 
+	    };
+	    
+	    private static final RowMapper<jqGridJsonTypeRow> serviceRowMapper = new RowMapper<jqGridJsonTypeRow>() {
+	        @Override
+	        public jqGridJsonTypeRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new jqGridJsonTypeRow(String.valueOf(rowNum), Arrays.asList(rs.getString("USERNAME"), rs.getString("CONFIGURATION")));
+//	        	return new ServiceUser();
 			} 
 	    };
 

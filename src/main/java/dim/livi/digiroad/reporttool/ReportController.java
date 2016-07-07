@@ -21,6 +21,8 @@ import dim.livi.digiroad.ServiceUser;
 import dim.livi.digiroad.Utilities;
 import dim.livi.digiroad.c3jsData;
 import dim.livi.digiroad.idtext;
+import dim.livi.digiroad.jqGridJsonType;
+import dim.livi.digiroad.jqGridJsonTypeRow;
 import dim.livi.digiroad.jsonMessage;
 import dim.livi.digiroad.rawModifiedResult;
 import dim.livi.digiroad.MiddleLayer;
@@ -42,8 +44,10 @@ public class ReportController {
 	}
 	
 	@RequestMapping(value = "/koodistot/kayttajat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<ServiceUser>> kayttajat() {
-		return new ResponseEntity<List<ServiceUser>>(items.getServiceUsers(), HttpStatus.OK);
+	public ResponseEntity<jqGridJsonType> kayttajat(@RequestParam Integer page, @RequestParam Integer rows, @RequestParam String sidx, @RequestParam String sord) {
+		int userCount = items.getServiceUserCount();
+		int pageCount = (int) Math.ceil((double) userCount / rows);
+		return new ResponseEntity<jqGridJsonType>(new jqGridJsonType(pageCount, page, userCount, items.getServiceUsers(rows, page, sidx, sord)), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
@@ -94,5 +98,20 @@ public class ReportController {
         Boolean result = future.get();
 		return new ResponseEntity<String>(result.toString(), HttpStatus.OK);
 	}
+	
+//	@RequestMapping(value = "/testi2", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+//	public ResponseEntity<jqGridJsonType> testi2(){
+//		jqGridJsonType res = new jqGridJsonType("1", "2", "3");
+//		List<jqGridJsonTypeRow> lista = new ArrayList<jqGridJsonTypeRow>();
+//		jqGridJsonTypeRow item = new jqGridJsonTypeRow();
+//		item.setId("22");
+//		List<String> rivi = new ArrayList<String>();
+//		rivi.add("user");
+//		rivi.add("conf");
+//		item.setCell(rivi);
+//		lista.add(item);
+//		res.setRows(lista);
+//		return new ResponseEntity<jqGridJsonType>(res, HttpStatus.OK);
+//	}
 }
 

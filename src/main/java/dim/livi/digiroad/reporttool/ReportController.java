@@ -44,10 +44,12 @@ public class ReportController {
 	}
 	
 	@RequestMapping(value = "/koodistot/kayttajat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<jqGridJsonType> kayttajat(@RequestParam Integer page, @RequestParam Integer rows, @RequestParam String sidx, @RequestParam String sord) {
-		int userCount = items.getServiceUserCount();
+	public ResponseEntity<jqGridJsonType> kayttajat(@RequestParam Integer page, @RequestParam Integer rows, @RequestParam String sidx, @RequestParam String sord, @RequestParam(required=false) String configuration) {
+		if ("busstop".equals(configuration)) configuration = "";
+//		else if ("all".equals(configuration)) configuration = null;
+		int userCount = items.getServiceUserCount(configuration);
 		int pageCount = (int) Math.ceil((double) userCount / rows);
-		return new ResponseEntity<jqGridJsonType>(new jqGridJsonType(pageCount, page, userCount, items.getServiceUsers(rows, page, sidx, sord)), HttpStatus.OK);
+		return new ResponseEntity<jqGridJsonType>(new jqGridJsonType(pageCount, page, userCount, items.getServiceUsers(rows, page, sidx, sord, configuration)), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

@@ -79,19 +79,29 @@ public class NisRepository {
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<String>(modDateMapper));
 	 }
 	
-	public List<jqGridJsonTypeRow> getServiceUsers(Integer rows, Integer page, String sidx, String sord) {
+	public List<jqGridJsonTypeRow> getServiceUsers(Integer rows, Integer page, String sidx, String sord, String configuration) {
 		int start = (page - 1) * rows;
-		int stop = start + rows;
+		int stop = start + rows;		
 		 return jdbc.query("select USERNAME, CONFIGURATION from (" +
 							  "select a.*, ROWNUM rnum from (" +
-							    "select * from DR2USER.SERVICE_USER ORDER BY " + sidx + " " + sord +
+							    "select * from DR2USER.SERVICE_USER WHERE " + this.createWhereClause(configuration) + " ORDER BY " + sidx + " " + sord +
 							  ") a where rownum <= ?" +
 							") where rnum > ?", new Object[]{stop, start}, new RowMapperResultSetExtractor<jqGridJsonTypeRow>(serviceRowMapper));
 	 }
 	
-	 public int getServiceUserCount() {
-	        return jdbc.queryForObject("select count(*) count from DR2USER.SERVICE_USER", itemMapper ); 
+	 public int getServiceUserCount(String configuration) {
+	        return jdbc.queryForObject("select count(*) count from DR2USER.SERVICE_USER WHERE " + this.createWhereClause(configuration), itemMapper ); 
 	    }
+	 
+	 private String createWhereClause(String configuration) {
+		 String whereClause = "1 = 1";
+		 if ("operator".equals(configuration) || "premium".equals(configuration)) whereClause = "replace(CONFIGURATION, ' ', '') LIKE " + "'%\"roles\":[\"" + configuration + "\"]%'";
+		 else if ("".equals(configuration)) whereClause = "replace(CONFIGURATION, ' ', '') LIKE " + "'%\"roles\":[]%'";
+		 else if ("other".equals(configuration)) whereClause = "replace(CONFIGURATION, ' ', '') NOT LIKE '%\"roles\":[\"premium\"]%'" +
+																 " AND replace(CONFIGURATION, ' ', '') NOT LIKE '%\"roles\":[\"operator\"]%'" +
+																 " AND replace(CONFIGURATION, ' ', '') NOT LIKE '%\"roles\":[]%'";
+		 return whereClause;
+	 }
 
 
 	    private static final RowMapper<Integer> itemMapper = new RowMapper<Integer>() {
@@ -154,6 +164,8 @@ public class NisRepository {
 	        	return new jqGridJsonTypeRow(String.valueOf(rowNum), Arrays.asList(rs.getString("USERNAME"), rs.getString("CONFIGURATION")));
 //	        	return new ServiceUser();
 			} 
+	        
 	    };
+	    
 
 }

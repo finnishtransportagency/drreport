@@ -172,40 +172,69 @@ global.jQuery(document).ready(function($) {
     function parseMunicipalities(cellvalue, options, rowObject) {
     	var configurationJSON = JSON.parse(cellvalue);
     	return configurationJSON.authorizedMunicipalities;
-    }
+    }  
     
+    var tooltiptemplate = escapeHtml('<div class="tooltip userconftooltip"><div class="tooltip-arrow"></div><div class="tooltip-inner"></div></div>');
+
+	  function escapeHtml(string) {
+			return String(string).replace(/[&<>"'\/]/g, function (s) {
+			var entityMap = {
+				    "&": "&amp;",
+				    "<": "&lt;",
+				    ">": "&gt;",
+				    '"': '&quot;',
+				    "'": '&#39;',
+				    "/": '&#x2F;'
+			    	  };
+			  return entityMap[s];
+			});
+	  }
+	  // ei käytössä
+	  function cutStringOnComma(str, cutcount) {
+		  for(var i = 0; i < str.length; i++) {
+			  if (i > cutcount && str[i] == ',') return str.substring(0, i) + " " + str.substr(i + 1);
+		  }
+		  return str;
+	  }
+
     
     $("#grid1").jqGrid({
-        colModel: [
-                   { name: "username", label: "Käyttäjätunnus", width: 200, search: false },
-                   { name: "configuration", label: "Käyttäjärooli", width: 200, formatter:parseRole, sortable: false,
-                	   stype: "select", searchoptions: { value: ":Any;FE:FedEx;TN:TNT;DH:DHL" }
-                   },
-                   { name: "configuration", label: "Käyttäjän kunnat", width: 600, formatter:parseMunicipalities, sortable: false, search: false}
-        ],
-        url:'/koodistot/kayttajat',
-        datatype: "json",
-//        loadonce: true,
-        iconSet: "fontAwesome",
-        guiStyle: "bootstrap",
-        idPrefix: "g1_",
-//        rownumbers: true,
-        sortname: "username",
-        sortorder: "asc",
-        caption: "DigiRoad käyttäjät tuotannossa",
-        pager: true,
-        rowNum: 15,
-        viewrecords: true,
-        onSortCol:
-            function () {
-
+		colModel: [
+		           { name: "username", label: "Käyttäjätunnus", width: 200, search: false },
+		           { name: "configuration", label: "Käyttäjärooli", width: 200, formatter:parseRole, sortable: false,
+		        	   stype: "select", searchoptions: { value: "all:Kaikki;premium:Muokkaaja;operator:Operaattori;busstop:Pysäkkikäyttäjä;other:Joku muu", defaultValue: "all" }
+		           },
+		           { name: "configuration", label: "Käyttäjän kunnat", width: 600, formatter:parseMunicipalities, sortable: false, search: false,
+		        	   cellattr: function (rowId, val, rawObject, cm, rdata) { return ' data-template="' + tooltiptemplate + '" data-toggle="tooltip" title = "' + JSON.stringify(rawObject[1]) + '"'; }
+		           }
+		],
+		url:'/koodistot/kayttajat',
+		datatype: "json",
+		//        loadonce: true,
+		iconSet: "fontAwesome",
+		guiStyle: "bootstrap",
+		idPrefix: "g1_",
+		//        rownumbers: true,
+		sortname: "username",
+		sortorder: "asc",
+		caption: "DigiRoad käyttäjät tuotannossa",
+		pager: true,
+		rowNum: 15,
+		viewrecords: true,
+		onSortCol: function () {
                 var postpage = $("#grid1").getGridParam('postData');
                 $("#grid1").setGridParam({ page: postpage.page });
+           },
+           gridComplete: function() {$('[data-toggle="tooltip"]').tooltip({
+		        	   container: 'body',
+		        	   html: true
+		           		});
            },
            refresh: true
 //        pginput: true
 //        pager : '#gridpager'
     }).jqGrid("filterToolbar");
+     
     
 });
 

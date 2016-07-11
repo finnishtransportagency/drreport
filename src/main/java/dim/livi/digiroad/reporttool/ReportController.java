@@ -17,12 +17,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import dim.livi.digiroad.NisRepository;
-import dim.livi.digiroad.ServiceUser;
 import dim.livi.digiroad.Utilities;
 import dim.livi.digiroad.c3jsData;
 import dim.livi.digiroad.idtext;
 import dim.livi.digiroad.jqGridJsonType;
-import dim.livi.digiroad.jqGridJsonTypeRow;
 import dim.livi.digiroad.jsonMessage;
 import dim.livi.digiroad.rawModifiedResult;
 import dim.livi.digiroad.MiddleLayer;

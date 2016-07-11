@@ -102,6 +102,10 @@ public class NisRepository {
 																 " AND replace(CONFIGURATION, ' ', '') NOT LIKE '%\"roles\":[]%'";
 		 return whereClause;
 	 }
+	 
+	public List<jqGridJsonTypeRow> getValidationRules() {		
+		 return jdbc.query("select * from OPERAATTORI.VALIDATION_RULES", new Object[]{}, new RowMapperResultSetExtractor<jqGridJsonTypeRow>(validationRuleMapper));
+	 }
 
 
 	    private static final RowMapper<Integer> itemMapper = new RowMapper<Integer>() {
@@ -162,8 +166,14 @@ public class NisRepository {
 	        @Override
 	        public jqGridJsonTypeRow mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new jqGridJsonTypeRow(String.valueOf(rowNum), Arrays.asList(rs.getString("USERNAME"), rs.getString("CONFIGURATION")));
-//	        	return new ServiceUser();
-			} 
+			}
+	    };
+	        
+	    private static final RowMapper<jqGridJsonTypeRow> validationRuleMapper = new RowMapper<jqGridJsonTypeRow>() {
+	        @Override
+	        public jqGridJsonTypeRow mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new jqGridJsonTypeRow(String.valueOf(rs.getInt("ID")), Arrays.asList(rs.getString("TIETOLAJI"), rs.getString("TYYPPI"), rs.getString("ARVOT"), rs.getString("MUIDEN_ARVOJEN_VAIKUTUS"), rs.getString("HUOM")));
+			}
 	        
 	    };
 	    

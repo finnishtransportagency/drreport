@@ -1,4 +1,5 @@
 var jqgrid = require('free-jqgrid');
+var ajaxrequest = require('./ajaxrequest.js');
 
 var gridController = {
 		
@@ -47,10 +48,10 @@ var gridController = {
 			colModel:[ {name:'tietolaji', label:'Tietolaji', index:'id', width:200},
 			           {name:'tyyppi', label:'Tyyppi', width:100},
 			           {name:'arvot', label:'Arvot', width:100},
-			           {name:'muiden_arvojen_vaikutus', label:'Muiden arvojen vaikutus', width:200},
+			           {name:'muiden_arvojen_vaikutus', label:'Muiden arvojen vaikutus', width:160},
 			           {name:'huom', label:'Huomioitavaa', width:250},
 			           {name: 'status', label: 'Status', width:100},
-			           {name: 'action', label: 'Validointi', width:100}],
+			           {name: 'action', label: 'Validointi', width:120}],
 			           url:'/validate/rules',
 			           datatype: "json",
 			           iconSet: "fontAwesome",
@@ -61,6 +62,17 @@ var gridController = {
 			           sortorder: "desc",
 			           loadonce: true,
 			           caption: "Validointi",
+			           beforeSelectRow: function (rowid, e) {
+			        	    var $td = $(e.target).closest("td"),
+			        	        iCol = $.jgrid.getCellIndex($td[0]),
+			        	        onCellSelect = $(this).jqGrid("getGridParam", "onCellSelect");
+
+			        	    if ($.isFunction(onCellSelect)) {
+			        	        onCellSelect.call(this, rowid, iCol, $td.html(), e);
+			        	    }
+
+			        	    return false;
+			        	},
 			           onCellSelect: me.cellSelected});
 	},
 	getTemplate: function() {
@@ -99,20 +111,22 @@ var gridController = {
     	var configurationJSON = JSON.parse(cellvalue);
     	return configurationJSON.authorizedMunicipalities;
     },
-    cellSelected: function(rowid, iCell, cellcontent, e) {
-//    	var vbid = 'validBtn' + options.rowId;
-//    	$("#validBtn").click(function(){
-//    		alert('aletaan validointi');
-//    	});
-//    	return '<button type="submit" class="btn btn-default" id="' + vbid  + '">Aloita</button>';
-    	console.log(rowid + ":" + iCell);
+    cellSelected: function(rowId, iCell, cellcontent, e) {
+    	if (iCell == 6) {
+    		jQuery("#grid2").jqGrid('setCell', rowId, iCell, 'Validointi aloitettu..','validred');
+    		ajaxrequest.get("/validate/test/" + rowId, "", gridController.updateStatus );
+    	}
     },
     cutStringOnComma: function(str, cutcount) {// ei käytössä
 		  for(var i = 0; i < str.length; i++) {
 			  if (i > cutcount && str[i] == ',') return str.substring(0, i) + " " + str.substr(i + 1);
 		  }
 		  return str;
-	  }
+	},
+	updateStatus: function(response) {
+		jQuery("#grid2").jqGrid('setCell', response[1], 6, 'Validointi valmis!', 'validgreen');
+		jQuery("#grid2").jqGrid('setCell', response[1], 5, response[0]);
+	}
 }
 
 module.exports = gridController;

@@ -3,15 +3,15 @@ package dim.livi.digiroad;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-public class jsonMessage {
+public class jsonMessagePlus extends jsonMessage {
 	
-	protected String status;
-	protected String message;
+	private String id;
 	
 	
-	public String createJsonMessage(String status, String message) {
+	public String createJsonMessage(String status, String message, String id) {
 		this.status = status;
 		this.message = message;
+		this.setId(id);
 		ObjectMapper mapper = new ObjectMapper();
 		String jsonmessage = "failed";
 		try {
@@ -22,19 +22,15 @@ public class jsonMessage {
 		}
 		return jsonmessage;
 	}
-	
-	
-	public String getStatus() {
-		return status;
+
+
+	public String getId() {
+		return id;
 	}
-	public void setStatus(String status) {
-		this.status = status;
-	}
-	public String getMessage() {
-		return message;
-	}
-	public void setMessage(String message) {
-		this.message = message;
+
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 }

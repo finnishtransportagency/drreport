@@ -24,6 +24,11 @@ var stompController = {
 		            }
 		            
 		        });
+		        stompClient.subscribe("/topic/testmessage", function(data) {
+		        	var rawmessage = data.body;
+		            var message = JSON.parse(rawmessage);
+		            if (message.status != "stop") jQuery("#grid2").jqGrid('setCell', message.id, 5, message.message);
+		        });
 		    });
 		}
 }

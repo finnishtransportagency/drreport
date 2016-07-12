@@ -67,6 +67,15 @@ public class NisRepository {
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper)));
 	 }
 	
+	@Async
+	public Future<List<String>> getSleep(Integer id) throws InterruptedException {
+		Thread.sleep(3000L);
+		List<String> lista = new ArrayList<String>();
+		lista.add("ok");
+		lista.add(id.toString());
+		return new AsyncResult<List<String>>(lista);
+	}
+	
 	public List<String> getModDates(String startDate, String stopDate, String kunnat, String tietolajit) {
 		 return jdbc.query("select distinct to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
 		"inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +

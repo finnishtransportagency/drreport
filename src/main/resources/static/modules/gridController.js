@@ -15,6 +15,7 @@ var gridController = {
 			        	   cellattr: function (rowId, val, rawObject, cm, rdata) { return ' data-template="' + me.getTemplate() + '" data-toggle="tooltip" title = "' + JSON.stringify(rawObject[1]) + '"'; }
 			           }
 			],
+			width: 1200,
 			url:'/koodistot/kayttajat',
 			datatype: "json",
 			//        loadonce: true,
@@ -52,16 +53,21 @@ var gridController = {
 			           {name:'huom', label:'Huomioitavaa', width:250},
 			           {name: 'status', label: 'Status', width:100},
 			           {name: 'action', label: 'Validointi', width:120}],
+			           width: 1200,
 			           url:'/validate/rules',
 			           datatype: "json",
 			           iconSet: "fontAwesome",
 			           guiStyle: "bootstrap",
-			           rowNum:20,
+			           rowNum: 10,
+			           rowList:[10,20,30],
 			           sortname: 'id',
 			           viewrecords: true,
 			           sortorder: "desc",
 			           loadonce: true,
 			           caption: "Validointi",
+			           subGrid: true,
+			           pager: true,
+//			           subGridOptions: {expandOnLoad: true },
 			           beforeSelectRow: function (rowid, e) {
 			        	    var $td = $(e.target).closest("td"),
 			        	        iCol = $.jgrid.getCellIndex($td[0]),
@@ -73,7 +79,30 @@ var gridController = {
 
 			        	    return false;
 			        	},
-			           onCellSelect: me.cellSelected});
+			           onCellSelect: me.cellSelected,
+			           subGridRowExpanded: function (subgridId, rowid) {
+			        	   me.cellSelected(rowid, 7);
+			               var subgridTableId = subgridId + "_t";
+			               $("#" + subgridId).html("<table id='" + subgridTableId + "'></table>");
+			               $("#" + subgridTableId).jqGrid({
+			                   datatype: "local",
+//			                   data: $(this).jqGrid("getLocalRow", rowid).files,
+			                   iconSet: "fontAwesome",
+					           guiStyle: "bootstrap",
+					           caption: "Validoinnin tulokset",
+			                   colNames: ["Parametri", "Arvo"],
+			                   colModel: [
+			                     {name: "_param", width: 130, key: true},
+			                     {name: "_value", width: 130}
+			                   ],
+			                   height: "100%",
+			                   rowNum: 10,
+			                   sortname: "_param",
+			                   idPrefix: "s_" + rowid + "_",
+			                   onHeaderClick: function(gridstate) { jQuery("#grid2").collapseSubGridRow(rowid) }
+			               });
+			           }
+		})
 	},
 	getTemplate: function() {
 		var me = this;
@@ -112,8 +141,9 @@ var gridController = {
     	return configurationJSON.authorizedMunicipalities;
     },
     cellSelected: function(rowId, iCell, cellcontent, e) {
-    	if (iCell == 6) {
+    	if (iCell == 7) {
     		jQuery("#grid2").jqGrid('setCell', rowId, iCell, 'Validointi aloitettu..','validred');
+    		$('.loading').show();
     		ajaxrequest.get("/validate/test/" + rowId, "", gridController.updateStatus );
     	}
     },
@@ -124,8 +154,16 @@ var gridController = {
 		  return str;
 	},
 	updateStatus: function(response) {
-		jQuery("#grid2").jqGrid('setCell', response[1], 6, 'Validointi valmis!', 'validgreen');
-		jQuery("#grid2").jqGrid('setCell', response[1], 5, response[0]);
+		jQuery("#grid2").jqGrid('setCell', response[1], 7, 'Validointi valmis!', 'validgreen');
+		jQuery("#grid2").jqGrid('setCell', response[1], 6, response[0]);
+		jQuery("#grid2").expandSubGridRow(response[1]);
+		var x = [];
+		x.push({ _param: "Pienin arvo", _value: "350" });
+		x.push({ _param: "Suurin arvo", _value: "70000" });
+		var subgridTableId = "grid2_" + response[1] + "_t";
+		jQuery('#' + subgridTableId).jqGrid('setGridParam', { data: x });
+		jQuery('#' + subgridTableId).trigger('reloadGrid');
+		$('.loading').hide();
 	}
 }
 

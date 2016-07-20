@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import dim.livi.digiroad.NisRepository;
 import dim.livi.digiroad.Utilities;
 import dim.livi.digiroad.c3jsData;
-import dim.livi.digiroad.idtext;
+import dim.livi.digiroad.IdText;
 import dim.livi.digiroad.jqGridJsonType;
 import dim.livi.digiroad.jsonMessage;
 import dim.livi.digiroad.rawModifiedResult;
@@ -32,13 +32,13 @@ public class ReportController {
 	private NisRepository items;
 
 	@RequestMapping(value = "/koodistot/tietolajit", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<idtext>> tietolajit(@RequestParam String q) {
-		return new ResponseEntity<List<idtext>>(items.getAssetTypes(q), HttpStatus.OK);
+	public ResponseEntity<List<IdText>> tietolajit(@RequestParam String q) {
+		return new ResponseEntity<List<IdText>>(items.getAssetTypes(q), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/koodistot/kunnat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<List<idtext>> kunnat(@RequestParam String q) {
-		return new ResponseEntity<List<idtext>>(items.getMunicipalitys(q), HttpStatus.OK);
+	public ResponseEntity<List<IdText>> kunnat(@RequestParam String q) {
+		return new ResponseEntity<List<IdText>>(items.getMunicipalitys(q), HttpStatus.OK);
 	}
 	
 	@RequestMapping(value = "/koodistot/kayttajat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)

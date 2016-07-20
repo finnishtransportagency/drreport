@@ -41,12 +41,12 @@ public class NisRepository {
 	 
 
 
-	public List<idtext> getAssetTypes(String term) {
-		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{term + "%"}, new RowMapperResultSetExtractor<idtext>(assetTypeMapper));
+	public List<IdText> getAssetTypes(String term) {
+		 return jdbc.query("select ID, NAME from DR2USER.ASSET_TYPE where lower(NAME) like lower(?) order by NAME", new Object[]{term + "%"}, new RowMapperResultSetExtractor<IdText>(assetTypeMapper));
 	 }
 	
-	public List<idtext> getMunicipalitys(String term) {
-		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{term + "%"}, new RowMapperResultSetExtractor<idtext>(MunicipalityMapper));
+	public List<IdText> getMunicipalitys(String term) {
+		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{term + "%"}, new RowMapperResultSetExtractor<IdText>(MunicipalityMapper));
 	 }
 	
 	@Async
@@ -112,8 +112,32 @@ public class NisRepository {
 		 return whereClause;
 	 }
 	 
-	public List<jqGridJsonTypeRow> getValidationRules() {		
-		 return jdbc.query("select * from OPERAATTORI.VALIDATION_RULES", new Object[]{}, new RowMapperResultSetExtractor<jqGridJsonTypeRow>(validationRuleMapper));
+	public List<jqGridJsonTypeRow> getValidationRules(Integer id) {
+		String whereClause = "1 = 1";
+		if (id != 0) whereClause = "ID=" + id;
+		return jdbc.query("select * from OPERAATTORI.VALIDATION_RULES WHERE " + whereClause, new Object[]{}, new RowMapperResultSetExtractor<jqGridJsonTypeRow>(validationRuleMapper));
+	 }
+	
+	@Async
+	public Future<List<ParamValue>> getValidationResult() {		
+		 return new AsyncResult<List<ParamValue>>(jdbc.query("with arvot as (" +
+						  "select a.ID, a.ASSET_TYPE_ID, npv.value from DR2USER.ASSET a " +
+						  "inner join DR2USER.NUMBER_PROPERTY_VALUE npv on a.ID = npv.ASSET_ID " +
+						  "where a.ID in (" +
+						    "select a.ID from DR2USER.LRM_POSITION lrm " +
+						    "inner join DR2USER.ASSET_LINK al on al.POSITION_ID = lrm.ID " +
+						    "inner join DR2USER.ASSET a on al.ASSET_ID = a.ID " +
+						    "where a.ASSET_TYPE_ID = 70 AND a.VALID_TO IS null and a.FLOATING=0 and lrm.LINK_ID is not null" +
+						    ")" +
+						  ")" +
+							"select 'c' porder, 'Pienin arvo' param, min(value) value from arvot " +
+							"union " +
+							"select 'c' porder, 'Suurin arvo', max(value) from arvot " +
+							"union " +
+							"select case when count(value) < 441 then 'a' else 'b' end porder, param, count(value) from (" +
+							  "select case when value < 441 then 'Valideja' else 'Ei valideja' end param, case when value < 441 then 1 else 0 end value from arvot) " +
+							"group by param, value " +
+							"order by porder", new Object[]{}, new RowMapperResultSetExtractor<ParamValue>(ParamValueMapper)));
 	 }
 
 
@@ -134,17 +158,17 @@ public class NisRepository {
 			} 
 	    };
 	    
-	    private static final RowMapper<idtext> assetTypeMapper = new RowMapper<idtext>() {
+	    private static final RowMapper<IdText> assetTypeMapper = new RowMapper<IdText>() {
 	        @Override
-	        public idtext mapRow(ResultSet rs, int rowNum) throws SQLException {
-	        	return new idtext(rs.getInt("ID"), rs.getString("NAME"));
+	        public IdText mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new IdText(rs.getInt("ID"), rs.getString("NAME"));
 			} 
 	    };
 	    
-	    private static final RowMapper<idtext> MunicipalityMapper = new RowMapper<idtext>() {
+	    private static final RowMapper<IdText> MunicipalityMapper = new RowMapper<IdText>() {
 	        @Override
-	        public idtext mapRow(ResultSet rs, int rowNum) throws SQLException {
-	        	return new idtext(rs.getInt("ID"), rs.getString("NAME_FI"));
+	        public IdText mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new IdText(rs.getInt("ID"), rs.getString("NAME_FI"));
 			} 
 	    };
 	    
@@ -181,9 +205,17 @@ public class NisRepository {
 	    private static final RowMapper<jqGridJsonTypeRow> validationRuleMapper = new RowMapper<jqGridJsonTypeRow>() {
 	        @Override
 	        public jqGridJsonTypeRow mapRow(ResultSet rs, int rowNum) throws SQLException {
-	        	return new jqGridJsonTypeRow(String.valueOf(rs.getInt("ID")), Arrays.asList(rs.getString("TIETOLAJI"), rs.getString("TYYPPI"), rs.getString("ARVOT"), rs.getString("MUIDEN_ARVOJEN_VAIKUTUS"), rs.getString("HUOM")));
+	        	return new jqGridJsonTypeRow(String.valueOf(rs.getInt("ID")), Arrays.asList(rs.getString("TIETOLAJI"), rs.getString("TYYPPI"),
+	        			rs.getString("ARVOT"), rs.getString("MUIDEN_ARVOJEN_VAIKUTUS"), rs.getString("HUOM"), String.valueOf(rs.getInt("ASSET_TYPE_ID"))));
 			}
 	        
+	    };
+	    
+	    private static final RowMapper<ParamValue> ParamValueMapper = new RowMapper<ParamValue>() {
+	        @Override
+	        public ParamValue mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new ParamValue(rs.getString("PARAM"), rs.getString("VALUE"));
+			} 
 	    };
 	    
 

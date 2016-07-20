@@ -1,9 +1,9 @@
 package dim.livi.digiroad;
 
-public class idtext {
+public class IdText {
 	private Integer id;
 	private String text;
-	public idtext(Integer id, String text) {
+	public IdText(Integer id, String text) {
 		this.setId(id);
 		this.setText(text);
 	}

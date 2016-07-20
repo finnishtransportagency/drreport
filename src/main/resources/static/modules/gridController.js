@@ -92,8 +92,8 @@ var gridController = {
 					           caption: "Validoinnin tulokset",
 			                   colNames: ["Parametri", "Arvo"],
 			                   colModel: [
-			                     {name: "_param", width: 130, key: true},
-			                     {name: "_value", width: 130}
+			                     {name: "param", width: 130, key: true},
+			                     {name: "value", width: 130}
 			                   ],
 			                   height: "100%",
 			                   rowNum: 10,
@@ -144,7 +144,8 @@ var gridController = {
     	if (iCell == 7) {
     		jQuery("#grid2").jqGrid('setCell', rowId, iCell, 'Validointi aloitettu..','validred');
     		$('.loading').show();
-    		ajaxrequest.get("/validate/test/" + rowId, "", gridController.updateStatus );
+    		var type = jQuery("#grid2").jqGrid('getCell', rowId, 'tyyppi')
+    		ajaxrequest.get("/validate/result/" + type + "/" + rowId, "", gridController.updateStatus );
     	}
     },
     cutStringOnComma: function(str, cutcount) {// ei käytössä
@@ -154,14 +155,14 @@ var gridController = {
 		  return str;
 	},
 	updateStatus: function(response) {
-		jQuery("#grid2").jqGrid('setCell', response[1], 7, 'Validointi valmis!', 'validgreen');
-		jQuery("#grid2").jqGrid('setCell', response[1], 6, response[0]);
-		jQuery("#grid2").expandSubGridRow(response[1]);
-		var x = [];
-		x.push({ _param: "Pienin arvo", _value: "350" });
-		x.push({ _param: "Suurin arvo", _value: "70000" });
-		var subgridTableId = "grid2_" + response[1] + "_t";
-		jQuery('#' + subgridTableId).jqGrid('setGridParam', { data: x });
+		jQuery("#grid2").jqGrid('setCell', response.rowid, 'action', 'Validointi valmis!', 'validgreen');
+		jQuery("#grid2").jqGrid('setCell', response.rowid, 'status', response.status);
+		jQuery("#grid2").expandSubGridRow(response.rowid);
+//		var x = [];
+//		x.push({ _param: "Pienin arvo", _value: "350" });
+//		x.push({ _param: "Suurin arvo", _value: "70000" });
+		var subgridTableId = "grid2_" + response.rowid + "_t";
+		jQuery('#' + subgridTableId).jqGrid('setGridParam', { data: response.params });
 		jQuery('#' + subgridTableId).trigger('reloadGrid');
 		$('.loading').hide();
 	}

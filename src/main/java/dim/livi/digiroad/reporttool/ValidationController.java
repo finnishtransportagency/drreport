@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
 
 import dim.livi.digiroad.NisRepository;
 import dim.livi.digiroad.ParamValue;
@@ -59,14 +60,14 @@ public class ValidationController {
 		return new ResponseEntity<List<String>>(future.get(), HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/validate/result/{type}/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<ValidationResult> result(@PathVariable String type, @PathVariable Integer id) throws InterruptedException, ExecutionException {
+	@RequestMapping(value = "/validate/result/{id}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<ValidationResult> result(@PathVariable Integer id) throws InterruptedException, ExecutionException {
 		jqGridJsonTypeRow validationRule = items.getValidationRules(id).get(0);
-		String Type = validationRule.getCell().get(1);
+		String type = null != validationRule.getCell().get(1) ? validationRule.getCell().get(1) : "undefined";
+		String filter = null != validationRule.getCell().get(2) ? validationRule.getCell().get(2) : "=0";
 		Integer Asset_type_id = Integer.parseInt(validationRule.getCell().get(5));
-		System.out.print(Type);
 		if ("number".equals(type)) {
-			final Future<List<ParamValue>> future = items.getValidationResult();
+			final Future<List<ParamValue>> future = items.getValidationResult(Asset_type_id, filter);
 			int startTime = ScheduleTask.getCurrentTimer();
 			jsonMessagePlus json = new jsonMessagePlus();
 			this.template.convertAndSend("/topic/testmessage", json.createJsonMessage(Utilities.status.START.toString(), "Prosessoidaan", id.toString()));

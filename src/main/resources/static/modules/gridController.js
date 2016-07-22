@@ -144,8 +144,8 @@ var gridController = {
     	if (iCell == 7) {
     		jQuery("#grid2").jqGrid('setCell', rowId, iCell, 'Validointi aloitettu..','validred');
     		$('.loading').show();
-    		var type = jQuery("#grid2").jqGrid('getCell', rowId, 'tyyppi')
-    		ajaxrequest.get("/validate/result/" + type + "/" + rowId, "", gridController.updateStatus );
+    		//var type = jQuery("#grid2").jqGrid('getCell', rowId, 'tyyppi')
+    		ajaxrequest.get("/validate/result/" + rowId, "", gridController.updateStatus );
     	}
     },
     cutStringOnComma: function(str, cutcount) {// ei käytössä

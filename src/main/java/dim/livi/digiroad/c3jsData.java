@@ -5,6 +5,7 @@ import java.util.Map;
 public class c3jsData {
 	
 	private String[][] columns;
+	private String[][] columns_alt;
 	private String[][] groups;
 	private Map<?, ?> names;
 	
@@ -13,6 +14,12 @@ public class c3jsData {
 	}
 	public void setColumns(String[][] columns) {
 		this.columns = columns;
+	}
+	public String[][] getColumnsAlt() {
+		return columns_alt;
+	}
+	public void setColumnsAlt(String[][] columns) {
+		this.columns_alt = columns;
 	}
 	public String[][] getGroups() {
 		return groups;

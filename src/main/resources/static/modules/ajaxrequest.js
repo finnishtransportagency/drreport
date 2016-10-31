@@ -3,7 +3,6 @@ var $ = require('jquery');
 var ajaxrequest = (function(){
 
 var get = function(loadUrl, dataString, callback) {
-
     jQuery.ajax({
         type: 'GET',
         url: loadUrl,

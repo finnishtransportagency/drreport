@@ -10,34 +10,48 @@ import java.util.Map;
 
 public class MiddleLayer {
 	
-	public c3jsData buildC3JsChartData(List<String> modDates, List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData) {
+	public c3jsData buildC3JsChartData(List<String> modDates, List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData, ArrayList<rawModifiedResult> rawDataRelative) {
 		c3jsData chartData = new c3jsData();
 		List<String> headerList = new ArrayList<String>();
-		List<String> hidesList = new ArrayList<String>();
+//		List<String> hidesList = new ArrayList<String>();
 		headerList.add("x");
 		headerList.addAll(modDates);
 		String[] header = headerList.toArray(new String[0]);
 		String[][] cols = new String[1 + kombinaatiot.size()][headerList.size()];
 		cols[0] = header;
+		String[][] colsAlt = new String[1 + kombinaatiot.size()][headerList.size()];
+		colsAlt[0] = header;
 		Map<String,String> names = new HashMap<String,String>();
 		int i = 1;
 		ListIterator<String> kombiterator = kombinaatiot.listIterator();
 		while (kombiterator.hasNext()) {
 			List<String> valueList = new ArrayList<String>();
+			List<String> valueListAlt = new ArrayList<String>();
 			String item = kombiterator.next();
+			String municipalityCode = item.split("-")[0];
+			String assetTypeId = item.split("-")[1];
 			valueList.add(item);
+			valueListAlt.add(item);
 			ListIterator<String> modDiterator = modDates.listIterator();
+			Integer count = 0;
 			while (modDiterator.hasNext()) {		
 				String mdate = modDiterator.next();
 				ListIterator<rawModifiedResult> rditerator = rawData.listIterator();
 				while (rditerator.hasNext()) {					
 					rawModifiedResult rditem = rditerator.next();
-					if (mdate.equals(rditem.getMod_Date()) && item.split("-")[0].equals(rditem.getMunicipalityCode().toString()) && item.split("-")[1].equals(rditem.getAsset_Type_Id().toString())) {
-							valueList.add(rditem.getCount().toString());
+					if (mdate.equals(rditem.getMod_Date())
+						&& municipalityCode.equals(rditem.getMunicipalityCode().toString())
+						&& assetTypeId.equals(rditem.getAsset_Type_Id().toString())) {
+							Integer total = getSum(rawDataRelative, Integer.parseInt(assetTypeId), Integer.parseInt(municipalityCode));
+							count += rditem.getCount();
+							Float percentage = total != 0 ? (float) (Math.round(10000f * count/total) / 10000f) : 0f;
+							valueList.add(count.toString());
+							valueListAlt.add(percentage.toString());
 							names.put(item, rditem.getMunicipality() + " " + rditem.getAsset_type());
 							break;
 						} else if (!rditerator.hasNext()) {
 							valueList.add("0");
+							valueListAlt.add("0");
 						}
 				}
 			}
@@ -45,11 +59,13 @@ public class MiddleLayer {
 //			cols[i] = valueList.toArray(new String[0]);
 			if (!this.checkIfAllZeros(valueList)) {
 				cols[i] = valueList.toArray(new String[0]);
+				colsAlt[i] = valueListAlt.toArray(new String[0]);
 				i++;
 			}	
 		}
 		
 		chartData.setColumns(Arrays.copyOf(cols, i));
+		chartData.setColumnsAlt(Arrays.copyOf(colsAlt, i));
 		chartData.setNames(names);
 //		chartData.setHides(hidesList.toArray(new String[0]));
 		return chartData;
@@ -91,6 +107,15 @@ public class MiddleLayer {
 			if (hasPrevious && !"0".equals(val)) return false;
 		}
 		return true;
+	}
+	
+	private Integer getSum(ArrayList<rawModifiedResult> rawdata, Integer Asset_Type_Id, Integer MunicipalityCode) {
+		Integer sum = 0;
+		for(rawModifiedResult item : rawdata) {
+			if(item.getAsset_Type_Id().intValue() == Asset_Type_Id.intValue()
+					&& item.getMunicipalityCode().intValue() == MunicipalityCode.intValue()) sum += item.getCount();
+		}
+		return sum;
 	}
 
 }

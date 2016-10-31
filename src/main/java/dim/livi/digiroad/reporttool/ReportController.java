@@ -1,9 +1,13 @@
 package dim.livi.digiroad.reporttool;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -55,7 +59,9 @@ public class ReportController {
 		MiddleLayer mid = new MiddleLayer();
 //		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
 //				mid.createArrayCombinations(kunnat, tietolajit), items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit));
+		String today = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 		final Future<ArrayList<rawModifiedResult>> future = items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit);
+		final Future<ArrayList<rawModifiedResult>> futureAll = items.getRawModifiedResult("01-01-1970", today, kunnat, tietolajit);
 		int startTime = ScheduleTask.getCurrentTimer();
 		jsonMessage json = new jsonMessage();
 //		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();
@@ -68,15 +74,14 @@ public class ReportController {
 //		        .build();
 //		this.template.convertAndSend("/topic/message", "message1", headers);
 		this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.START.toString(), "Prosessoidaan"));
-		while (!future.isDone()) {
-//        	System.out.println("xx " + ScheduleTask.getCurrentTimer());
+		while (!future.isDone() || !futureAll.isDone()) {
 			Thread.sleep(500L);
 			this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.CONTINUE.toString(),"Haetaan tuloksia graafia varten, aikaa kulunut " + (ScheduleTask.getCurrentTimer() - startTime) + " s."));
 			Thread.sleep(500L);
         }
-		this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.STOP.toString(), "Haku valmis, piirretään graafi."));
+		this.template.convertAndSend( "/topic/message", json.createJsonMessage(Utilities.status.STOP.toString(), "Haku valmis, piirretään graafi."));
 		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
-				mid.createArrayCombinations(kunnat, tietolajit), future.get());
+				mid.createArrayCombinations(kunnat, tietolajit), future.get(), futureAll.get());
 		chartData.setGroups(mid.createGroups(kunnat, tietolajit));
 		return new ResponseEntity<c3jsData>(chartData, HttpStatus.OK);
 	}

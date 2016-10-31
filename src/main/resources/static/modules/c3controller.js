@@ -1,12 +1,15 @@
 //var moment = require('moment');
 //var d3 = require('d3');
 var c3 = require('c3');
+var d3 = require('d3');
 var noty = require('./notyController.js');
 var ajaxrequest = require('./ajaxrequest.js');
 
 var c3Controller = {
 
 chart: null,
+chartData: null,
+relativeYAxis: true,
 init: function() {
 	me = this;
 	me.chart = c3.generate({
@@ -44,30 +47,52 @@ init: function() {
 	                culling: false
 	            },
 	            height: 100
+	        },
+	        y : {
+	            tick: {
+//	                format: d3.format("$,")
+	                format: function (d) { return c3Controller.relativeYAxis ? Math.round(10000*d) / 100 + " %" : d; }
+	            }
 	        }
 	    }
 	});
 	me.registerClick();
+	me.registerSwitch();
 },
 nid: null,
-updateChart: function(response) {
+updateChart: function() {
+	var me = this;
 	c3Controller.chart.load({
-        columns: response.columns,
-        names: response.names
+		unload: true,
+        columns: me.relativeYAxis ? me.chartData.columnsAlt : me.chartData.columns,
+        names: me.chartData.names
     });
-	c3Controller.chart.groups(response.groups);
-    if (response.columns[0].length < 2) noty.createNoty("Ei tuloksia!", "alert");
+	c3Controller.chart.groups(me.chartData.groups);
+    if (me.chartData.columns[0].length < 2) noty.createNoty("Ei tuloksia!", "alert");
     c3Controller.nid.close();
+},
+updateChartData: function(response) {
+	c3Controller.chartData = response;
+	c3Controller.updateChart();
 },
 registerClick: function() {
 	var me = this;
-	$("#haeGraafiBtn").click(function(){
+	$("#haeGraafiBtn").click(function(e){
+		e.preventDefault();
 		var startdate = $("#startdate").val() != "" ? $("#startdate").val().replace(/\./g, "-") : "01-01-1970";
 		var stopdate = $("#stopdate").val() != "" ? $("#stopdate").val().replace(/\./g, "-") : "01-01-1970";
 		var kunnat = $(".js-data-kunta-ajax").val() != null ? $(".js-data-kunta-ajax").val() : "0";
 		var tietolajit = $(".js-data-tietolaji-ajax").val() != null ? $(".js-data-tietolaji-ajax").val() : "0";
-		ajaxrequest.get("/raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit, "", me.updateChart);
+		var urli = "/raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit;
+		ajaxrequest.get(urli, "", c3Controller.updateChartData);
 	});
+},
+registerSwitch: function() {
+	var me = this;
+	$('input[name="sw-abs-rel"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		me.relativeYAxis = state;
+		me.updateChart();
+	})
 },
 trash: function() {
 //	function toggle(id) {

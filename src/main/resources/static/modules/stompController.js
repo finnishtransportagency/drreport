@@ -10,7 +10,7 @@ var stompController = {
 		init: function(c3) {
 		    // defined a connection to a new socket endpoint
 		    var socket = new SockJS('/stomp');
-
+console.log("sessio:" + this.getRandomId(1000000,2000000));
 		    var stompClient = Stomp.over(socket);
 
 		    stompClient.connect({ }, function(frame) {
@@ -32,7 +32,11 @@ var stompController = {
 		            }
 		        });
 		    });
+		},
+		getRandomId: function(min, max){
+			return Math.floor(Math.random()*(max-min+1)+min);
 		}
+		
 }
 
 module.exports = stompController;

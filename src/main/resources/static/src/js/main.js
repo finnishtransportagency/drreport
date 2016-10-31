@@ -6,6 +6,7 @@ require('jquery-ui/custom');
 require('select2');
 require('moment/locale/fi');
 require('bootstrap');
+require('bootstrap-switch');
 require('eonasdan-bootstrap-datetimepicker-custom');
 var select2 = require('../../modules/select2controller.js');
 var dateTime = require('../../modules/dateTimeController.js');
@@ -41,6 +42,6 @@ global.jQuery(document).ready(function($) {
 		});
 	});
 
-    
+	$('input[name="sw-abs-rel"]').bootstrapSwitch('state', true, true);
 });
 

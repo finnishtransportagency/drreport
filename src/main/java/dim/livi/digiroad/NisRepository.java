@@ -104,7 +104,7 @@ public class NisRepository {
 	 
 	 private String createWhereClause(String configuration) {
 		 String whereClause = "1 = 1";
-		 if ("operator".equals(configuration) || "premium".equals(configuration)) whereClause = "replace(CONFIGURATION, ' ', '') LIKE " + "'%\"roles\":[\"" + configuration + "\"]%'";
+		 if ("operator".equals(configuration) || "premium".equals(configuration) || "busStopMaintainer".equals(configuration)) whereClause = "replace(CONFIGURATION, ' ', '') LIKE " + "'%\"roles\":[\"" + configuration + "\"]%'";
 		 else if ("".equals(configuration)) whereClause = "replace(CONFIGURATION, ' ', '') LIKE " + "'%\"roles\":[]%'";
 		 else if ("other".equals(configuration)) whereClause = "replace(CONFIGURATION, ' ', '') NOT LIKE '%\"roles\":[\"premium\"]%'" +
 																 " AND replace(CONFIGURATION, ' ', '') NOT LIKE '%\"roles\":[\"operator\"]%'" +

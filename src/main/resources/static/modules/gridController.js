@@ -9,7 +9,7 @@ var gridController = {
 			colModel: [
 			           { name: "username", label: "Käyttäjätunnus", width: 200, search: false },
 			           { name: "configuration", label: "Käyttäjärooli", width: 200, formatter:me.parseRole, sortable: false,
-			        	   stype: "select", searchoptions: { value: "all:Kaikki;premium:Muokkaaja;operator:Operaattori;busstop:Pysäkkikäyttäjä;other:Joku muu", defaultValue: "all" }
+			        	   stype: "select", searchoptions: { value: "all:Kaikki;premium:Muokkaaja;operator:Operaattori;busstop:Pysäkkikäyttäjä;busStopMaintainer:Ely-pysäkkikäyttäjä;other:Joku muu", defaultValue: "all" }
 			           },
 			           { name: "configuration", label: "Käyttäjän kunnat", width: 600, formatter:me.parseMunicipalities, sortable: false, search: false,
 			        	   cellattr: function (rowId, val, rawObject, cm, rdata) { return ' data-template="' + me.getTemplate() + '" data-toggle="tooltip" title = "' + JSON.stringify(rawObject[1]) + '"'; }
@@ -132,6 +132,8 @@ var gridController = {
             return "Operaattori";
         case "viewer":
         	return "Katselija (poistettu rooli)";
+        case "busStopMaintainer":
+        	return "ELY-pysäkkikäyttäjä";
         default:
             return "n/a";
     	} 

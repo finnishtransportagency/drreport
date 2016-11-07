@@ -10,6 +10,7 @@ var c3Controller = {
 chart: null,
 chartData: null,
 relativeYAxis: true,
+cumulativity: true,
 init: function() {
 	me = this;
 	me.chart = c3.generate({
@@ -62,13 +63,19 @@ init: function() {
 nid: null,
 updateChart: function() {
 	var me = this;
+	var columns = null;
+	if(me.relativeYAxis) {
+		columns = me.cumulativity ? me.chartData.columnsCumulRel : me.chartData.columnsRel;
+	} else {
+		columns = me.cumulativity ? me.chartData.columnsCumul : me.chartData.columns;
+	}
 	c3Controller.chart.load({
 		unload: true,
-        columns: me.relativeYAxis ? me.chartData.columnsAlt : me.chartData.columns,
+        columns: columns,
         names: me.chartData.names
     });
 	c3Controller.chart.groups(me.chartData.groups);
-    if (me.chartData.columns[0].length < 2) noty.createNoty("Ei tuloksia!", "alert");
+    if (me.chartData.columnsCumulRel[0].length < 2) noty.createNoty("Ei tuloksia!", "alert");
     c3Controller.nid.close();
 },
 updateChartData: function(response) {
@@ -91,6 +98,10 @@ registerSwitch: function() {
 	var me = this;
 	$('input[name="sw-abs-rel"]').on('switchChange.bootstrapSwitch', function(event, state) {
 		me.relativeYAxis = state;
+		me.updateChart();
+	})
+	$('input[name="sw-cumul"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		me.cumulativity = state;
 		me.updateChart();
 	})
 },

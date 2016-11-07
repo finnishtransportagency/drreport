@@ -59,71 +59,68 @@
 			<div class="container-fluid">
 				<h3>Raportointi</h3>
 				<form role="form">
+				
 					<div class="row reportrow">
-						<div class='col-md-6'>
-							<div class="form-group">
-								<div class="col-sm-2 col-sm-offset-4">
-									<p>Valitse alkupvm:</p>
-								</div>
-								<div class='input-group date col-sm-6' id='datetimepicker1'>
-									<input type='text' class="form-control" id="startdate" />
-									<span class="input-group-addon">
-										<span class="glyphicon glyphicon-calendar"></span>
-									</span>
-								</div>
+						<div class='form-group col-md-1 col-md-offset-2'>
+							<p>Alkupvm:</p>
+						</div>
+						<div class='form-group col-md-2'>
+							<div class='input-group date' id='datetimepicker1'>
+								<input type='text' class="form-control" id="startdate" />
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
 							</div>
 						</div>
-						<div class='col-md-6'>
-							<div class="form-group">
-								<div class="col-sm-2">
-									<p>Valitse tietolaji:</p>
-								</div>
-								<div class="col-sm-6">
-									<select class="js-data-tietolaji-ajax form-control" style="width: 100%" multiple="multiple"></select>
-								</div>
-							</div>
+						<div class='form-group col-md-1 col-md-offset-1'>
+							<p>Tietolaji:</p>
+						</div>
+						<div class='form-group col-md-3'>
+							<select class="js-data-tietolaji-ajax form-control" style="width: 100%" multiple="multiple"></select>
 						</div>
 					</div>
+					
 					<div class="row reportrow">
-						<div class='col-md-6'>
-							<div class="form-group">
-								<div class="col-sm-2 col-sm-offset-4">
-									<p>Valitse loppupvm:</p>
-								</div>
-								<div class='input-group date' id='datetimepicker2'>
-									<input type='text' class="form-control" id="stopdate"/>
-									<span class="input-group-addon">
-										<span class="glyphicon glyphicon-calendar"></span>
-									</span>
-								</div>
+						<div class='form-group col-md-1 col-md-offset-2'>
+							<p>Loppupvm:</p>
+						</div>
+						<div class="form-group col-md-2">
+							<div class='input-group date' id='datetimepicker2'>
+								<input type='text' class="form-control" id="stopdate"/>
+								<span class="input-group-addon">
+									<span class="glyphicon glyphicon-calendar"></span>
+								</span>
 							</div>
 						</div>
-						<div class='col-md-6'>
-							<div class="form-group">
-								<div class="col-sm-2">
-									<p>Valitse kunta:</p>
-								</div>
-								<div class="col-sm-6">
-									<select class="js-data-kunta-ajax form-control" style="width: 100%" multiple="multiple"></select>
-								</div>
-							</div>
+						<div class='form-group col-md-1 col-md-offset-1'>
+							<p>Kunta:</p>
+						</div>
+						<div class="form-group col-md-3">
+							<select class="js-data-kunta-ajax form-control" style="width: 100%" multiple="multiple"></select>
 						</div>
 					</div>
+					
 					<div class="row reportrow">
+						<div class="form-group col-md-1 col-md-offset-2">
+							<p>Suhteellisuus: </p>
+						</div>
+				    	<div class="form-group col-md-2">
+				      		<input type="checkbox" name="sw-abs-rel" data-on-text="ON" data-off-text="OFF" checked>
+				    	</div>
+					  	<div class='form-group col-md-1 col-md-offset-1'>
+							<p>Kumulatiivisuus: </p>
+						</div>
+				    	<div class="form-group col-md-3">
+				      		<input type="checkbox" name="sw-cumul" data-on-text="ON" data-off-text="OFF" checked>
+				    	</div>
+					</div>
+					 
+					 <div class="row reportrow">
 				    	<div class="col-md-1 col-md-offset-5">
 				      		<button class="btn btn-default" id="haeGraafiBtn">Hae graafi</button>
 				    	</div>
-					  	<div class='col-md-6'>
-							<div class="form-group">
-							<div class="col-sm-2">
-									<p>Määrät: </p>
-								</div>
-						    	<div class="col-sm-6">
-						      		<input type="checkbox" name="sw-abs-rel" data-on-text="REL" data-off-text="ABS" checked>
-						    	</div>
-						  	</div>
-					  	</div>
 					 </div>
+					 
 					 <div class="row reportrow chartcontainer">
 					 	<div id="chart"></div>
 					 </div> 

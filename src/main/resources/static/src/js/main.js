@@ -14,6 +14,7 @@ var c3 = require('../../modules/c3Controller.js');
 var grid = require('../../modules/gridController.js');
 var stomp = require('../../modules/stompController.js');
 require('../../modules/jquery.chocolat.js');
+var map = require('../../modules/map.js');
 
 
 global.jQuery(document).ready(function($) {
@@ -44,5 +45,7 @@ global.jQuery(document).ready(function($) {
 
 	$('input[name="sw-abs-rel"]').bootstrapSwitch('state', true, true);
 	$('input[name="sw-cumul"]').bootstrapSwitch('state', true, true);
+	
+	map.createMap();
 });
 

@@ -32,6 +32,7 @@
     "jquery": "^2.2.4",
     "jquery-ui": "^1.10.5",
     "noty": "^2.3.8",
+    "openlayers": "^4.0.1",
     "select2": "^4.0.3",
     "select2-bootstrap-css": "^1.4.6",
     "sockjs-client": "^1.1.1",

@@ -9,107 +9,188 @@ var projection = new ol.proj.Projection({
 ol.proj.addProjection(projection);
 
 var layers = require('./layers.js');
+var $ = require('jquery');
 
-var map = (function(){
-	
-	var styleFunction1 = function(feature) {
+var kuntaValitsin = {
+	map: null,
+	selectedAvis: [],
+	selectedMaakunnat: [],
+	selectedKunnat: [],
+	ifAviSelected: function(code) {
+		var me = this;
+		return $.inArray(code, me.selectedAvis);
+	},
+	createMap : function() {
+		var me = this;
+		me.map = new ol.Map({
+	    layers: [me.vectorLayer3(), me.vectorLayer2(), me.vectorLayer1()],
+	    target: 'map',
+	    controls: ol.control.defaults({
+	      attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
+	        collapsible: false
+	      })
+	    }),
+	    view: new ol.View({
+	    	resolutions: [4000,2000,1000,400],
+	    	center: [310000, 7200000],
+	    	zoom: 0
+	    })
+		});
+		me.map.getView().on('change:resolution', function(evt) {
+			me.handleLayerVisibility(me.map.getView().getZoom());
+			}
+		);
+//		me.map.on('singleclick', function(evt) {
+//			console.dir(evt.target);
+//			}
+//		);
+//		var select = new ol.interaction.Select();
+//		me.map.addInteraction(select);
+//		console.dir(select.getFeatures());
+		me.map.on('singleclick', function(evt) {
+			var feature = me.map.forEachFeatureAtPixel(evt.pixel, me.handleFeatureSelection);
+			}); 
+	},
+	handleLayerVisibility : function(zoom) {
+		var me = this;
+		switch(zoom) {
+		    case 0 || 1:
+		    	me.map.getLayers().item(2).setVisible(true);
+		    	me.map.getLayers().item(1).setVisible(false);
+		        break;
+		    case 2:
+		    	me.map.getLayers().item(1).setVisible(true);
+		    	me.map.getLayers().item(2).setVisible(false);
+		        break;
+		    case 3:
+		    	me.map.getLayers().item(1).setVisible(false);
+		    	me.map.getLayers().item(2).setVisible(false);
+		        break;
+		    default:
+		    	
+		}
+	},
+	handleFeatureSelection : function(feature, layer) {
+		var me = this;
+		switch(layer.get('category')) {
+		    case 'avi':
+				console.info(kuntaValitsin.ifAviSelected(feature.get('NATCODE')));
+		    	feature.setStyle(kuntaValitsin.styleFunction3());
+		        break;
+		    case 'maakunta':
+		    	console.info(feature.get('KUNNAT'));
+		        break;
+		    case 'kunta':
+		    	console.info(feature.get('NATCODE'));
+		        break;
+		    default:
+		    	
+		}
+	},
+	aviStyle : function(feature, resolution) {
+		var me = this;
+        var polyStyleConfig = {
+        		stroke: new ol.style.Stroke({
+	        		color: 'rgba(255, 255, 255, 1)',
+	        		width: 1
+                }),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255, 0, 0,0.3)'
+                })
+        }
+        var textStyleConfig = {
+	        text:new ol.style.Text({
+		        text:resolution >= 4000 ? kuntaValitsin.stringDivider(feature.get('NAMEFIN'), 20, "\n") : feature.get('NAMEFIN'),
+		        font:resolution >= 4000 ? 'Normal 8px Arial' : 'Normal 10px Arial',
+		//        text:resolution < 100000 ? feature.get('NAMEFIN') : '' ,
+		        fill: new ol.style.Fill({ color: "#000000" }),
+		        stroke: new ol.style.Stroke({ color: "#FFFFFF", width: 2 })
+	        }),
+	        geometry: function(feature){
+		        var retPoint;
+		        if (feature.getGeometry().getType() === 'MultiPolygon') {
+		        	retPoint =  kuntaValitsin.getMaxPoly(feature.getGeometry().getPolygons()).getInteriorPoint();
+		        } else if (feature.getGeometry().getType() === 'Polygon') {
+		        	retPoint = feature.getGeometry().getInteriorPoint();
+		        }
+		        return retPoint;
+	        }
+        }
+        var textStyle = new ol.style.Style(textStyleConfig);
+        var style = new ol.style.Style(polyStyleConfig);
+        return [style,textStyle];
+	},
+	styleFunction1 : function(feature) {
 		return new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: '#333333',
-          width: 1
+          color: '#222222',
+          width: 2
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(0, 0, 255, 0.2)'
-        }),
-        text: new ol.style.Text({
-            font: '12px Verdana',
-            text: feature.get('NAMEFIN'),
-            fill: new ol.style.Fill({color: 'black'}),
-            stroke: new ol.style.Stroke({color: 'white', width: 0.5})
+          color: 'rgba(0, 0, 255, 0.8)'
         })
+//        text: new ol.style.Text({
+//            font: '12px Verdana',
+//            text: feature.get('NAMEFIN'),
+//            fill: new ol.style.Fill({color: 'black'}),
+//            stroke: new ol.style.Stroke({color: 'white', width: 0.5})
+//        })
       })
-	}
-	
-	var styleFunction2 = function() {
+	},	
+	styleFunction2 : function() {
 		return new ol.style.Style({
         stroke: new ol.style.Stroke({
           color: 'green',
           width: 2
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(0, 255, 0, 0.1)'
+          color: 'rgba(0, 255, 0, 0.5)'
         })
       })
-	}
-	
-	var styleFunction3 = function() {
+	},
+	styleFunction3 : function() {
 		return new ol.style.Style({
         stroke: new ol.style.Stroke({
-          color: 'red',
-          width: 2
+          color: 'rgba(0, 0, 0, 1)',
+          width: 1
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(255, 0, 0, 0.1)'
+          color: 'rgba(255, 200, 200, 0.5)'
         })
       })
-	}
-	
-	function stringDivider(str, width, spaceReplacer) {
-	    if (str.length>width) {
-	        var p=width
-	        for (;p>0 && str[p]!=' ';p--) {
-	        }
-	        if (p>0) {
-	            var left = str.substring(0, p);
-	            var right = str.substring(p+1);
-	            return left + spaceReplacer + stringDivider(right, width, spaceReplacer);
-	        }
-	    }
-	    return str;
-	}
-	
-	var vectorSource1 = new ol.source.Vector({
+	},
+	stringDivider : function stringDivider(str, width, spaceReplacer) {
+        if (str.length > width) {
+            var p = width;
+            while (p > 0 && (str[p] != ' ' && str[p] != '-')) {
+              p--;
+            }
+            if (p > 0) {
+              var left;
+              if (str.substring(p, p + 1) == '-') {
+                left = str.substring(0, p + 1);
+              } else {
+                left = str.substring(0, p);
+              }
+              var right = str.substring(p + 1);
+              return left + spaceReplacer + stringDivider(right, width, spaceReplacer);
+            }
+          }
+          return str;
+    },
+	vectorSource1 : function() {
+		return new ol.source.Vector({
         features: (new ol.format.GeoJSON()).readFeatures(layers.getAvi())
       });
-	
-	var vector = new ol.layer.Vector({
- 		style: function (feature, resolution) {
-        var polyStyleConfig = {
-        				stroke: new ol.style.Stroke({
-                    color: 'rgba(255, 255, 255, 1)',
-                    width: 1
-                	}),
-                fill: new ol.style.Fill({
-                    color: 'rgba(255, 0, 0,0.3)'
-                })
-        }
-        var textStyleConfig = {
-        text:new ol.style.Text({
-        text:resolution >= 4000 ? stringDivider(feature.get('NAMEFIN'), 20, "\n") : feature.get('NAMEFIN'),
-        font:resolution >= 4000 ? 'Normal 8px Arial' : 'Normal 10px Arial',
-//        text:resolution < 100000 ? feature.get('NAMEFIN') : '' ,
-        fill: new ol.style.Fill({ color: "#000000" }),
-        stroke: new ol.style.Stroke({ color: "#FFFFFF", width: 2 })
-        }),
-        geometry: function(feature){   
-        var retPoint;
-        	if (feature.getGeometry().getType() === 'MultiPolygon') {
-          retPoint =  getMaxPoly(feature.getGeometry().getPolygons()).getInteriorPoint();
-          } else if (feature.getGeometry().getType() === 'Polygon') {
-          retPoint = feature.getGeometry().getInteriorPoint();
-          }
-        return retPoint;
-        }
-        }
-        var textStyle = new ol.style.Style(textStyleConfig);
-        var style = new ol.style.Style(polyStyleConfig);
-        return [style,textStyle];
-    },
-    source: vectorSource1
-        });
-  
-	
-	function getMaxPoly(polys) {
+	},
+	vector : function() {
+		var me = this;
+		return new ol.layer.Vector({
+	 		style: me.aviStyle,
+		    source: me.vectorSource1()
+		});
+	},
+	getMaxPoly : function(polys) {
 		  var polyObj = [];
 		  //now need to find which one is the greater and so label only this
 		  for (var b = 0; b < polys.length; b++) {
@@ -118,58 +199,40 @@ var map = (function(){
 		  polyObj.sort(function (a, b) { return a.area - b.area });
 
 		  return polyObj[polyObj.length - 1].poly;
-		 }
-	
-
-	
-	var vectorSource2 = new ol.source.Vector({
+	},
+	vectorSource2 : function() {return new ol.source.Vector({
         features: (new ol.format.GeoJSON()).readFeatures(layers.getMaakunnat())
       });
-	
-	var vectorSource3 = new ol.source.Vector({
+	},
+	vectorSource3 : function() {return new ol.source.Vector({
         features: (new ol.format.GeoJSON()).readFeatures(layers.getKunnat())
       });
-	
-	var vectorLayer1 = new ol.layer.Vector({
-        source: vectorSource1,
-        style: styleFunction1
+	},
+	vectorLayer1 : function() {
+		var me = this;
+		return new ol.layer.Vector({
+        source: me.vectorSource1(),
+        style: me.styleFunction1(),
+        category: 'avi'
       });
-	
-	var vectorLayer2 = new ol.layer.Vector({
-        source: vectorSource2,
-        style: styleFunction2
+	},
+	vectorLayer2 : function() {
+		var me = this;
+		return new ol.layer.Vector({
+        source: me.vectorSource2(),
+        style: me.styleFunction2(),
+        visible: false,
+        category: 'maakunta'
       });
-	
-	var vectorLayer3 = new ol.layer.Vector({
-        source: vectorSource3,
-        style: styleFunction3
+	},
+	vectorLayer3 : function() {
+		var me = this;
+		return new ol.layer.Vector({
+        source: me.vectorSource3(),
+        style: me.styleFunction3(),
+        category: 'kunta'
       });
+	}
+}
 
-	var createMap = function() {
-		var map = new ol.Map({
-	    layers: [
-	             vector
-	    ],
-	    target: 'map',
-	    controls: ol.control.defaults({
-	      attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
-	        collapsible: false
-	      })
-	    }),
-	    view: new ol.View({
-	    	resolutions: [4000,1000,400],
-	    	center: [310000, 7200000],
-	    	zoom: 0
-	    })
-	  });
-//		map.getView().on('change:resolution', function(e) {console.info(map.getView().getZoom());});
-	};
-	
-
-	return{
-		createMap: createMap
-	  };
-
-	})();
-
-	module.exports = map;
+	module.exports = kuntaValitsin;

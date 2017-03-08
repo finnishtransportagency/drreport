@@ -13,17 +13,36 @@ var $ = require('jquery');
 
 var kuntaValitsin = {
 	map: null,
-	selectedAvis: [],
-	selectedMaakunnat: [],
 	selectedKunnat: [],
-	ifAviSelected: function(code) {
+	lisattavatKunnat: [],
+	poistettavatKunnat: [],
+	allKunnatExist : function(testattavat){
+	var me = this;
+	for(var i = 0 , len = testattavat.length; i < len; i++){
+		 if($.inArray(testattavat[i], me.selectedKunnat) == -1) return false;
+	}
+	return true;
+	},
+	removeKunnat : function(poistettavat) {
 		var me = this;
-		return $.inArray(code, me.selectedAvis);
+		me.selectedKunnat = me.selectedKunnat.filter( function ( elem ) {
+		    return poistettavat.indexOf( elem ) === -1;
+		});
+		me.poistettavatKunnat = me.poistettavatKunnat.concat(poistettavat);
+	},
+	addKunnat : function(lisattavat) {
+		var me = this;
+		for(var i = 0 , len = lisattavat.length; i < len; i++){
+			 if($.inArray(lisattavat[i], me.selectedKunnat) == -1) {
+				 me.selectedKunnat.push(lisattavat[i]);
+			 }
+		}
+		me.lisattavatKunnat = me.lisattavatKunnat.concat(lisattavat);
 	},
 	createMap : function() {
 		var me = this;
 		me.map = new ol.Map({
-	    layers: [me.vectorLayer3(), me.vectorLayer2(), me.vectorLayer1()],
+	    layers: [me.kuntaLayer(), me.maakuntaLayer(), me.aviLayer()],
 	    target: 'map',
 	    controls: ol.control.defaults({
 	      attributionOptions: /** @type {olx.control.AttributionOptions} */ ({
@@ -40,13 +59,6 @@ var kuntaValitsin = {
 			me.handleLayerVisibility(me.map.getView().getZoom());
 			}
 		);
-//		me.map.on('singleclick', function(evt) {
-//			console.dir(evt.target);
-//			}
-//		);
-//		var select = new ol.interaction.Select();
-//		me.map.addInteraction(select);
-//		console.dir(select.getFeatures());
 		me.map.on('singleclick', function(evt) {
 			var feature = me.map.forEachFeatureAtPixel(evt.pixel, me.handleFeatureSelection);
 			}); 
@@ -54,7 +66,8 @@ var kuntaValitsin = {
 	handleLayerVisibility : function(zoom) {
 		var me = this;
 		switch(zoom) {
-		    case 0 || 1:
+		    case 0:
+		    case 1:
 		    	me.map.getLayers().item(2).setVisible(true);
 		    	me.map.getLayers().item(1).setVisible(false);
 		        break;
@@ -71,24 +84,39 @@ var kuntaValitsin = {
 		}
 	},
 	handleFeatureSelection : function(feature, layer) {
-		var me = this;
 		switch(layer.get('category')) {
 		    case 'avi':
-				console.info(kuntaValitsin.ifAviSelected(feature.get('NATCODE')));
-		    	feature.setStyle(kuntaValitsin.styleFunction3());
-		        break;
 		    case 'maakunta':
-		    	console.info(feature.get('KUNNAT'));
+		    	kuntaValitsin.updateKuntaListat(feature.get('KUNNAT').split(','));
 		        break;
 		    case 'kunta':
-		    	console.info(feature.get('NATCODE'));
+		    	if (!kuntaValitsin.lisattavatKunnat.length && !kuntaValitsin.poistettavatKunnat.length) {
+			    	kuntaValitsin.updateKuntaListat(feature.get('NATCODE').split(','));
+		    	}
+		    	kuntaValitsin.handleKuntaFeatureStyle(layer, kuntaValitsin.lisattavatKunnat, true);
+		    	kuntaValitsin.lisattavatKunnat.length = 0;
+		    	kuntaValitsin.handleKuntaFeatureStyle(layer, kuntaValitsin.poistettavatKunnat, false);
+		    	kuntaValitsin.poistettavatKunnat.length = 0;
 		        break;
-		    default:
-		    	
+		    default:    	
 		}
 	},
-	aviStyle : function(feature, resolution) {
-		var me = this;
+	updateKuntaListat : function(kunnat) {
+		if(kuntaValitsin.allKunnatExist(kunnat)) {
+    		kuntaValitsin.removeKunnat(kunnat);
+    	} else {
+    		kuntaValitsin.addKunnat(kunnat);
+    	}
+	},
+	handleKuntaFeatureStyle : function(layer, kunnat, selected) {
+		for(var i = 0 , len = layer.getSource().getFeatures().length; i < len; i++){
+			var natcode = layer.getSource().getFeatures()[i].get('NATCODE');
+			if($.inArray(natcode, kunnat) != -1) {
+				selected ? layer.getSource().getFeatures()[i].setStyle(kuntaValitsin.kuntaStyleSelected()) : layer.getSource().getFeatures()[i].setStyle(kuntaValitsin.kuntaStyleNormal());
+			}
+		}
+	},
+	aviStyleX : function(feature, resolution) {
         var polyStyleConfig = {
         		stroke: new ol.style.Stroke({
 	        		color: 'rgba(255, 255, 255, 1)',
@@ -120,14 +148,14 @@ var kuntaValitsin = {
         var style = new ol.style.Style(polyStyleConfig);
         return [style,textStyle];
 	},
-	styleFunction1 : function(feature) {
+	aviStyle : function(feature) {
 		return new ol.style.Style({
         stroke: new ol.style.Stroke({
           color: '#222222',
           width: 2
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(0, 0, 255, 0.8)'
+          color: 'rgba(0, 0, 255, 0.5)'
         })
 //        text: new ol.style.Text({
 //            font: '12px Verdana',
@@ -137,7 +165,7 @@ var kuntaValitsin = {
 //        })
       })
 	},	
-	styleFunction2 : function() {
+	maakuntaStyle : function() {
 		return new ol.style.Style({
         stroke: new ol.style.Stroke({
           color: 'green',
@@ -148,14 +176,25 @@ var kuntaValitsin = {
         })
       })
 	},
-	styleFunction3 : function() {
+	kuntaStyleNormal : function() {
+		return new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: 'rgba(128, 128, 128, 1)',
+          width: 1
+        }),
+        fill: new ol.style.Fill({
+          color: 'rgba(255, 255, 255, 1)'
+        })
+      })
+	},
+	kuntaStyleSelected : function() {
 		return new ol.style.Style({
         stroke: new ol.style.Stroke({
           color: 'rgba(0, 0, 0, 1)',
           width: 1
         }),
         fill: new ol.style.Fill({
-          color: 'rgba(255, 200, 200, 0.5)'
+          color: 'rgba(128, 128, 128, 1)'
         })
       })
 	},
@@ -178,11 +217,6 @@ var kuntaValitsin = {
           }
           return str;
     },
-	vectorSource1 : function() {
-		return new ol.source.Vector({
-        features: (new ol.format.GeoJSON()).readFeatures(layers.getAvi())
-      });
-	},
 	vector : function() {
 		var me = this;
 		return new ol.layer.Vector({
@@ -200,36 +234,41 @@ var kuntaValitsin = {
 
 		  return polyObj[polyObj.length - 1].poly;
 	},
-	vectorSource2 : function() {return new ol.source.Vector({
+	aviSource : function() {
+		return new ol.source.Vector({
+        features: (new ol.format.GeoJSON()).readFeatures(layers.getAvi())
+      });
+	},
+	maakuntaSource : function() {return new ol.source.Vector({
         features: (new ol.format.GeoJSON()).readFeatures(layers.getMaakunnat())
       });
 	},
-	vectorSource3 : function() {return new ol.source.Vector({
+	kuntaSource : function() {return new ol.source.Vector({
         features: (new ol.format.GeoJSON()).readFeatures(layers.getKunnat())
       });
 	},
-	vectorLayer1 : function() {
+	aviLayer : function() {
 		var me = this;
 		return new ol.layer.Vector({
-        source: me.vectorSource1(),
-        style: me.styleFunction1(),
+        source: me.aviSource(),
+        style: me.aviStyle(),
         category: 'avi'
       });
 	},
-	vectorLayer2 : function() {
+	maakuntaLayer : function() {
 		var me = this;
 		return new ol.layer.Vector({
-        source: me.vectorSource2(),
-        style: me.styleFunction2(),
+        source: me.maakuntaSource(),
+        style: me.maakuntaStyle(),
         visible: false,
         category: 'maakunta'
       });
 	},
-	vectorLayer3 : function() {
+	kuntaLayer : function() {
 		var me = this;
 		return new ol.layer.Vector({
-        source: me.vectorSource3(),
-        style: me.styleFunction3(),
+        source: me.kuntaSource(),
+        style: me.kuntaStyleNormal(),
         category: 'kunta'
       });
 	}

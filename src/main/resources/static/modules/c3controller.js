@@ -4,6 +4,7 @@ var c3 = require('c3');
 var d3 = require('d3');
 var noty = require('./notyController.js');
 var ajaxrequest = require('./ajaxrequest.js');
+var c3configs = require('./c3configs.js');
 
 var c3Controller = {
 
@@ -11,70 +12,35 @@ chart: null,
 chartData: null,
 relativeYAxis: true,
 cumulativity: true,
+summary: false,
 init: function() {
 	me = this;
-	me.chart = c3.generate({
-		size: {
-			  height: 500
-			},
-	    data: {
-	    	x: 'x',
-	    	xFormat: '%d-%m-%Y',
-	        columns: [
-	        ],
-   	        type: 'bar',
-	        names: {
-	        },
-	        labels: false
-	    },
-	    zoom: {
-	        enabled: true
-	    },
-	    bar: {
-	        width: {
-	            ratio: 0.6 // this makes bar width 60% of length between ticks
-	        }
-	        // or
-//	        width: 10 // this makes bar width 100px
-	    },
-	    axis: {
-	        x: {
-	            type: 'timeseries',
-//	            type: 'category',
-	            tick: {
-//	                count: 12,
-	                format: '%d-%m-%Y',
-	                rotate: -90,
-	                culling: false
-	            },
-	            height: 100
-	        },
-	        y : {
-	            tick: {
-//	                format: d3.format("$,")
-	                format: function (d) { return c3Controller.relativeYAxis ? Math.round(10000*d) / 100 + " %" : d; }
-	            }
-	        }
-	    }
-	});
+	var config = me.summary ? c3configs.config2() : c3configs.config1();
+	config.axis.y.tick.format = function (d) { return c3Controller.relativeYAxis ? Math.round(10000*d) / 100 + " %" : d; };
+	me.chart = c3.generate(config);
 	me.registerClick();
 	me.registerSwitch();
 },
 nid: null,
 updateChart: function() {
 	var me = this;
-	var columns = null;
-	if(me.relativeYAxis) {
+	var columns;
+	var categories = [];
+	if(me.relativeYAxis && !me.summary) {
 		columns = me.cumulativity ? me.chartData.columnsCumulRel : me.chartData.columnsRel;
+	} else if(me.summary) {
+		columns = me.relativeYAxis ? me.chartData.columnsSumRel : me.chartData.columnsSum;
+		categories = me.chartData.categories;
 	} else {
 		columns = me.cumulativity ? me.chartData.columnsCumul : me.chartData.columns;
 	}
 	c3Controller.chart.load({
-		unload: true,
-        columns: columns,
-        names: me.chartData.names
+	unload: true,
+    columns: columns,
+    names: me.chartData.names,
+    categories: categories
     });
-	c3Controller.chart.groups(me.chartData.groups);
+	me.summary ? c3Controller.chart.groups([]) : c3Controller.chart.groups(me.chartData.groups);
     if (me.chartData.columnsCumulRel[0].length < 2) noty.createNoty("Ei tuloksia!", "alert");
     c3Controller.nid.close();
 },
@@ -104,6 +70,18 @@ registerSwitch: function() {
 		me.cumulativity = state;
 		me.updateChart();
 	})
+	$('input[name="sw-summary"]').on('switchChange.bootstrapSwitch', function(event, state) {
+		me.summary = state;
+		if (me.summary) {
+			config = c3configs.config2();
+			config.axis.y.tick.format = function (d) { return c3Controller.relativeYAxis ? Math.round(10000*d) / 100 + " %" : d; };
+			me.chart = c3.generate(config);
+		} else {
+			config = c3configs.config1();
+			me.chart = c3.generate(config);
+		}
+		me.updateChart();
+	})
 },
 trash: function() {
 //	function toggle(id) {
@@ -130,6 +108,50 @@ trash: function() {
 
 //chart.data.colors({data3: chart.data.colors().data1, data4: chart.data.colors().data2});
 }
+//extendChartData : function(chartData) {
+//	chartData.columnsSummary = [];
+//	chartData.columnsSummaryRel = [];
+//	chartData.columnsSummary.push(['x']);
+//	chartData.columnsSummaryRel.push(['x']);
+////	chartData.columnsSummary.push(['y']);
+//	for(var i = 1 , len = chartData['columns'].length; i < len; i++){
+//		var k = 0;
+//		var f = 0.0;
+//		for(var j = 0 , len2 = chartData['columns'][i].length; j < len2; j++){
+//			if(j==0) {
+//				chartData.columnsSummary[0].push(chartData.names[(chartData['columns'][i][0])]);
+//				chartData.columnsSummaryRel[0].push(chartData.names[(chartData['columns'][i][0])]);
+//				chartData.columnsSummary.push([chartData['columns'][i][0]]);
+//				chartData.columnsSummaryRel.push([chartData['columns'][i][0]]);
+//			} else {
+//				k = k + parseInt(chartData['columns'][i][j]);
+//				f = f + parseFloat(chartData['columnsRel'][i][j]);
+//			}
+//		}
+//		chartData.columnsSummary[i].push(k);
+//		chartData.columnsSummaryRel[i].push(f);
+//	}
+
+//		for(var i = 1 , len = chartData['columns'].length; i < len; i++){
+//			var k = 0;
+//			for(var j = 0 , len2 = chartData['columns'][i].length; j < len2; j++){
+//				if(j==0) {
+//					chartData.columnsSummary[0].push(chartData.names[(chartData['columns'][i][0])]);
+//					chartData.columnsSummary.push([i]);
+//				} else {
+//					k = k + parseInt(chartData['columns'][i][j]);
+//				}
+//			}
+//		}
+//		chartData.columnsSummary[1].push(k);
+//	for(var i = 1 , len = chartData['columns'].length; i < len; i++){
+//		var k = 0;
+//		for(var j = 0 , len2 = chartData['columns'][i].length; j < len2; j++){
+//			j==0 ? chartData.columnsSummary[0].push(chartData.names[(chartData['columns'][i][0])]) : k = k + parseInt(chartData['columns'][i][j]);
+//		}
+//		chartData.columnsSummary[1].push(k);
+//	}
+//}
 
   
   

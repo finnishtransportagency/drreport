@@ -8,7 +8,10 @@ public class c3jsData {
 	private String[][] columns_cumul_rel;
 	private String[][] columns;
 	private String[][] columns_rel;
+	private String[][] columns_sum;
+	private String[][] columns_sum_rel;
 	private String[][] groups;
+	private String[] categories;
 	private Map<?, ?> names;
 	
 	public String[][] getColumnsCumul() {
@@ -35,8 +38,26 @@ public class c3jsData {
 	public void setColumnsRel(String[][] columns) {
 		this.columns_rel = columns;
 	}
+	public String[][] getColumnsSum() {
+		return columns_sum;
+	}
+	public void setColumnsSum(String[][] columns) {
+		this.columns_sum = columns;
+	}
+	public String[][] getColumnsSumRel() {
+		return columns_sum_rel;
+	}
+	public void setColumnsSumRel(String[][] columns) {
+		this.columns_sum_rel = columns;
+	}
 	public String[][] getGroups() {
 		return groups;
+	}
+	public void setCategories(String[] categories) {
+		this.categories = categories;
+	}
+	public String[] getCategories() {
+		return categories;
 	}
 	public void setGroups(String[][] groups) {
 		this.groups = groups;

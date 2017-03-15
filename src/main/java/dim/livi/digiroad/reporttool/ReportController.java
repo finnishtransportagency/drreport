@@ -83,6 +83,7 @@ public class ReportController {
 		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
 				mid.createArrayCombinations(kunnat, tietolajit), future.get(), futureAll.get());
 		chartData.setGroups(mid.createGroups(kunnat, tietolajit));
+		chartData.setCategories(mid.getGategories().toArray(new String[0]));
 		return new ResponseEntity<c3jsData>(chartData, HttpStatus.OK);
 	}
 	

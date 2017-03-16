@@ -7,6 +7,7 @@ var activate = function(element, url) {
 	  $(element).select2({
 	  theme: "classic",
 	  placeholder: "Valitse tietolaji",
+	  multiple:true,
 	  ajax: {
 	    url: url,
 	    dataType: 'json',
@@ -71,8 +72,9 @@ var activate = function(element, url) {
 	};
 	
 	return{
-		activate: activate
+		activate: activate,
 	  };
+
 	  
 	  
 })();

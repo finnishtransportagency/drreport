@@ -84,37 +84,93 @@ var kuntaValitsin = {
 		}
 	},
 	handleFeatureSelection : function(feature, layer) {
+		console.log('handleFeatureSelectionhandleFeatureSelectionhandleFeatureSelection');
 		switch(layer.get('category')) {
 		    case 'avi':
 		    case 'maakunta':
 		    	kuntaValitsin.updateKuntaListat(feature.get('KUNNAT').split(','));
 		        break;
 		    case 'kunta':
+		    	console.log('handleFeatureSelection, before update: lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
+		    	console.log('handleFeatureSelection, before update: poistettavat kunnat:' + kuntaValitsin.poistettavatKunnat);
 		    	if (!kuntaValitsin.lisattavatKunnat.length && !kuntaValitsin.poistettavatKunnat.length) {
+		    		console.log('handleFeatureSelection - tsekataan update-tarve');
 			    	kuntaValitsin.updateKuntaListat(feature.get('NATCODE').split(','));
 		    	}
-		    	kuntaValitsin.handleKuntaFeatureStyle(layer, kuntaValitsin.lisattavatKunnat, true);
-		    	kuntaValitsin.lisattavatKunnat.length = 0;
-		    	kuntaValitsin.handleKuntaFeatureStyle(layer, kuntaValitsin.poistettavatKunnat, false);
-		    	kuntaValitsin.poistettavatKunnat.length = 0;
+		    	console.log('handleFeatureSelection, after update: lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
+		    	console.log('handleFeatureSelection, after update: poistettavat kunnat:' + kuntaValitsin.poistettavatKunnat);
+		    	if (kuntaValitsin.lisattavatKunnat.length) {
+		    		kuntaValitsin.handleKunnat2Select2(kuntaValitsin.lisattavatKunnat, true);
+		    		kuntaValitsin.handleKuntaFeatureStyle(layer, kuntaValitsin.lisattavatKunnat, true);
+		    	}
+		    	if (kuntaValitsin.poistettavatKunnat.length) {
+		    		kuntaValitsin.handleKunnat2Select2(kuntaValitsin.poistettavatKunnat, false);
+		    		kuntaValitsin.handleKuntaFeatureStyle(layer, kuntaValitsin.poistettavatKunnat, false);
+		    	}
 		        break;
 		    default:    	
 		}
 	},
+	handleKunnat2Select2 : function(kunnat, lisaa) {
+		console.log('select2: ' + kunnat + ', lisätään: ' + lisaa);
+		var data = [];
+		var values = [];
+		for(var i = 0 , len = layers.getKunnat().features.length; i < len; i++){
+			for(var j = 0 , len2 = kunnat.length; j < len2; j++){
+				if(kunnat[j] == layers.getKunnat().features[i].properties.NATCODE) {
+					if (lisaa) {
+						data.push({id:kunnat[j], text: layers.getKunnat().features[i].properties.NAMEFIN});
+						values.push(kunnat[j]);
+//						var arr = [{ id: 100, text: 'Lorem Ipsum 1' },{ id: 200, text: 'Lorem Ipsum 2'}];
+//						$('.js-data-kunta-ajax').select2({data: arr}).val(['100','200']).trigger('change');
+//						console.log('nyt lisätään!' + layers.getKunnat().features[i].properties.NATCODE);
+//						$('.js-data-kunta-ajax').select2("trigger", "select", {data: {id: layers.getKunnat().features[i].properties.NATCODE, text: layers.getKunnat().features[i].properties.NAMEFIN}});
+					} else {
+						console.log('nyt poistetaan!' + layers.getKunnat().features[i].properties.NATCODE);
+						$('.js-data-kunta-ajax').select2("trigger", "unselect", {data: {id: layers.getKunnat().features[i].properties.NATCODE}});
+					}
+				}
+			}
+		}
+		$('.js-data-kunta-ajax').select2({data: data}).val(values).trigger('change');
+		return true;
+	},
+	registerKuntaListaValitsin : function() {
+		var me = this;
+		$('.js-data-kunta-ajax').on('select2:unselecting', function (evt) {
+			console.log('unselecting.. before updatekuntalistat');
+			if (!kuntaValitsin.poistettavatKunnat.length) me.updateKuntaListat(['' + evt.params.args.data.id]);
+			console.log('unselecting.. before handlekuntafeaturestyle');
+			kuntaValitsin.handleKuntaFeatureStyle(me.map.getLayers().item(0), kuntaValitsin.poistettavatKunnat, false);
+			});
+		$('.js-data-kunta-ajax').on('select2:selecting', function (evt) {
+			console.log('selecting.. before updatekuntalistat, lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
+			if (!kuntaValitsin.lisattavatKunnat.length) me.updateKuntaListat(['' + evt.params.args.data.id]);
+			console.log('selecting.. before handlekuntafeaturestyle, lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
+			kuntaValitsin.handleKuntaFeatureStyle(me.map.getLayers().item(0), kuntaValitsin.lisattavatKunnat, true);
+			});
+	},
 	updateKuntaListat : function(kunnat) {
+		console.log('updateKuntaListat:' + kunnat);
 		if(kuntaValitsin.allKunnatExist(kunnat)) {
     		kuntaValitsin.removeKunnat(kunnat);
     	} else {
     		kuntaValitsin.addKunnat(kunnat);
     	}
+		console.log('selectedKunnat:' + this.selectedKunnat);
 	},
 	handleKuntaFeatureStyle : function(layer, kunnat, selected) {
+		console.log('handleKuntaFeatureStyle:' + kunnat + ', highlight:' + selected);
 		for(var i = 0 , len = layer.getSource().getFeatures().length; i < len; i++){
 			var natcode = layer.getSource().getFeatures()[i].get('NATCODE');
 			if($.inArray(natcode, kunnat) != -1) {
-				selected ? layer.getSource().getFeatures()[i].setStyle(kuntaValitsin.kuntaStyleSelected()) : layer.getSource().getFeatures()[i].setStyle(kuntaValitsin.kuntaStyleNormal());
+				this.changeKuntaFeatureStyle(layer.getSource().getFeatures()[i], selected);
 			}
 		}
+		selected ? kuntaValitsin.lisattavatKunnat.length = 0 : kuntaValitsin.poistettavatKunnat.length = 0;
+	},
+	changeKuntaFeatureStyle : function(feature, selected) {
+		selected ? feature.setStyle(kuntaValitsin.kuntaStyleSelected()) : feature.setStyle(kuntaValitsin.kuntaStyleNormal());
 	},
 	aviStyleX : function(feature, resolution) {
         var polyStyleConfig = {

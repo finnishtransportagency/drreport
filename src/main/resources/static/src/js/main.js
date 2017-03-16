@@ -48,5 +48,6 @@ global.jQuery(document).ready(function($) {
 	$('input[name="sw-summary"]').bootstrapSwitch('state', false, true);
 	
 	map.createMap();
+	map.registerKuntaListaValitsin();
 });
 

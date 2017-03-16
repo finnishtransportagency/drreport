@@ -108,53 +108,6 @@ trash: function() {
 
 //chart.data.colors({data3: chart.data.colors().data1, data4: chart.data.colors().data2});
 }
-//extendChartData : function(chartData) {
-//	chartData.columnsSummary = [];
-//	chartData.columnsSummaryRel = [];
-//	chartData.columnsSummary.push(['x']);
-//	chartData.columnsSummaryRel.push(['x']);
-////	chartData.columnsSummary.push(['y']);
-//	for(var i = 1 , len = chartData['columns'].length; i < len; i++){
-//		var k = 0;
-//		var f = 0.0;
-//		for(var j = 0 , len2 = chartData['columns'][i].length; j < len2; j++){
-//			if(j==0) {
-//				chartData.columnsSummary[0].push(chartData.names[(chartData['columns'][i][0])]);
-//				chartData.columnsSummaryRel[0].push(chartData.names[(chartData['columns'][i][0])]);
-//				chartData.columnsSummary.push([chartData['columns'][i][0]]);
-//				chartData.columnsSummaryRel.push([chartData['columns'][i][0]]);
-//			} else {
-//				k = k + parseInt(chartData['columns'][i][j]);
-//				f = f + parseFloat(chartData['columnsRel'][i][j]);
-//			}
-//		}
-//		chartData.columnsSummary[i].push(k);
-//		chartData.columnsSummaryRel[i].push(f);
-//	}
-
-//		for(var i = 1 , len = chartData['columns'].length; i < len; i++){
-//			var k = 0;
-//			for(var j = 0 , len2 = chartData['columns'][i].length; j < len2; j++){
-//				if(j==0) {
-//					chartData.columnsSummary[0].push(chartData.names[(chartData['columns'][i][0])]);
-//					chartData.columnsSummary.push([i]);
-//				} else {
-//					k = k + parseInt(chartData['columns'][i][j]);
-//				}
-//			}
-//		}
-//		chartData.columnsSummary[1].push(k);
-//	for(var i = 1 , len = chartData['columns'].length; i < len; i++){
-//		var k = 0;
-//		for(var j = 0 , len2 = chartData['columns'][i].length; j < len2; j++){
-//			j==0 ? chartData.columnsSummary[0].push(chartData.names[(chartData['columns'][i][0])]) : k = k + parseInt(chartData['columns'][i][j]);
-//		}
-//		chartData.columnsSummary[1].push(k);
-//	}
-//}
-
-  
-  
 };
 
 module.exports = c3Controller;

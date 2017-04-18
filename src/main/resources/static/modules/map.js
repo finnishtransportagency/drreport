@@ -16,6 +16,7 @@ var kuntaValitsin = {
 	selectedKunnat: [],
 	lisattavatKunnat: [],
 	poistettavatKunnat: [],
+	kevennettyKuntalista: [],
 	allKunnatExist : function(testattavat){
 	var me = this;
 	for(var i = 0 , len = testattavat.length; i < len; i++){
@@ -62,6 +63,11 @@ var kuntaValitsin = {
 		me.map.on('singleclick', function(evt) {
 			var feature = me.map.forEachFeatureAtPixel(evt.pixel, me.handleFeatureSelection);
 			}); 
+	},
+	populateKevennettyKuntalista : function() {
+		for(var i = 0 , len = layers.getKunnat().features.length; i < len; i++){
+			this.kevennettyKuntalista.push({id:layers.getKunnat().features[i].properties.NATCODE, text:layers.getKunnat().features[i].properties.NAMEFIN});
+		}
 	},
 	handleLayerVisibility : function(zoom) {
 		var me = this;
@@ -112,27 +118,22 @@ var kuntaValitsin = {
 		}
 	},
 	handleKunnat2Select2 : function(kunnat, lisaa) {
-		console.log('select2: ' + kunnat + ', lisätään: ' + lisaa);
+		console.log('select2: ' + kunnat + ' lisätään: ' + lisaa);
 		var data = [];
 		var values = [];
-		for(var i = 0 , len = layers.getKunnat().features.length; i < len; i++){
-			for(var j = 0 , len2 = kunnat.length; j < len2; j++){
-				if(kunnat[j] == layers.getKunnat().features[i].properties.NATCODE) {
-					if (lisaa) {
-						data.push({id:kunnat[j], text: layers.getKunnat().features[i].properties.NAMEFIN});
-						values.push(kunnat[j]);
-//						var arr = [{ id: 100, text: 'Lorem Ipsum 1' },{ id: 200, text: 'Lorem Ipsum 2'}];
-//						$('.js-data-kunta-ajax').select2({data: arr}).val(['100','200']).trigger('change');
-//						console.log('nyt lisätään!' + layers.getKunnat().features[i].properties.NATCODE);
-//						$('.js-data-kunta-ajax').select2("trigger", "select", {data: {id: layers.getKunnat().features[i].properties.NATCODE, text: layers.getKunnat().features[i].properties.NAMEFIN}});
-					} else {
-						console.log('nyt poistetaan!' + layers.getKunnat().features[i].properties.NATCODE);
-						$('.js-data-kunta-ajax').select2("trigger", "unselect", {data: {id: layers.getKunnat().features[i].properties.NATCODE}});
-					}
+		for(var i = 0 , len = kuntaValitsin.kevennettyKuntalista.length; i < len; i++) {
+			for(var j = 0 , len2 = kunnat.length; j < len2; j++) {
+				if(kunnat[j] == kuntaValitsin.kevennettyKuntalista[i].id) {
+					data.push(kuntaValitsin.kevennettyKuntalista[i]);
+					values.push(kunnat[j]);
 				}
 			}
 		}
-		$('.js-data-kunta-ajax').select2({data: data}).val(values).trigger('change');
+		if(lisaa) {
+			$('.js-data-kunta-ajax').select2({data: data}).val(values).trigger('change');
+		} else {
+			$('.js-data-kunta-ajax').select2("trigger", "unselect", {data: data});//tämä pitää koijata!
+		}
 		return true;
 	},
 	registerKuntaListaValitsin : function() {

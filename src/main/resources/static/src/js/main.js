@@ -49,5 +49,6 @@ global.jQuery(document).ready(function($) {
 	
 	map.createMap();
 	map.registerKuntaListaValitsin();
+	map.populateKevennettyKuntalista();
 });
 

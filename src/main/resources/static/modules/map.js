@@ -13,6 +13,8 @@ var $ = require('jquery');
 
 var kuntaValitsin = {
 	map: null,
+	oletusRajoitus: 10,
+	kuntaRajoitus: 70,
 	selectedKunnat: [],
 	lisattavatKunnat: [],
 	poistettavatKunnat: [],
@@ -33,12 +35,18 @@ var kuntaValitsin = {
 	},
 	addKunnat : function(lisattavat) {
 		var me = this;
-		for(var i = 0 , len = lisattavat.length; i < len; i++){
-			 if($.inArray(lisattavat[i], me.selectedKunnat) == -1) {
-				 me.selectedKunnat.push(lisattavat[i]);
-			 }
-		}
-		me.lisattavatKunnat = me.lisattavatKunnat.concat(lisattavat);
+		//tarkista onko kuntien määrä rajoissa
+		var koko = lisattavat.length + me.selectedKunnat.length;
+		console.log('[PS]: KONAISKOKO: ', + koko);
+		console.log('[PS]: rajoitus: ', + me.kuntaRajoitus);
+		if(koko<me.kuntaRajoitus){
+		    for(var i = 0 , len = lisattavat.length; i < len; i++){
+			    if($.inArray(lisattavat[i], me.selectedKunnat) == -1) {
+				    me.selectedKunnat.push(lisattavat[i]);
+					}
+				}
+		    me.lisattavatKunnat = me.lisattavatKunnat.concat(lisattavat);
+			}
 	},
 	createMap : function() {
 		var me = this;
@@ -61,6 +69,7 @@ var kuntaValitsin = {
 			}
 		);
 		me.map.on('singleclick', function(evt) {
+			//tarkistaako jokaisen layerin iteratiivisesti!?
 			var feature = me.map.forEachFeatureAtPixel(evt.pixel, me.handleFeatureSelection);
 			}); 
 	},
@@ -90,11 +99,13 @@ var kuntaValitsin = {
 		}
 	},
 	handleFeatureSelection : function(feature, layer) {
-		console.log('handleFeatureSelectionhandleFeatureSelectionhandleFeatureSelection');
+		var pituus = 0;
+		pituus = kuntaValitsin.selectedKunnat.length;
+		
 		switch(layer.get('category')) {
 		    case 'avi':
 		    case 'maakunta':
-		    	kuntaValitsin.updateKuntaListat(feature.get('KUNNAT').split(','));
+			    kuntaValitsin.updateKuntaListat(feature.get('KUNNAT').split(','));
 		        break;
 		    case 'kunta':
 		    	console.log('handleFeatureSelection, before update: lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
@@ -119,33 +130,39 @@ var kuntaValitsin = {
 	},
 	handleKunnat2Select2 : function(kunnat, lisaa) {
 		console.log('select2: ' + kunnat + ' lisätään: ' + lisaa);
+		//kunnat attribuuttia ei käytetä korjauksen jälkeen vaan luotetaan selectedKunnat listaan
 		var data = [];
 		var values = [];
 		for(var i = 0 , len = kuntaValitsin.kevennettyKuntalista.length; i < len; i++) {
-			for(var j = 0 , len2 = kunnat.length; j < len2; j++) {
-				if(kunnat[j] == kuntaValitsin.kevennettyKuntalista[i].id) {
+			for(var j = 0 , len2 = kuntaValitsin.selectedKunnat.length; j < len2; j++) {
+				if(kuntaValitsin.selectedKunnat[j] == kuntaValitsin.kevennettyKuntalista[i].id) {
 					data.push(kuntaValitsin.kevennettyKuntalista[i]);
-					values.push(kunnat[j]);
+					values.push(kuntaValitsin.selectedKunnat[j]);
 				}
 			}
 		}
 		if(lisaa) {
+			//console.log('Lisätään: ' + JSON.stringify(data) + ' ja :'+ values);
+			//selectedKunnat päivittyy oikein, mutta SELECT ei, data sisältää vain viimeisimmän klikkauksen. 
 			$('.js-data-kunta-ajax').select2({data: data}).val(values).trigger('change');
 		} else {
-			$('.js-data-kunta-ajax').select2("trigger", "unselect", {data: data});//tämä pitää koijata!
+			//else haara turha
+			//console.log('Poistetaan: ' + JSON.stringify(data));
+			//$('.js-data-kunta-ajax').select2("trigger", "unselect", {data: data});//tämä pitää koijata!
+			$('.js-data-kunta-ajax').select2({data: data}).val(values).trigger('change');
 		}
 		return true;
 	},
 	registerKuntaListaValitsin : function() {
 		var me = this;
 		$('.js-data-kunta-ajax').on('select2:unselecting', function (evt) {
-			console.log('unselecting.. before updatekuntalistat');
+			console.log('FROM SELECT. unselecting.. before updatekuntalistat');
 			if (!kuntaValitsin.poistettavatKunnat.length) me.updateKuntaListat(['' + evt.params.args.data.id]);
 			console.log('unselecting.. before handlekuntafeaturestyle');
 			kuntaValitsin.handleKuntaFeatureStyle(me.map.getLayers().item(0), kuntaValitsin.poistettavatKunnat, false);
 			});
 		$('.js-data-kunta-ajax').on('select2:selecting', function (evt) {
-			console.log('selecting.. before updatekuntalistat, lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
+			console.log('FROM-SELECT. selecting.. before updatekuntalistat, lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
 			if (!kuntaValitsin.lisattavatKunnat.length) me.updateKuntaListat(['' + evt.params.args.data.id]);
 			console.log('selecting.. before handlekuntafeaturestyle, lisättävät kunnat:' + kuntaValitsin.lisattavatKunnat);
 			kuntaValitsin.handleKuntaFeatureStyle(me.map.getLayers().item(0), kuntaValitsin.lisattavatKunnat, true);

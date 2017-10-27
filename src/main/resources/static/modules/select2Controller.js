@@ -2,22 +2,24 @@ var $ = require('jquery');
 
 var select2controller = (function(){
 	
-var activate = function(element, url) {
+var activate = function(element, url, multi, pituus) {
 	
 	  $(element).select2({
 	  theme: "classic",
 	  placeholder: "Valitse tietolaji",
-	  multiple:true,
+	  multiple: multi,
 	  ajax: {
 	    url: url,
 	    dataType: 'json',
 	    delay: 250,
 	    data: function (params) {
-	      return {
+	    	if(!params.term) {
+	    	params.term = '';}
+	        var query = {
 	        q: params.term, // search term
 	        page: params.page
-	      };
-	    },
+	              }
+	        return query;},
 	    processResults: function (data, params) {
 	      // parse the results into the format expected by Select2
 	      // since we are using custom formatting functions we do not need to
@@ -37,7 +39,7 @@ var activate = function(element, url) {
 	    cache: true
 	  },
 	  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
-	  minimumInputLength: 2,
+	  minimumInputLength: pituus,
 	  language: {
 		    inputTooShort: function(args) {
 		      // args.minimum is the minimum required length

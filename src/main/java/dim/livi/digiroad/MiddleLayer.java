@@ -145,7 +145,10 @@ public class MiddleLayer {
 	}
 	
 	private String[][] doTheSummaryCols(String[][] columns) {
-		int colsSumHeight = columns.length/categories.size();
+		int categoriesSize = categories.size();
+		int colsSumHeight = 1;
+		if (categoriesSize!=0){colsSumHeight = columns.length/categoriesSize;}
+		//int colsSumHeight = columns.length/categories.size();
 		int colsSumWidth = categories.size()+1;
 		String[][] colsSum = new String[colsSumHeight][colsSumWidth];
 		int csi1 = 0;
@@ -160,8 +163,8 @@ public class MiddleLayer {
 					csi1++;
 					csi2 = 0;
 				}
-				colsSum[csi1][0] = columns[i][0];
-				colsSum[csi1][1] = columns[i][1];
+				if(columns[i][0]!=null){colsSum[csi1][0] = columns[i][0];}
+				if(columns[i][1]!=null){colsSum[csi1][1] = columns[i][1];}
 				csi2 = 2;
 			}
 		}

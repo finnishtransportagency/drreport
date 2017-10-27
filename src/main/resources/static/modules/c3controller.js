@@ -19,6 +19,8 @@ init: function() {
 	config.axis.y.tick.format = function (d) { return c3Controller.relativeYAxis ? Math.round(10000*d) / 100 + " %" : d; };
 	me.chart = c3.generate(config);
 	me.registerClick();
+	me.registerCsvClick();
+	$("#haeCSVBtn").hide();
 	me.registerSwitch();
 },
 nid: null,
@@ -47,17 +49,52 @@ updateChart: function() {
 updateChartData: function(response) {
 	c3Controller.chartData = response;
 	c3Controller.updateChart();
+	$("#haeCSVBtn").show();
+	console.log("make CSV button visible");
 },
 registerClick: function() {
 	var me = this;
 	$("#haeGraafiBtn").click(function(e){
 		e.preventDefault();
+		$("#haeCSVBtn").hide();
 		var startdate = $("#startdate").val() != "" ? $("#startdate").val().replace(/\./g, "-") : "01-01-1970";
 		var stopdate = $("#stopdate").val() != "" ? $("#stopdate").val().replace(/\./g, "-") : "01-01-1970";
 		var kunnat = $(".js-data-kunta-ajax").val() != null ? $(".js-data-kunta-ajax").val() : "0";
 		var tietolajit = $(".js-data-tietolaji-ajax").val() != null ? $(".js-data-tietolaji-ajax").val() : "0";
 		var urli = "/raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit;
+		console.log("REST:" + urli);
 		ajaxrequest.get(urli, "", c3Controller.updateChartData);
+	});
+},
+registerCsvClick: function() {
+	var me = this;
+	$("#haeCSVBtn").click(function(e){
+		e.preventDefault();
+		var columns;
+		var fileName;
+	    if(me.relativeYAxis && !me.summary) {
+		    columns = me.cumulativity ? me.chartData.columnsCumulRel : me.chartData.columnsRel;
+			fileName = me.cumulativity ? "data_columnsCumulRel_" : "data_columnsRel_";
+	    } else if(me.summary) {
+		    columns = me.relativeYAxis ? me.chartData.columnsSumRel : me.chartData.columnsSum;
+			fileName = me.relativeYAxis ? "data_columnsSumRel_" : "data_columnsSum_";
+	    } else {
+		    columns = me.cumulativity ? me.chartData.columnsCumul : me.chartData.columns;
+			fileName = me.cumulativity ? "data_columnsCumul_" : "data_columns_";
+	    }
+        var csvContent = "data:text/csv;charset=utf-8,";
+        columns.forEach(function(infoArray, index){
+            dataString = infoArray.join(";");
+            csvContent += index < columns.length ? dataString+ "\n" : dataString;
+        }); 
+        var encodedUri = encodeURI(csvContent);
+        var link = document.createElement("a");
+        link.setAttribute("href", encodedUri);
+        link.setAttribute("download", fileName + (new Date()).getTime() + ".csv");
+        document.body.appendChild(link); // Required for FF
+        link.click();
+		console.log("csvContent: " + csvContent);
+		console.log("encodeUri: " + encodedUri);
 	});
 },
 registerSwitch: function() {

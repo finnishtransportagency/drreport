@@ -18,14 +18,13 @@ var map = require('../../modules/map.js');
 
 
 global.jQuery(document).ready(function($) {
-	
 	$(".scroll").click(function(event){
 		event.preventDefault();
 		$('html,body').animate({scrollTop:$(this.hash).offset().top},1200);
 	});
 	
-	select2.activate(".js-data-kunta-ajax", "/koodistot/kunnat");
-	select2.activate(".js-data-tietolaji-ajax", "/koodistot/tietolajit");
+	select2.activate(".js-data-kunta-ajax", "/koodistot/kunnat", true, 2);
+	select2.activate(".js-data-tietolaji-ajax", "/koodistot/tietolajit", false, 0);
 	dateTime.activatePicker1();
 	dateTime.activatePicker2();
 	c3.init();
@@ -46,7 +45,7 @@ global.jQuery(document).ready(function($) {
 	$('input[name="sw-abs-rel"]').bootstrapSwitch('state', true, true);
 	$('input[name="sw-cumul"]').bootstrapSwitch('state', true, true);
 	$('input[name="sw-summary"]').bootstrapSwitch('state', false, true);
-	
+
 	map.createMap();
 	map.registerKuntaListaValitsin();
 	map.populateKevennettyKuntalista();

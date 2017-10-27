@@ -61,7 +61,7 @@ public class ReportController {
 //				mid.createArrayCombinations(kunnat, tietolajit), items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit));
 		String today = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
 		final Future<ArrayList<rawModifiedResult>> future = items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit);
-		final Future<ArrayList<rawModifiedResult>> futureAll = items.getRawModifiedResult("01-01-1970", today, kunnat, tietolajit);
+		final Future<ArrayList<rawModifiedResult>> futureAll = items.getRawModifiedAllResult(kunnat, tietolajit);
 		int startTime = ScheduleTask.getCurrentTimer();
 		jsonMessage json = new jsonMessage();
 //		SimpMessageHeaderAccessor accessor = SimpMessageHeaderAccessor.create();

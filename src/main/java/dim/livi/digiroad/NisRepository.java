@@ -71,6 +71,7 @@ public class NisRepository {
 		  "where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
 		  "and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
 		  "and rl.ADMINCLASS in (" + hallinnollinenluokka + ") " +
+		  "and (ass.MODIFIED_BY LIKE 'k%' OR ass.MODIFIED_BY LIKE 'lx%' OR ass.MODIFIED_BY LIKE 'u%' OR ass.MODIFIED_BY LIKE 'a%')" +
 		  "and ass.VALID_TO is null " +
 		  "and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
 		  ") " +

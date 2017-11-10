@@ -49,8 +49,18 @@ public class NisRepository {
 		 return jdbc.query("select ID, NAME_FI from DR2USER.MUNICIPALITY where lower(NAME_FI) like lower(?) order by NAME_FI", new Object[]{term + "%"}, new RowMapperResultSetExtractor<IdText>(MunicipalityMapper));
 	 }
 	
+	public List<IdText> getAdminClass(String term) {
+		ArrayList<IdText> test= new ArrayList<IdText>();
+		test.add(new IdText(1,"Valtio"));
+		test.add(new IdText(2,"Kunta"));
+		test.add(new IdText(3,"Yksityinen"));
+		test.add(new IdText(99,"Ei määritelty"));
+		return test;
+		//return jdbc.query("select ADMINISTRATIVE_CLASS as ID, ADMINISTRATIVE_CLASS from DR2USER.ADMINISTRATIVE_CLASS where lower(ADMINISTRATIVE_CLASS) like lower(?) order by ADMINISTRATIVE_CLASS", new Object[]{term + "%"}, new RowMapperResultSetExtractor<IdText>(AdminClassMapper));
+	 }
+	
 	@Async
-	public Future<ArrayList<rawModifiedResult>> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit) {
+	public Future<ArrayList<rawModifiedResult>> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit, String hallinnollinenluokka) {
 		 return new AsyncResult<ArrayList<rawModifiedResult>>((ArrayList<rawModifiedResult>) jdbc.query("select MOD_DATE, ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, count(MOD_DATE) COUNT from ( " +
 		  "select ass.ASSET_TYPE_ID, at.NAME, rl.MUNICIPALITYCODE, mu.NAME_FI, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
 		  "inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
@@ -60,6 +70,7 @@ public class NisRepository {
 		  "inner join DR2USER.ASSET_TYPE at on ass.ASSET_TYPE_ID = at.ID " +
 		  "where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
 		  "and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
+		  "and rl.ADMINCLASS in (" + hallinnollinenluokka + ") " +
 		  "and ass.VALID_TO is null " +
 		  "and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
 		  ") " +
@@ -186,6 +197,13 @@ public class NisRepository {
 	        @Override
 	        public IdText mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new IdText(rs.getInt("ID"), rs.getString("NAME_FI"));
+			} 
+	    };
+	    
+	    private static final RowMapper<IdText> AdminClassMapper = new RowMapper<IdText>() {
+	        @Override
+	        public IdText mapRow(ResultSet rs, int rowNum) throws SQLException {
+	        	return new IdText(rs.getInt("ID"), rs.getString("ADMINISTRATIVE_CLASS"));
 			} 
 	    };
 	    

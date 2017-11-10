@@ -2,11 +2,11 @@ var $ = require('jquery');
 
 var select2controller = (function(){
 	
-var activate = function(element, url, multi, pituus) {
+var activate = function(element, url, multi, pituus, oletusTeksti) {
 	
 	  $(element).select2({
 	  theme: "classic",
-	  placeholder: "Valitse tietolaji",
+	  placeholder: oletusTeksti,
 	  multiple: multi,
 	  ajax: {
 	    url: url,

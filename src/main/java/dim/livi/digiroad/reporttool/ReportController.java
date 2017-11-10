@@ -45,6 +45,11 @@ public class ReportController {
 		return new ResponseEntity<List<IdText>>(items.getMunicipalitys(q), HttpStatus.OK);
 	}
 	
+	@RequestMapping(value = "/koodistot/hallinnollinenluokka", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<List<IdText>> hallinnollinenluokka(@RequestParam String q) {
+		return new ResponseEntity<List<IdText>>(items.getAdminClass(q), HttpStatus.OK);
+	}
+	
 	@RequestMapping(value = "/koodistot/kayttajat", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<jqGridJsonType> kayttajat(@RequestParam Integer page, @RequestParam Integer rows, @RequestParam String sidx, @RequestParam String sord, @RequestParam(required=false) String configuration) {
 		if ("busstop".equals(configuration)) configuration = "";
@@ -54,13 +59,13 @@ public class ReportController {
 		return new ResponseEntity<jqGridJsonType>(new jqGridJsonType(pageCount, page, userCount, items.getServiceUsers(rows, page, sidx, sord, configuration)), HttpStatus.OK);
 	}
 	
-	@RequestMapping(value = "/raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
-	public ResponseEntity<c3jsData> chart1(@PathVariable String startdate, @PathVariable String stopdate, @PathVariable String kunnat, @PathVariable String tietolajit) throws InterruptedException, ExecutionException {
+	@RequestMapping(value = "/raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}/{hallinnollinenluokka}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
+	public ResponseEntity<c3jsData> chart1(@PathVariable String startdate, @PathVariable String stopdate, @PathVariable String kunnat, @PathVariable String tietolajit, @PathVariable String hallinnollinenluokka) throws InterruptedException, ExecutionException {
 		MiddleLayer mid = new MiddleLayer();
 //		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
 //				mid.createArrayCombinations(kunnat, tietolajit), items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit));
-		String today = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
-		final Future<ArrayList<rawModifiedResult>> future = items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit);
+		//String today = new SimpleDateFormat("dd-MM-yyyy").format(new Date());
+		final Future<ArrayList<rawModifiedResult>> future = items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit, hallinnollinenluokka);
 		final Future<ArrayList<rawModifiedResult>> futureAll = items.getRawModifiedAllResult(kunnat, tietolajit);
 		int startTime = ScheduleTask.getCurrentTimer();
 		jsonMessage json = new jsonMessage();

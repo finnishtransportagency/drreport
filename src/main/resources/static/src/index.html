@@ -15,7 +15,7 @@
 		<!--scrolling-->
 	</head>
 	<body>	
-		<!--top-header-->
+		<!--top-header
 		<div id="home" class="top-header">
 			<div class="container">
 				<div class="logo">
@@ -31,16 +31,16 @@
 						<li><a class="scroll" href="#blog">Käyttäjät</a></li>
 						<li><a class="scroll" href="#contact">Jotain muuta</a></li>
 					</ul>
-					<!-- script-for-menu -->
+					<!-- script-for-menu
 					<script>					
 
 					</script>
-					<!-- script-for-menu -->
+					<!-- script-for-menu
 				</div>
 			</div>
-		</div>
+			</div>-->
 		
-		<!--header-->
+		<!--header
 		<div class="header">
 			<div class="container">
 				<div class="banner-info">
@@ -48,11 +48,11 @@
 					<p>Praesent a tortor ipsum. In ornare nibh urna, non hendrerit leo lacinia non. Proin malesuada blandit ex, 
 						vitae placerat purus placerat non. Pellentesque habitant morbi tristique senectus et netus et malesuada 
 						fames ac turpis egestas.</p>
-					<!-- <a href="#">Click</a> -->
+					<!-- <a href="#">Click</a>
 				</div>
 				<div class="clearfix"></div>
 			</div>
-		</div>
+		</div>-->
 		
 		<!--Raportointi-->
 		<div id="service" class="service">
@@ -60,107 +60,107 @@
 				<h3>Raportointi</h3>
 				<form role="form">
 				
-<div class="row">
-    <div class="col-md-8">
-        <div class="row reportrow">
-            <div class="col-md-6">
-                <div class='form-group col-sm-4 col-sm-offset-2'>
-					<p>Alkupvm:</p>
-				</div>
-				<div class='form-group col-sm-6'>
-					<div class='input-group date' id='datetimepicker1'>
-						<input type='text' class="form-control" id="startdate" />
-						<span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
+				<div class="row">
+					<div class="col-md-8">
+						<div class="row reportrow">
+							<div class="col-md-6">
+								<div class='form-group col-sm-4 col-sm-offset-2'>
+									<p>Alkupvm:</p>
+								</div>
+								<div class='form-group col-sm-6'>
+									<div class='input-group date' id='datetimepicker1'>
+										<input type='text' class="form-control" id="startdate" />
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class='form-group col-sm-4'>
+									<p>Tietolaji:</p>
+								</div>
+								<div class='form-group col-sm-8'>
+									<select class="js-data-tietolaji-ajax form-control" style="width: 100%" multiple="multiple"></select>
+								</div>
+							</div>
+						</div>
+						<div class="row reportrow">
+							<div class="col-md-6">
+									<div class='form-group col-sm-4 col-sm-offset-2'>
+									<p>Loppupvm:</p>
+								</div>
+								<div class="form-group col-sm-6">
+									<div class='input-group date' id='datetimepicker2'>
+										<input type='text' class="form-control" id="stopdate"/>
+										<span class="input-group-addon">
+											<span class="glyphicon glyphicon-calendar"></span>
+										</span>
+									</div>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class='form-group col-sm-4'>
+									<p>Hallinnollinen luokka:</p>
+								</div>
+								<div class='form-group col-sm-8'>
+									<select class="js-data-hallinnollinenluokka-ajax form-control" style="width: 100%" multiple="multiple"></select>
+								</div>
+							</div>
+						</div>
+						<div class="row reportrow">
+							<div class="col-md-6">
+								<div class="form-group col-sm-4 col-sm-offset-2">
+									<p>Suhteellisuus: </p>
+								</div>
+								<div class="form-group col-sm-6">
+									<input type="checkbox" name="sw-abs-rel" data-on-text="ON" data-off-text="OFF" checked>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class='form-group col-sm-4'>
+									<p>Kunta:</p>
+								</div>
+								<div class="form-group col-sm-8">
+									<select class="js-data-kunta-ajax form-control" style="width: 100%" multiple="multiple"></select>
+								</div>
+							</div>
+						</div>
+						<div class="row reportrow">
+							<div class="col-md-6">
+								<div class='form-group col-sm-4 col-sm-offset-2'>
+									<p>Yhteenveto: </p>
+								</div>
+								<div class="form-group col-sm-6">
+									<input type="checkbox" name="sw-summary" data-on-text="ON" data-off-text="OFF">
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class='form-group col-sm-4'>
+									<p>Kumulatiivisuus: </p>
+								</div>
+								<div class="form-group col-sm-8">
+									<input type="checkbox" name="sw-cumul" data-on-text="ON" data-off-text="OFF" checked>
+								</div>
+							</div>
+						</div>
+						<div class="row reportrow">
+							<div class="col-md-6">
+								<div class="col-sm-4 col-sm-offset-2">
+									<button class="btn btn-default" id="haeGraafiBtn">Hae graafi</button>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="col-sm-4 col-sm-4">
+									<button class="btn btn-default" id="haeCSVBtn">Hae CSV</button>
+								</div>
+							</div>
+						</div>
 					</div>
+						<div class="col-md-3">
+							<div class="map" id="map"></div>
+						</div>
 				</div>
-            </div>
-            <div class="col-md-6">
-              	<div class='form-group col-sm-4'>
-					<p>Tietolaji:</p>
-				</div>
-				<div class='form-group col-sm-8'>
-					<select class="js-data-tietolaji-ajax form-control" style="width: 100%" multiple="multiple"></select>
-				</div>
-            </div>
-            <div class="col-md-6">
-              	<div class='form-group col-sm-4'>
-					<p>Hallinnollinen luokka:</p>
-				</div>
-				<div class='form-group col-sm-8'>
-					<select class="js-data-hallinnollinenluokka-ajax form-control" style="width: 100%" multiple="multiple"></select>
-				</div>
-            </div>
-        </div>
-        <div class="row reportrow">
-            <div class="col-md-6">
-              		<div class='form-group col-sm-4 col-sm-offset-2'>
-					<p>Loppupvm:</p>
-				</div>
-				<div class="form-group col-sm-6">
-					<div class='input-group date' id='datetimepicker2'>
-						<input type='text' class="form-control" id="stopdate"/>
-						<span class="input-group-addon">
-							<span class="glyphicon glyphicon-calendar"></span>
-						</span>
-					</div>
-				</div>
-            </div>
-            <div class="col-md-6">
-              	<div class='form-group col-sm-4'>
-					<p>Kunta:</p>
-				</div>
-				<div class="form-group col-sm-8">
-					<select class="js-data-kunta-ajax form-control" style="width: 100%" multiple="multiple"></select>
-				</div>
-            </div>
-        </div>
-        <div class="row reportrow">
-            <div class="col-md-6">
-                <div class="form-group col-sm-4 col-sm-offset-2">
-					<p>Suhteellisuus: </p>
-				</div>
-		    	<div class="form-group col-sm-6">
-		      		<input type="checkbox" name="sw-abs-rel" data-on-text="ON" data-off-text="OFF" checked>
-		    	</div>
-            </div>
-            <div class="col-md-6">
-       			<div class='form-group col-sm-4'>
-					<p>Kumulatiivisuus: </p>
-				</div>
-		    	<div class="form-group col-sm-8">
-		      		<input type="checkbox" name="sw-cumul" data-on-text="ON" data-off-text="OFF" checked>
-		    	</div>
-            </div>
-        </div>
-        <div class="row reportrow">
-        	<div class="col-md-6">
-       			<div class='form-group col-sm-4 col-sm-offset-2'>
-					<p>Yhteenveto: </p>
-				</div>
-		    	<div class="form-group col-sm-6">
-		      		<input type="checkbox" name="sw-summary" data-on-text="ON" data-off-text="OFF">
-		    	</div>
-            </div>
-            <div class="col-md-6">
-                <div class="col-sm-4 col-sm-offset-4">
-					<button class="btn btn-default" id="haeGraafiBtn">Hae graafi</button>
-				</div>
-            </div>
-        </div>
-		<div class="row reportrow">
-		    <div class="col-md-6 col-md-push-6">
-                <div class="col-sm-4 col-sm-offset-4">
-					<button class="btn btn-default" id="haeCSVBtn">Hae CSV</button>
-				</div>
-            </div>
-        </div>
-    </div>
-        <div class="col-md-3">
-        	<div class="map" id="map"></div>
-    	</div>
-</div>
 	 
 					 <div class="row reportrow chartcontainer">
 					 	<div id="chart"></div>

@@ -14,7 +14,7 @@ var $ = require('jquery');
 var kuntaValitsin = {
 	map: null,
 	oletusRajoitus: 10,
-	kuntaRajoitus: 70,
+	kuntaRajoitus: 10,
 	selectedKunnat: [],
 	lisattavatKunnat: [],
 	poistettavatKunnat: [],

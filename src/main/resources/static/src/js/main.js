@@ -11,7 +11,7 @@ require('eonasdan-bootstrap-datetimepicker-custom');
 var select2 = require('../../modules/select2controller.js');
 var dateTime = require('../../modules/dateTimeController.js');
 var c3 = require('../../modules/c3Controller.js');
-var grid = require('../../modules/gridController.js');
+//var grid = require('../../modules/gridController.js');
 var stomp = require('../../modules/stompController.js');
 require('../../modules/jquery.chocolat.js');
 var map = require('../../modules/map.js');
@@ -29,8 +29,8 @@ global.jQuery(document).ready(function($) {
 	dateTime.activatePicker1();
 	dateTime.activatePicker2();
 	c3.init();
-	grid.initUserDrid();
-	grid.initValidationGrid();
+	//grid.initUserDrid();
+	//grid.initValidationGrid();
 	stomp.init(c3);
 
 	global.jQuery(function() {

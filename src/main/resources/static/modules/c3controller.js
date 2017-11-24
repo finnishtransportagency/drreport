@@ -43,7 +43,7 @@ updateChart: function() {
     categories: categories
     });
 	me.summary ? c3Controller.chart.groups([]) : c3Controller.chart.groups(me.chartData.groups);
-    if (me.chartData.columnsCumulRel[0].length < 2) noty.createNoty("Ei tuloksia!", "alert");
+    if (me.chartData.columnsCumulRel[0].length < 2) noty.createNoty("Ei tuloksia!", "warning");
     c3Controller.nid.close();
 },
 updateChartData: function(response) {
@@ -87,14 +87,25 @@ registerCsvClick: function() {
         columns.forEach(function(infoArray, index){
             dataString = infoArray.join(";");
             csvContent += index < columns.length ? dataString+ "\n" : dataString;
-        }); 
-        var encodedUri = encodeURI(csvContent);
+        });
+        //DR-753 selkokieliset nimet. me.chartData.names löytyy koodi:nimi parit
+        //käydään ne läpi ja korvataan koodit nimillä
+        var newCsvContent = csvContent;
+        for (var key in me.chartData.names) {
+            if (me.chartData.names.hasOwnProperty(key)) {
+            	csvContent = newCsvContent;//tallennetaan kaikki muutokset
+                console.log(key + " -> " + me.chartData.names[key]);
+                //onko avain muotoa #-# (eikä pelkkä kuntakoodi) ja korvaa koodi nimellä
+                if(key.indexOf("-") !== -1){newCsvContent = csvContent.replace(key, me.chartData.names[key]);}
+            }
+        }
+        var encodedUri = encodeURI(newCsvContent);
         var link = document.createElement("a");
         link.setAttribute("href", encodedUri);
         link.setAttribute("download", fileName + (new Date()).getTime() + ".csv");
         document.body.appendChild(link); // Required for FF
         link.click();
-		console.log("csvContent: " + csvContent);
+		console.log("csvContent: " + newCsvContent);
 		console.log("encodeUri: " + encodedUri);
 	});
 },

@@ -79,33 +79,33 @@ registerCsvClick: function() {
 	    } else if(me.summary) {
 		    columns = me.relativeYAxis ? me.chartData.columnsSumRel : me.chartData.columnsSum;
 			fileName = me.relativeYAxis ? "data_columnsSumRel_" : "data_columnsSum_";
+			//tähän kuntanimet selkokielisiksi?
 	    } else {
 		    columns = me.cumulativity ? me.chartData.columnsCumul : me.chartData.columns;
 			fileName = me.cumulativity ? "data_columnsCumul_" : "data_columns_";
+	    }
+        //DR-753 selkokieliset nimet. me.chartData.names löytyy koodi:nimi parit
+        //käydään ne läpi ja korvataan koodit nimillä
+	    for(var i = 0; i < columns.length; i++) {
+	        var cube = columns[i];
+	        for (var key in me.chartData.names) {
+	            if (me.chartData.names.hasOwnProperty(key)) {
+	                if(key==cube[0]){cube[0]=me.chartData.names[key];}
+	            }
+	        }
 	    }
         var csvContent = "data:text/csv;charset=utf-8,";
         columns.forEach(function(infoArray, index){
             dataString = infoArray.join(";");
             csvContent += index < columns.length ? dataString+ "\n" : dataString;
         });
-        //DR-753 selkokieliset nimet. me.chartData.names löytyy koodi:nimi parit
-        //käydään ne läpi ja korvataan koodit nimillä
-        var newCsvContent = csvContent;
-        for (var key in me.chartData.names) {
-            if (me.chartData.names.hasOwnProperty(key)) {
-            	csvContent = newCsvContent;//tallennetaan kaikki muutokset
-                console.log(key + " -> " + me.chartData.names[key]);
-                //onko avain muotoa #-# (eikä pelkkä kuntakoodi) ja korvaa koodi nimellä
-                if(key.indexOf("-") !== -1){newCsvContent = csvContent.replace(key, me.chartData.names[key]);}
-            }
-        }
-        var encodedUri = encodeURI(newCsvContent);
+        var encodedUri = encodeURI(csvContent);
         var link = document.createElement("a");
         link.setAttribute("href", encodedUri);
         link.setAttribute("download", fileName + (new Date()).getTime() + ".csv");
         document.body.appendChild(link); // Required for FF
         link.click();
-		console.log("csvContent: " + newCsvContent);
+		console.log("csvContent: " + csvContent);
 		console.log("encodeUri: " + encodedUri);
 	});
 },

@@ -6,6 +6,7 @@ var activate = function(element, url, multi, pituus, oletusTeksti) {
 	
 	  $(element).select2({
 	  theme: "classic",
+	  maximumSelectionLength: 10,
 	  placeholder: oletusTeksti,
 	  multiple: multi,
 	  ajax: {
@@ -65,7 +66,7 @@ var activate = function(element, url, multi, pituus, oletusTeksti) {
 		    },
 		    maximumSelected: function(args) {
 		      // args.maximum is the maximum number of items the user may select
-		      return "Virhe";
+		      return "Liikaa valintoja!";
 		    }
 		  }
 //	  templateResult: formatRepo, // omitted for brevity, see the source of this page

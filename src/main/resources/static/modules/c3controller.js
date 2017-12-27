@@ -22,8 +22,9 @@ init: function() {
 	me.registerCsvClick();
 	$("#haeCSVBtn").hide();
 	me.registerSwitch();
+	me.nid = noty.createNoty("MORO!!", "warning");//X
 },
-nid: null,
+nid: null,//jos ei määritelty pitäisi käsitellä X
 updateChart: function() {
 	var me = this;
 	var columns;
@@ -44,7 +45,7 @@ updateChart: function() {
     });
 	me.summary ? c3Controller.chart.groups([]) : c3Controller.chart.groups(me.chartData.groups);
     if (me.chartData.columnsCumulRel[0].length < 2) noty.createNoty("Ei tuloksia!", "warning");
-    c3Controller.nid.close();
+    c3Controller.nid.close();//jos ei määritelty X niin tulee virhe että null.lle ei löydy close()
 },
 updateChartData: function(response) {
 	c3Controller.chartData = response;

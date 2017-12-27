@@ -8,7 +8,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 
-	<name>DRReport</name>
+	<name>DRReport2017</name>
 	<description>Dimenteq - LiVi - DR Reporter</description>
 
 	<parent>

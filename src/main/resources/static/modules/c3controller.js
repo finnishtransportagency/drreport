@@ -22,9 +22,8 @@ init: function() {
 	me.registerCsvClick();
 	$("#haeCSVBtn").hide();
 	me.registerSwitch();
-	me.nid = noty.createNoty("MORO!!", "warning");//X
 },
-nid: null,//jos ei määritelty pitäisi käsitellä X
+nid: null,
 updateChart: function() {
 	var me = this;
 	var columns;
@@ -37,6 +36,8 @@ updateChart: function() {
 	} else {
 		columns = me.cumulativity ? me.chartData.columnsCumul : me.chartData.columns;
 	}
+	if(me.nid!=null) c3Controller.nid.close();
+	me.nid = noty.createNoty("Piirretään graafi...", "alert");
 	c3Controller.chart.load({
 	unload: true,
     columns: columns,
@@ -44,8 +45,10 @@ updateChart: function() {
     categories: categories
     });
 	me.summary ? c3Controller.chart.groups([]) : c3Controller.chart.groups(me.chartData.groups);
-    if (me.chartData.columnsCumulRel[0].length < 2) noty.createNoty("Ei tuloksia!", "warning");
-    c3Controller.nid.close();//jos ei määritelty X niin tulee virhe että null.lle ei löydy close()
+    if (me.chartData.columnsCumulRel[0].length < 2) {
+    	if(me.nid!=null) c3Controller.nid.close();
+    	me.nid = noty.createNoty("Ei tuloksia!", "alert");}
+    if(me.nid!=null) c3Controller.nid.close();
 },
 updateChartData: function(response) {
 	c3Controller.chartData = response;
@@ -65,7 +68,14 @@ registerClick: function() {
 		var hallinnollinenluokka = $(".js-data-hallinnollinenluokka-ajax").val() != null ? $(".js-data-hallinnollinenluokka-ajax").val() : "1,2,3,99";
 		var urli = "/raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit + "/" + hallinnollinenluokka;
 		console.log("REST:" + urli);
+		if(me.nid!=null) c3Controller.nid.close();
+		if(tietolajit == 0 || kunnat == 0){
+			me.nid = noty.createNoty("Anna tietolaji ja kunta!", "alert");
+		} 
+		else {
+		me.nid = noty.createNoty("Haetaan data...", "alert");
 		ajaxrequest.get(urli, "", c3Controller.updateChartData);
+		}
 	});
 },
 registerCsvClick: function() {

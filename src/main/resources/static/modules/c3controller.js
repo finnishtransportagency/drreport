@@ -13,6 +13,7 @@ chartData: null,
 relativeYAxis: true,
 cumulativity: true,
 summary: false,
+kello: 0,
 init: function() {
 	me = this;
 	var config = me.summary ? c3configs.config2() : c3configs.config1();
@@ -51,6 +52,7 @@ updateChart: function() {
     if(me.nid!=null) c3Controller.nid.close();
 },
 updateChartData: function(response) {
+	c3Controller.myStopFunction();
 	c3Controller.chartData = response;
 	c3Controller.updateChart();
 	$("#haeCSVBtn").show();
@@ -73,7 +75,10 @@ registerClick: function() {
 			me.nid = noty.createNoty("Anna tietolaji ja kunta!", "alert");
 		} 
 		else {
-		me.nid = noty.createNoty("Haetaan data...", "alert");
+		//me.nid = noty.createNoty("Haetaan data...", "alert");
+			me.nid = noty.createNoty("Haetaan data...<span id=\"demo\"></span>", "alert");
+		//start timer
+		me.myVar = setInterval(function(){ c3Controller.myTimer() }, 1000);
 		ajaxrequest.get(urli, "", c3Controller.updateChartData);
 		}
 	});
@@ -90,7 +95,6 @@ registerCsvClick: function() {
 	    } else if(me.summary) {
 		    columns = me.relativeYAxis ? me.chartData.columnsSumRel : me.chartData.columnsSum;
 			fileName = me.relativeYAxis ? "data_columnsSumRel_" : "data_columnsSum_";
-			//tähän kuntanimet selkokielisiksi?
 	    } else {
 		    columns = me.cumulativity ? me.chartData.columnsCumul : me.chartData.columns;
 			fileName = me.cumulativity ? "data_columnsCumul_" : "data_columns_";
@@ -142,6 +146,16 @@ registerSwitch: function() {
 		}
 		me.updateChart();
 	})
+},
+myTimer: function() {
+		var me = this;
+	    me.kello=me.kello+1;
+	    document.getElementById("demo").innerHTML = me.kello;
+},
+myStopFunction: function() {
+		var me = this;
+		me.kello=0;
+		clearInterval(me.myVar);
 },
 trash: function() {
 //	function toggle(id) {

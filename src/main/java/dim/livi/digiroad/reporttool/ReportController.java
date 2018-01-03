@@ -47,17 +47,10 @@ public class ReportController {
 		MiddleLayer mid = new MiddleLayer();
 		final Future<ArrayList<rawModifiedResult>> future = items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit, hallinnollinenluokka);
 		final Future<ArrayList<rawModifiedResult>> futureAll = items.getRawModifiedAllResult(kunnat, tietolajit);
-		//int startTime = ScheduleTask.getCurrentTimer();
-		//jsonMessage json = new jsonMessage();
-		//this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.START.toString(), "Prosessoidaan"));
 		while (!future.isDone() || !futureAll.isDone()) {
 			Thread.sleep(500L);
-			//this.template.convertAndSend("/topic/message", json.createJsonMessage(Utilities.status.CONTINUE.toString(),"Haetaan tuloksia graafia varten, aikaa kulunut " + (ScheduleTask.getCurrentTimer() - startTime) + " s."));
-			Thread.sleep(500L);
         }
-		//this.template.convertAndSend( "/topic/message", json.createJsonMessage(Utilities.status.STOP.toString(), "Haku valmis, piirretään graafi."));
-		c3jsData chartData = mid.buildC3JsChartData(items.getModDates(startdate, stopdate, kunnat, tietolajit),
-				mid.createArrayCombinations(kunnat, tietolajit), future.get(), futureAll.get());
+		c3jsData chartData = mid.buildC3JsChartData(mid.createArrayCombinations(kunnat, tietolajit), future.get(), futureAll.get());
 		chartData.setGroups(mid.createGroups(kunnat, tietolajit));
 		chartData.setCategories(mid.getGategories().toArray(new String[0]));
 		return new ResponseEntity<c3jsData>(chartData, HttpStatus.OK);

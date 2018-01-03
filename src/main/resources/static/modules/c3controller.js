@@ -13,7 +13,7 @@ chartData: null,
 relativeYAxis: true,
 cumulativity: true,
 summary: false,
-kello: 0,
+laskuri: 0,
 init: function() {
 	me = this;
 	var config = me.summary ? c3configs.config2() : c3configs.config1();
@@ -75,11 +75,9 @@ registerClick: function() {
 			me.nid = noty.createNoty("Anna tietolaji ja kunta!", "alert");
 		} 
 		else {
-		//me.nid = noty.createNoty("Haetaan data...", "alert");
-			me.nid = noty.createNoty("Haetaan data...<span id=\"demo\"></span>", "alert");
-		//start timer
-		me.myVar = setInterval(function(){ c3Controller.myTimer() }, 1000);
-		ajaxrequest.get(urli, "", c3Controller.updateChartData);
+			me.nid = noty.createNoty("Haetaan data...<span id=\"laskuri\"></span>", "alert");
+			me.munLaskuri = setInterval(function(){ c3Controller.myTimer() }, 1000);
+			ajaxrequest.get(urli, "", c3Controller.updateChartData);
 		}
 	});
 },
@@ -149,13 +147,13 @@ registerSwitch: function() {
 },
 myTimer: function() {
 		var me = this;
-	    me.kello=me.kello+1;
-	    document.getElementById("demo").innerHTML = me.kello;
+	    me.laskuri=me.laskuri+1;
+	    document.getElementById("laskuri").innerHTML = me.laskuri;
 },
 myStopFunction: function() {
 		var me = this;
-		me.kello=0;
-		clearInterval(me.myVar);
+		me.laskuri=0;
+		clearInterval(me.munLaskuri);
 },
 trash: function() {
 //	function toggle(id) {

@@ -81,17 +81,21 @@ public class NisRepository {
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper)));
 	 }
 
-	public List<String> getModDates(String startDate, String stopDate, String kunnat, String tietolajit) {
-		 return jdbc.query("select distinct to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
-		"inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
-		"inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
-		"inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
-		"where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
-		"and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
-		"and ass.VALID_TO is null " +
-		"and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
-		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<String>(modDateMapper));
-	 }
+//	public List<String> getModDates(String startDate, String stopDate, String kunnat, String tietolajit, String hallinnollinenluokka) {
+//		String tuntematonNopeusrajoitus = (tietolajit.equals("20")) ? "and lrm.LINK_ID not in (select usl.link_id from DR2USER.UNKNOWN_SPEED_LIMIT usl)" : "";
+//		 return jdbc.query("select distinct to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
+//		"inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
+//		"inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
+//		"inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
+//		"where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
+//		"and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
+//		"and rl.ADMINCLASS in (" + hallinnollinenluokka + ") " +
+//		  ""+ tuntematonNopeusrajoitus +"" +
+//		"and (ass.MODIFIED_BY LIKE 'k%' OR ass.MODIFIED_BY LIKE 'lx%' OR ass.MODIFIED_BY LIKE 'u%' OR ass.MODIFIED_BY LIKE 'a%')" +
+//		"and ass.VALID_TO is null " +
+//		"and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
+//		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<String>(modDateMapper));
+//	 }
 	 
 	    private static final RowMapper<IdText> assetTypeMapper = new RowMapper<IdText>() {
 	        @Override

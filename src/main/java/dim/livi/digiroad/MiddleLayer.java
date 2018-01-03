@@ -16,7 +16,9 @@ public class MiddleLayer {
 		return categories;
 	}
 	
-	public c3jsData buildC3JsChartData(List<String> modDates, List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData, ArrayList<rawModifiedResult> rawDataRelative) {
+	public c3jsData buildC3JsChartData(List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData, ArrayList<rawModifiedResult> rawDataRelative) {
+		List<String> modDates = new ArrayList<String>();
+		for (int i =0;i<rawData.size();i++){modDates.add(rawData.get(i).getMod_Date());}
 		c3jsData chartData = new c3jsData();
 		categories = new ArrayList<String>();
 		List<String> headerList = new ArrayList<String>();

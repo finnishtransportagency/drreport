@@ -33,17 +33,17 @@ public class NisRepository {
 	 }
 	
 	public List<IdText> getAdminClass(String term) {
-		ArrayList<IdText> test= new ArrayList<IdText>();
-		test.add(new IdText(1,"Valtio"));
-		test.add(new IdText(2,"Kunta"));
-		test.add(new IdText(3,"Yksityinen"));
-		test.add(new IdText(99,"Ei määritelty"));
-		return test;
-		//return jdbc.query("select ADMINISTRATIVE_CLASS as ID, ADMINISTRATIVE_CLASS from DR2USER.ADMINISTRATIVE_CLASS where lower(ADMINISTRATIVE_CLASS) like lower(?) order by ADMINISTRATIVE_CLASS", new Object[]{term + "%"}, new RowMapperResultSetExtractor<IdText>(AdminClassMapper));
+		//nämä pysyvät pitempään, ei implementoitu dynaamiseksi
+		ArrayList<IdText> valinnat= new ArrayList<IdText>();
+		valinnat.add(new IdText(1,"Valtio"));
+		valinnat.add(new IdText(2,"Kunta"));
+		valinnat.add(new IdText(3,"Yksityinen"));
+		valinnat.add(new IdText(99,"Ei määritelty"));
+		return valinnat;
 	 }
 	
 	@Async
-	public Future<ArrayList<rawModifiedResult>> getRawModifiedResult(String startDate, String stopDate, String kunnat, String tietolajit, String hallinnollinenluokka) {
+	public Future<ArrayList<rawModifiedResult>> getRawModifiedAllResult(String kunnat, String tietolajit, String hallinnollinenluokka) {
 		String tuntematonNopeusrajoitus = (tietolajit.equals("20")) ? "and lrm.LINK_ID not in (select usl.link_id from DR2USER.UNKNOWN_SPEED_LIMIT usl)" : "";/*onko tietolaji nopeusajoitus*/
 		 return new AsyncResult<ArrayList<rawModifiedResult>>((ArrayList<rawModifiedResult>) jdbc.query("select MOD_DATE, ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, count(MOD_DATE) COUNT from ( " +
 		  "select ass.ASSET_TYPE_ID, at.NAME, rl.MUNICIPALITYCODE, mu.NAME_FI, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
@@ -58,44 +58,10 @@ public class NisRepository {
 		  ""+ tuntematonNopeusrajoitus +"" +
 		  "and (ass.MODIFIED_BY LIKE 'k%' OR ass.MODIFIED_BY LIKE 'lx%' OR ass.MODIFIED_BY LIKE 'u%' OR ass.MODIFIED_BY LIKE 'a%')" +
 		  "and ass.VALID_TO is null " +
-		  "and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
-		  ") " +
-		"group by ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, MOD_DATE " +
-		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper)));
-	 }
-	
-	@Async
-	public Future<ArrayList<rawModifiedResult>> getRawModifiedAllResult(String kunnat, String tietolajit) {
-		 return new AsyncResult<ArrayList<rawModifiedResult>>((ArrayList<rawModifiedResult>) jdbc.query("select MOD_DATE, ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, count(MOD_DATE) COUNT from ( " +
-		  "select ass.ASSET_TYPE_ID, at.NAME, rl.MUNICIPALITYCODE, mu.NAME_FI, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
-		  "inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
-		  "inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
-		  "inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
-		  "inner join DR2USER.MUNICIPALITY mu on rl.MUNICIPALITYCODE = mu.ID " +
-		  "inner join DR2USER.ASSET_TYPE at on ass.ASSET_TYPE_ID = at.ID " +
-		  "where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
-		  "and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
-		  "and ass.VALID_TO is null " +
 		  ") " +
 		"group by ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, MOD_DATE " +
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper)));
 	 }
-
-//	public List<String> getModDates(String startDate, String stopDate, String kunnat, String tietolajit, String hallinnollinenluokka) {
-//		String tuntematonNopeusrajoitus = (tietolajit.equals("20")) ? "and lrm.LINK_ID not in (select usl.link_id from DR2USER.UNKNOWN_SPEED_LIMIT usl)" : "";
-//		 return jdbc.query("select distinct to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
-//		"inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " +
-//		"inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
-//		"inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
-//		"where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
-//		"and rl.MUNICIPALITYCODE in (" + kunnat + ") " +
-//		"and rl.ADMINCLASS in (" + hallinnollinenluokka + ") " +
-//		  ""+ tuntematonNopeusrajoitus +"" +
-//		"and (ass.MODIFIED_BY LIKE 'k%' OR ass.MODIFIED_BY LIKE 'lx%' OR ass.MODIFIED_BY LIKE 'u%' OR ass.MODIFIED_BY LIKE 'a%')" +
-//		"and ass.VALID_TO is null " +
-//		"and coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) between to_date(?, 'DD-MM-YYYY') AND to_date(?, 'DD-MM-YYYY') " +
-//		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new Object[]{startDate, stopDate}, new RowMapperResultSetExtractor<String>(modDateMapper));
-//	 }
 	 
 	    private static final RowMapper<IdText> assetTypeMapper = new RowMapper<IdText>() {
 	        @Override
@@ -115,14 +81,6 @@ public class NisRepository {
 	        @Override
 	        public rawModifiedResult mapRow(ResultSet rs, int rowNum) throws SQLException {
 	        	return new rawModifiedResult(rs.getString("MOD_DATE"), rs.getInt("ASSET_TYPE_ID"), rs.getString("NAME"), rs.getInt("MUNICIPALITYCODE"), rs.getString("NAME_FI"), rs.getInt("COUNT"));
-			} 
-	    };
-	    
-	    private static final RowMapper<String> modDateMapper = new RowMapper<String>() {
-	        @Override
-	        public String mapRow(ResultSet rs, int rowNum) throws SQLException { 
-	            return rs.getString("MOD_DATE"); 
-
 			} 
 	    };
 }

@@ -1,9 +1,11 @@
 package dim.livi.digiroad;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -16,9 +18,33 @@ public class MiddleLayer {
 		return categories;
 	}
 	
-	public c3jsData buildC3JsChartData(List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData, ArrayList<rawModifiedResult> rawDataRelative) {
+	public c3jsData buildC3JsChartData(String startDate, String stopDate, List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData) {
+
 		List<String> modDates = new ArrayList<String>();
-		for (int i =0;i<rawData.size();i++){modDates.add(rawData.get(i).getMod_Date());}
+		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+	    Date cStartDate = null;
+	    Date cStopDate = null;
+		try {
+			cStartDate = format.parse(startDate);
+			cStopDate = format.parse(stopDate);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	    
+		for (int i =0;i<rawData.size();i++){
+		    String rawDate = rawData.get(i).getMod_Date();
+		    Date cRawDate = null;
+			try {
+				cRawDate = format.parse(rawDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		    if (cStartDate.compareTo(cRawDate) <= 0 && cStopDate.compareTo(cRawDate) >= 0) {
+		    	modDates.add(rawDate);
+		    }
+			}
 		c3jsData chartData = new c3jsData();
 		categories = new ArrayList<String>();
 		List<String> headerList = new ArrayList<String>();
@@ -66,7 +92,7 @@ public class MiddleLayer {
 					if (mdate.equals(rditem.getMod_Date())
 						&& municipalityCode.equals(rditem.getMunicipalityCode().toString())
 						&& assetTypeId.equals(rditem.getAsset_Type_Id().toString())) {
-							Integer total = getSum(rawDataRelative, Integer.parseInt(assetTypeId), Integer.parseInt(municipalityCode));
+							Integer total = getSum(rawData, Integer.parseInt(assetTypeId), Integer.parseInt(municipalityCode));
 							Integer count = rditem.getCount();
 							countCumul += rditem.getCount();
 							countSum += count;
@@ -106,8 +132,6 @@ public class MiddleLayer {
 		chartData.setColumnsCumulRel(Arrays.copyOf(colsCumulRel, i));
 		chartData.setColumns(Arrays.copyOf(cols, i));
 		chartData.setColumnsRel(Arrays.copyOf(colsRel, i));
-//		chartData.setColumnsSum(Arrays.copyOf(colsSum, i-1));
-//		chartData.setColumnsSumRel(Arrays.copyOf(colsSumRel, i-1));
 		chartData.setColumnsSum(this.doTheSummaryCols(colsSum));
 		chartData.setColumnsSumRel(this.doTheSummaryCols(colsSumRel));
 		chartData.setNames(names);
@@ -150,7 +174,6 @@ public class MiddleLayer {
 		int categoriesSize = categories.size();
 		int colsSumHeight = 1;
 		if (categoriesSize!=0){colsSumHeight = columns.length/categoriesSize;}
-		//int colsSumHeight = columns.length/categories.size();
 		int colsSumWidth = categories.size()+1;
 		String[][] colsSum = new String[colsSumHeight][colsSumWidth];
 		int csi1 = 0;

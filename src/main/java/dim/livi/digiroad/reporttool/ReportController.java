@@ -45,13 +45,8 @@ public class ReportController {
 	@RequestMapping(value = "/raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}/{hallinnollinenluokka}", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_UTF8_VALUE)
 	public ResponseEntity<c3jsData> chart1(@PathVariable String startdate, @PathVariable String stopdate, @PathVariable String kunnat, @PathVariable String tietolajit, @PathVariable String hallinnollinenluokka) throws InterruptedException, ExecutionException {
 		MiddleLayer mid = new MiddleLayer();
-		//final Future<ArrayList<rawModifiedResult>> future = items.getRawModifiedResult(startdate, stopdate, kunnat, tietolajit, hallinnollinenluokka);
 		final Future<ArrayList<rawModifiedResult>> futureAll = items.getRawModifiedAllResult(kunnat, tietolajit, hallinnollinenluokka);
-		//while (!future.isDone() || !futureAll.isDone()) {
-		while (!futureAll.isDone()) {
-			Thread.sleep(500L);
-        }
-		//c3jsData chartData = mid.buildC3JsChartData(startdate, stopdate, mid.createArrayCombinations(kunnat, tietolajit), futureAll.get(), futureAll.get());
+		while (!futureAll.isDone()) {Thread.sleep(500L);}
 		c3jsData chartData = mid.buildC3JsChartData(startdate, stopdate, mid.createArrayCombinations(kunnat, tietolajit), futureAll.get());
 		chartData.setGroups(mid.createGroups(kunnat, tietolajit));
 		chartData.setCategories(mid.getGategories().toArray(new String[0]));

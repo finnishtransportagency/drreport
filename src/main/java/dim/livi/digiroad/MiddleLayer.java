@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -18,7 +19,7 @@ public class MiddleLayer {
 		return categories;
 	}
 	
-	public c3jsData buildC3JsChartData(String startDate, String stopDate, List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData) {
+	public c3jsData buildC3JsChartData(String startDate, String stopDate, List<String> kombinaatiot, ArrayList<rawModifiedResult> rawData, Integer total) {
 
 		List<String> modDates = new ArrayList<String>();
 		SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
@@ -92,8 +93,7 @@ public class MiddleLayer {
 					if (mdate.equals(rditem.getMod_Date())
 						&& municipalityCode.equals(rditem.getMunicipalityCode().toString())
 						&& assetTypeId.equals(rditem.getAsset_Type_Id().toString())) {
-							Integer total = getSum(rawData, Integer.parseInt(assetTypeId), Integer.parseInt(municipalityCode));
-							Integer count = rditem.getCount();
+						    Integer count = rditem.getCount();
 							countCumul += rditem.getCount();
 							countSum += count;
 							Float percentage = total != 0 ? (float) (Math.round(10000f * count/total) / 10000f) : 0f;
@@ -132,6 +132,8 @@ public class MiddleLayer {
 		chartData.setColumnsCumulRel(Arrays.copyOf(colsCumulRel, i));
 		chartData.setColumns(Arrays.copyOf(cols, i));
 		chartData.setColumnsRel(Arrays.copyOf(colsRel, i));
+//		chartData.setColumnsSum(Arrays.copyOf(colsSum, i-1));
+//		chartData.setColumnsSumRel(Arrays.copyOf(colsSumRel, i-1));
 		chartData.setColumnsSum(this.doTheSummaryCols(colsSum));
 		chartData.setColumnsSumRel(this.doTheSummaryCols(colsSumRel));
 		chartData.setNames(names);
@@ -174,6 +176,7 @@ public class MiddleLayer {
 		int categoriesSize = categories.size();
 		int colsSumHeight = 1;
 		if (categoriesSize!=0){colsSumHeight = columns.length/categoriesSize;}
+		//int colsSumHeight = columns.length/categories.size();
 		int colsSumWidth = categories.size()+1;
 		String[][] colsSum = new String[colsSumHeight][colsSumWidth];
 		int csi1 = 0;
@@ -206,13 +209,5 @@ public class MiddleLayer {
 		return true;
 	}
 	
-	private Integer getSum(ArrayList<rawModifiedResult> rawdata, Integer Asset_Type_Id, Integer MunicipalityCode) {
-		Integer sum = 0;
-		for(rawModifiedResult item : rawdata) {
-			if(item.getAsset_Type_Id().intValue() == Asset_Type_Id.intValue()
-					&& item.getMunicipalityCode().intValue() == MunicipalityCode.intValue()) sum += item.getCount();
-		}
-		return sum;
-	}
 
 }

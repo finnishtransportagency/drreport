@@ -43,7 +43,7 @@ public class NisRepository {
 	 }
 	
 	@Async
-	public Future<ArrayList<rawModifiedResult>> getRawModifiedAllResult(String kunnat, String tietolajit, String hallinnollinenluokka) {
+	public Future<ArrayList<rawModifiedResult>> getRawModifiedResult(String kunnat, String tietolajit, String hallinnollinenluokka) {
 		String tuntematonNopeusrajoitus = (tietolajit.equals("20")) ? "and lrm.LINK_ID not in (select usl.link_id from DR2USER.UNKNOWN_SPEED_LIMIT usl)" : "";/*onko tietolaji nopeusajoitus*/
 		 return new AsyncResult<ArrayList<rawModifiedResult>>((ArrayList<rawModifiedResult>) jdbc.query("select MOD_DATE, ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, count(MOD_DATE) COUNT from ( " +
 		  "select ass.ASSET_TYPE_ID, at.NAME, rl.MUNICIPALITYCODE, mu.NAME_FI, to_char(cast(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE) as date), 'DD-MM-YYYY') MOD_DATE from DR2USER.ASSET ass " +
@@ -62,7 +62,20 @@ public class NisRepository {
 		"group by ASSET_TYPE_ID, NAME, MUNICIPALITYCODE, NAME_FI, MOD_DATE " +
 		"order by to_date(MOD_DATE, 'DD-MM-YYYY')", new RowMapperResultSetExtractor<rawModifiedResult>(rawModifiedResultMapper)));
 	 }
-	 
+
+	@Async
+	public Future<Integer> getAllCount(String kunnat, String tietolajit) {
+		return new AsyncResult<Integer>(jdbc.queryForObject("select count(coalesce(ass.MODIFIED_DATE, ass.CREATED_DATE)) as total from DR2USER.ASSET ass " +
+				 "inner join DR2USER.ASSET_LINK al on ass.ID = al.ASSET_ID " + 
+				 "inner join DR2USER.LRM_POSITION lrm on al.POSITION_ID = lrm.ID " +
+				 "inner join VVH.ROADLINK@VVH rl on lrm.LINK_ID = rl.LINKID " +
+				 "inner join DR2USER.MUNICIPALITY mu on rl.MUNICIPALITYCODE = mu.ID " +
+				 "inner join DR2USER.ASSET_TYPE at on ass.ASSET_TYPE_ID = at.ID " +
+				 "where ass.ASSET_TYPE_ID in (" + tietolajit + ") " +
+				 "and rl.MUNICIPALITYCODE in (" + kunnat + ") " +			 
+				 "and ass.VALID_TO is null", itemMapper));
+	 }
+	
 	    private static final RowMapper<IdText> assetTypeMapper = new RowMapper<IdText>() {
 	        @Override
 	        public IdText mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -76,7 +89,15 @@ public class NisRepository {
 	        	return new IdText(rs.getInt("ID"), rs.getString("NAME_FI"));
 			} 
 	    };
-	    
+	    private static final RowMapper<Integer> itemMapper = new RowMapper<Integer>() {
+	        @Override
+	        public Integer mapRow(ResultSet rs, int rowNum) throws SQLException { 
+	            int item = rs.getInt("total");
+	            return item; 
+
+			} 
+	    };
+
 	    private static final RowMapper<rawModifiedResult> rawModifiedResultMapper = new RowMapper<rawModifiedResult>() {
 	        @Override
 	        public rawModifiedResult mapRow(ResultSet rs, int rowNum) throws SQLException {

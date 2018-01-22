@@ -69,7 +69,7 @@ registerClick: function() {
 		var kunnat = $(".js-data-kunta-ajax").val() != null ? $(".js-data-kunta-ajax").val() : "0";
 		var tietolajit = $(".js-data-tietolaji-ajax").val() != null ? $(".js-data-tietolaji-ajax").val() : "0";
 		var hallinnollinenluokka = $(".js-data-hallinnollinenluokka-ajax").val() != null ? $(".js-data-hallinnollinenluokka-ajax").val() : "1,2,3,99";
-		var urli = "/raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit + "/" + hallinnollinenluokka;
+		var urli = "raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit + "/" + hallinnollinenluokka;
 		console.log("REST:" + urli);
 		if(me.nid!=null) c3Controller.nid.close();
 		if(tietolajit == 0 || kunnat == 0){

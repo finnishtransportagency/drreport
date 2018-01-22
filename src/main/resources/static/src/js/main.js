@@ -12,9 +12,9 @@ var dateTime = require('../../modules/dateTimeController.js');
 var c3 = require('../../modules/c3Controller.js');
 
 global.jQuery(document).ready(function($) {	
-	select2.activate(".js-data-kunta-ajax", "/koodistot/kunnat", true, 2, "Kunta");
-	select2.activate(".js-data-tietolaji-ajax", "/koodistot/tietolajit", false, 0, "Valitse tietolaji");
-	select2.activate(".js-data-hallinnollinenluokka-ajax", "/koodistot/hallinnollinenluokka", true, 0, "Valitse hallinnollinenluokka");
+	select2.activate(".js-data-kunta-ajax", "koodistot/kunnat", true, 2, "Kunta");
+	select2.activate(".js-data-tietolaji-ajax", "koodistot/tietolajit", false, 0, "Valitse tietolaji");
+	select2.activate(".js-data-hallinnollinenluokka-ajax", "koodistot/hallinnollinenluokka", true, 0, "Valitse hallinnollinenluokka");
 	dateTime.activatePicker1();
 	dateTime.activatePicker2();
 	c3.init();

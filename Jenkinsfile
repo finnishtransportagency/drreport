@@ -6,7 +6,12 @@ pipeline {
                 docker { image 'node:7-alpine' }
             }
             steps {
-                sh 'node --version'
+                sh ''' 
+				cd ./src/main/resources/static
+				node version				
+				ls -la
+				npm version
+				'''
             }
         }
 		stage('Back-end') {

@@ -8,7 +8,7 @@ pipeline {
             steps {
                 sh ''' 
 				cd ./src/main/resources/static
-				node version				
+				node --version				
 				ls -la
 				npm version
 				'''

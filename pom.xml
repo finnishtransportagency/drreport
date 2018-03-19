@@ -43,8 +43,8 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupid>com.oracle.jdbc</groupid>
-            <artifactid>ojdbc8</artifactid>
+            <groupId>com.oracle.jdbc</groupId>
+            <artifactId>ojdbc8</artifactId>
             <version>12.2.0.1</version>
 		</dependency>
 		<dependency>

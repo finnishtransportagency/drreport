@@ -14,7 +14,7 @@ pipeline {
 				npm run html
 				npm run css
 				ls -la
-				npm run js
+				npm run js2
 				npm run fonts
 				ls -la
 				cd ./js

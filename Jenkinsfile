@@ -10,7 +10,11 @@ pipeline {
 				cd ./src/main/resources/static
 				node --version				
 				ls -la
-				npm version
+				npm install
+				npm run html
+				npm run css
+				npm run js
+				npm run fonts
 				'''
             }
         }

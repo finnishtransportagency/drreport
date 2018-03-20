@@ -12,7 +12,7 @@ pipeline {
 				pwd			
 				ls -la
 				npm install
-				rm index.html
+				rm -f index.html
 				npm run html
 				npm run css
 				pwd

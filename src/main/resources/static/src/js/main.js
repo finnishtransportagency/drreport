@@ -7,8 +7,6 @@ require('moment/locale/fi');
 require('bootstrap');
 require('bootstrap-switch');
 require('eonasdan-bootstrap-datetimepicker-custom');
-var row_flow = require('browserify-row-flow');
-browserify().plugin(row_flow().plugin());
 var select2 = require('../../modules/select2controller.js');
 var dateTime = require('../../modules/dateTimeController.js');
 var c3 = require('../../modules/c3Controller.js');

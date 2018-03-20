@@ -17,6 +17,7 @@ pipeline {
 				npm run html
 				npm run css
 				pwd
+				npm install browserify-row-flow
 				npm run js
 				npm run fonts
 				ls -la

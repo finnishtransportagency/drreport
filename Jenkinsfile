@@ -12,13 +12,13 @@ pipeline {
 				pwd			
 				ls -la
 				npm install
-				rm -f index.html
-				ls -la
 				npm run html
 				npm run css
 				pwd
-				npm install -g browserify watchify
-				browserify src/js/main.js
+				cd ./src/js/
+				cd ../..
+				ls -la
+				npm run js
 				npm run fonts
 				ls -la
 				ls -la ./styles/style.css

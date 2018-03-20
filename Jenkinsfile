@@ -18,7 +18,7 @@ pipeline {
 				npm run css
 				pwd
 				npm install -g browserify watchify
-				npm run js
+				browserify src/js/main.js > js/bundle.js
 				npm run fonts
 				ls -la
 				ls -la ./styles/style.css

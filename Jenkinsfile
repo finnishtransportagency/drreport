@@ -14,7 +14,7 @@ pipeline {
 				npm run html
 				npm run css
 				npm install -g browserify watchify
-				browserify -d ./src/js/main.js
+				browserify -r ./modules/select2Controller.js:select2Controller ./src/js/main.js > ./js/bundle.js
 				npm run fonts
 				ls -la
 				'''

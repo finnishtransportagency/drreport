@@ -8,8 +8,8 @@ require('bootstrap');
 require('bootstrap-switch');
 require('eonasdan-bootstrap-datetimepicker-custom');
 var select2 = require('select2Controller');
-var dateTime = require('../../modules/dateTimeController.js');
-var c3 = require('../../modules/c3Controller.js');
+var dateTime = require('dateTimeController');
+var c3 = require('c3Controller');
 
 global.jQuery(document).ready(function($) {	
 	select2.activate(".js-data-kunta-ajax", "koodistot/kunnat", true, 2, "Kunta");

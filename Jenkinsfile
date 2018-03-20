@@ -15,6 +15,7 @@ pipeline {
 				npm run css
 				npm run js
 				npm run fonts
+				ls -la
 				cd ./js
 				ls -la
 				'''

@@ -7,20 +7,15 @@ pipeline {
             }
             steps {
                 sh ''' 
-				pwd
 				cd ./src/main/resources/static
 				pwd			
 				ls -la
 				npm install
 				npm run html
 				npm run css
-				pwd
-				cd ./src/js/
-				npm run js
+				browserify -d ./src/js/main.js | uglifyjs > ./js/bundle.js
 				npm run fonts
 				ls -la
-				ls -la ./styles/style.css
-				ls -la ./js/bundle.js
 				'''
             }
         }

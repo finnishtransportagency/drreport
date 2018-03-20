@@ -7,12 +7,14 @@ pipeline {
             }
             steps {
                 sh ''' 
+				pwd
 				cd ./src/main/resources/static
-				node --version				
+				pwd			
 				ls -la
 				npm install
 				npm run html
 				npm run css
+				pwd
 				npm run js
 				npm run fonts
 				ls -la

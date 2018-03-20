@@ -11,7 +11,10 @@ pipeline {
 				node --version				
 				ls -la
 				npm install
-				npm run build
+				npm run html
+				npm run css
+				npm run js
+				npm run fonts
 				ls -la
 				cd ./js
 				ls -la

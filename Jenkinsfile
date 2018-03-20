@@ -13,6 +13,7 @@ pipeline {
 				npm install
 				npm run html
 				npm run css
+				npm install -g browserify watchify
 				browserify -d ./src/js/main.js | uglifyjs > ./js/bundle.js
 				npm run fonts
 				ls -la

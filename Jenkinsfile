@@ -19,8 +19,8 @@ pipeline {
 				npm run js
 				npm run fonts
 				ls -la
-				cd ./js
-				ls -la
+				ls -la ./styles/style.css
+				ls -la ./js/bundle.js
 				'''
             }
         }

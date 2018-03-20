@@ -13,7 +13,7 @@ pipeline {
 				npm install
 				npm run html
 				npm run css
-				npm run js2
+				npm run js
 				npm run fonts
 				cd ./js
 				ls -la

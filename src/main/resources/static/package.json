@@ -29,7 +29,7 @@
     "eonasdan-bootstrap-datetimepicker-custom": "^4.17.39",
     "font-awesome": "^4.6.3",
     "free-jqgrid": "4.13.3",
-    "jquery": "3.0.0",
+    "jquery": "^2.2.4",
     "jquery-ui": "1.10.5",
     "noty": "^2.3.8",
     "openlayers": "^4.0.1",

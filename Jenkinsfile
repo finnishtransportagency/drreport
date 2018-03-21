@@ -8,7 +8,7 @@ pipeline {
             steps {
                 sh ''' 
 				cd ./src/main/resources/static/modules
-				chmod * 777
+				chmod 777 *
                 cd ..
 				ls -la
 				npm install

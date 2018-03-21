@@ -10,7 +10,7 @@ def notify(message,color) {
 pipeline {
     agent none
     stages {
-        /*stage('Front-end') {
+        stage('Front-end') {
             agent {
                 docker { image 'node:alpine' }
             }
@@ -27,7 +27,7 @@ pipeline {
 				cd ../../../..
 				'''
             }
-        }*/
+        }
 		stage('Back-end') {
             agent {
                 docker {
@@ -38,6 +38,7 @@ pipeline {
             }
 			when {
                 beforeAgent true 
+				
                 expression { 
                     get_environment()?.trim()
                 } 

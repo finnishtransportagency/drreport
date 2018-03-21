@@ -8,9 +8,53 @@ def notify(message,color) {
     //slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
 pipeline {
-    agent none
+    agent any
+    options {
+        buildDiscarder(logRotator(numToKeepStr: "5"))
+        disableConcurrentBuilds()
+    }
     stages {
-        stage('Front-end') {
+        stage("Setup") {
+            when { 
+                expression { 
+                    get_environment()?.trim() 
+                } 
+            }
+            steps {
+                script {
+                    // t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit
+                 }
+            }
+        }
+        stage("Ack") {
+            agent none
+            options { 
+                timeout(time: 5, unit: "MINUTES")
+            }
+            when { 
+                expression { 
+                    DEPLOY_TARGET
+                } 
+            }
+            steps {
+                notify("Stage 'Ack': Waiting for user input!","warning")
+                input(
+                    message: "Proceed with following settings?",
+                    parameters: [
+                        choice(choices: DEPLOY_TARGET, description: "Deploy target.", name: "deploy_target"),
+                        choice(choices: ARTIFACT_ID, description: "Artifact ID", name: "artifact_id"),
+                        choice(choices: ARTIFACT_VERSION, description: "Artifact version", name: "artifact_version"),
+                        choice(choices: GROUP_ID, description: "Group ID", name: "group_id")
+                    ]
+                )
+            }
+            post {
+                aborted { 
+                    notify("Stage 'Ack': aborted!","warning") 
+                }
+            }
+        }
+        stage("Front-end") {
             agent {
                 docker { image 'node:alpine' }
             }
@@ -33,16 +77,15 @@ pipeline {
 		stage('Back-end') {
             agent {
                 docker {
-                    image 'maven:alpine'
+                    image "maven:alpine"
                     args "--volume /data1/maven/:/m2/"
-                    reuseNode true					
+                    reuseNode true
                 }
             }
-			when {
+            when {
                 beforeAgent true 
-				
                 expression { 
-                    get_environment()?.trim()
+                    get_environment()?.trim() 
                 } 
             }
             steps {

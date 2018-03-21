@@ -7,15 +7,11 @@ pipeline {
             }
             steps {
                 sh ''' 
-				cd ./src/main/resources/static/modules
-				ls -la
-                cd ..
-				ls -la
+				cd ./src/main/resources/static
 				npm install
 				npm run html
 				npm run css
-				npm install -g browserify watchify
-				browserify -d -r ./modules/select2Controller.js:select2Controller -r ./modules/c3controller.js:c3Controller -r ./modules/dateTimeController.js:dateTimeController ./src/js/main.js > ./js/bundle.js
+				npm run js2
 				npm run fonts
 				ls -la
 				'''

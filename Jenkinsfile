@@ -175,7 +175,7 @@ pipeline {
                 } 
             }
             steps {
-                ...
+                echo "..."
             }
             post {
                 always {

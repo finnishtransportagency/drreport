@@ -24,10 +24,10 @@ pipeline {
                 script {
                     echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
 					/*n‰‰ pit‰‰ poistaa*/
-					ARTIFACT_ID = 1
+					ARTIFACT_ID = "1"
 					DEPLOY_TARGET = get_environment()
-					ARTIFACT_VERSION = 1
-					GROUP_ID = 1
+					ARTIFACT_VERSION = "1"
+					GROUP_ID = "1"
                  }
             }
         }

@@ -1,4 +1,5 @@
 def get_environment() {
+	printenv
     if (env.NODE_NAME.equals("develop")) { return "dev" }
     if (env.NODE_NAME.equals("master")) { return "prod" }
     return ""
@@ -9,7 +10,7 @@ def notify(message,color) {
 pipeline {
     agent none
     stages {
-        stage('Front-end') {
+        /*stage('Front-end') {
             agent {
                 docker { image 'node:alpine' }
             }
@@ -26,7 +27,7 @@ pipeline {
 				cd ../../../..
 				'''
             }
-        }
+        }*/
 		stage('Back-end') {
             agent {
                 docker {

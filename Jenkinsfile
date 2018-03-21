@@ -20,8 +20,9 @@ pipeline {
 		stage('Back-end') {
             agent {
                 docker {
-                    image 'maven:alpine' 
-                    args '-v /root/.m2:/root/.m2' 
+                    image 'maven:alpine'
+                    args "--volume /data1/maven/:/m2/"
+                    reuseNode true					
                 }
             }
             steps {

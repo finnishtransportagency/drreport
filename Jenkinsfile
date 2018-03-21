@@ -94,6 +94,122 @@ pipeline {
                 mvn -B -DskipTests clean package
 				'''
             }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+                failure { 
+                    notify("Stage 'Build': failure!","danger") 
+                }
+            }
+        }
+        stage("Confirm") {
+            agent none
+            options {
+                timeout(time: 5, unit: "MINUTES")
+            }
+            when {
+                branch "master"
+            }
+            steps {
+                notify("Stage 'Confirm': Waiting for user input!","warning")
+                input "Create release ${GROUP_ID}:${ARTIFACT_ID}@${ARTIFACT_VERSION} and deploy to ${DEPLOY_TARGET}?"
+            }
+            post {
+                aborted { 
+                    notify("Stage 'Confirm': aborted!","danger") 
+                }
+            }
+        }
+
+        stage("Publish") {
+            agent {
+                docker {
+                    image "maven:alpine"
+                    args "--volume /data1/maven/:/m2/"
+                    reuseNode true
+                }
+            }
+            when {
+                beforeAgent true
+                expression { 
+                    get_environment()?.trim() 
+                } 
+            }
+            steps {
+                sh "${MAVEN_DEPLOY.join(' ')} ${MAVEN_SETTINGS}"
+            }
+            post {
+                failure { 
+                    notify("Stage 'Publish': failure!","danger") 
+                }
+            }
+        }
+        stage("Deploy") {
+            when { 
+                expression { 
+                    get_environment()?.trim() 
+                }
+            }
+            steps {
+                sh "ansible localhost -m maven_artifact -a '${ANSIBLE_EXTRA_VARS}'"
+            }
+            post {
+                failure { 
+                    notify("Stage 'Deploy': failure!","danger")
+                }
+            }
+        }
+        stage("Test") {
+            agent {
+                docker {
+                    image "python:2-alpine"
+                    args "-u root"
+                    reuseNode true
+                }
+            }
+            when {
+                beforeAgent true
+                expression { 
+                    get_environment()?.trim() 
+                } 
+            }
+            steps {
+                ...
+            }
+            post {
+                always {
+                    publishHTML target: [
+                        allowMissing: true,
+                        alwaysLinkToLastBuild: false,
+                        keepAll: true,
+                        reportDir: "src",
+                        reportFiles: "*.html",
+                        reportName: 'RF Reports'
+                    ]
+                }
+                failure {
+                    notify("Stage 'Test': failure!","danger") 
+                }
+            }
+        }
+    }
+    post {
+        aborted {
+            nofity("Job aborted!","warning")
+        }
+        always { 
+            deleteDir()
+        }
+        failure { 
+            notify("Job failure!\nCheck <${BUILD_URL}/console|console>!","danger")
+        }
+        success {
+            script {
+                if (get_environment()?.trim()) {
+                    notify("Job success!","good")       
+                }
+            }
         }
     }
 }

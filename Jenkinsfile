@@ -14,14 +14,18 @@ pipeline {
             agent {
                 docker { image 'node:alpine' }
             }
+			when {
+                beforeAgent true 
+				
+                expression { 
+                    get_environment()?.trim()
+                } 
+            }
             steps {
                 sh '''
 				cd ./src/main/resources/static
 				npm install
-				npm run html
-				npm run css
-				npm run js2
-				npm run fonts
+				npm run build
 				cd ../../../..
 				'''
             }

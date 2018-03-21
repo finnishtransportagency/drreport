@@ -30,7 +30,8 @@ pipeline {
                 mvn -B -DskipTests clean package
 				cd target
 				ls -la
-				docker cp jenkinsci/blueocean:/var/jenkins_home/workspace/DRreport/target/reporttool-0.0.1-SNAPSHOT.war .
+				cd ${env.WORKSPACE}
+				pwd
 				'''
             }
         }

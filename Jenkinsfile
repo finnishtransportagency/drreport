@@ -37,7 +37,7 @@ pipeline {
 			when {
                 beforeAgent true 
                 expression { 
-                    echo "get_environment()?.trim()" 
+                    prod 
                 } 
             }
             steps {

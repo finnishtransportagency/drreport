@@ -1,8 +1,11 @@
 def get_environment() {
-    if (BRANCH_NAME.equals("develop")) { return "dev" }
-    if (BRANCH_NAME.equals("master")) { return "prod" }
-    if (BRANCH_NAME.startsWith("release-")) { return "stg" }
+    if (env.BRANCH_NAME.equals("develop")) { return "dev" }
+    if (env.BRANCH_NAME.equals("master")) { return "prod" }
+    if (env.BRANCH_NAME.startsWith("release-")) { return "stg" }
     return ""
+}
+def notify(message,color) {
+    //slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
 pipeline {
     agent none

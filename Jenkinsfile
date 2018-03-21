@@ -1,5 +1,4 @@
 def get_environment() {
-	echo NODE_NAME
 	echo env.NODE_NAME
     if (env.NODE_NAME.equals("develop")) { return "dev" }
     if (env.NODE_NAME.equals("master")) { return "prod" }

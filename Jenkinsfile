@@ -16,6 +16,7 @@ pipeline {
             steps {
                 sh '''
 				printenv
+				echo ${env.NODE_NAME}
 				cd ./src/main/resources/static
 				npm install
 				npm run html
@@ -37,7 +38,7 @@ pipeline {
 			when {
                 beforeAgent true 
                 expression { 
-                    get_environment().trim()
+                    get_environment()?.trim()
                 } 
             }
             steps {

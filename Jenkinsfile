@@ -22,7 +22,7 @@ pipeline {
             }
             steps {
                 script {
-                    // tässä tehdään tarvittavat flow asetusleikit
+                    echo "tässä tehdään tarvittavat flow asetusleikit"
                  }
             }
         }

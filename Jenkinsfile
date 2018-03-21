@@ -14,7 +14,8 @@ pipeline {
                 docker { image 'node:alpine' }
             }
             steps {
-                sh ''' 
+                sh '''
+				printenv
 				cd ./src/main/resources/static
 				npm install
 				npm run html

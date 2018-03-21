@@ -1,7 +1,7 @@
 def get_environment() {
-	echo env.NODE_NAME
-    if (env.NODE_NAME.equals("develop")) { return "dev" }
-    if (env.NODE_NAME.equals("master")) { return "prod" }
+    if (BRANCH_NAME.equals("develop")) { return "dev" }
+    if (BRANCH_NAME.equals("master")) { return "prod" }
+    if (BRANCH_NAME.startsWith("release-")) { return "stg" }
     return ""
 }
 def notify(message,color) {

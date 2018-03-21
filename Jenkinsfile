@@ -13,9 +13,7 @@ pipeline {
 				npm run css
 				npm run js2
 				npm run fonts
-				cd ./js
-				ls -la
-				cd ../../../../..
+				cd ../../../..
 				'''
             }
         }

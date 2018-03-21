@@ -37,7 +37,7 @@ pipeline {
 			when {
                 beforeAgent true 
                 expression { 
-                    get_environment()?.trim() 
+                    echo "get_environment()?.trim()" 
                 } 
             }
             steps {

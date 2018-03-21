@@ -23,7 +23,11 @@ pipeline {
             steps {
                 script {
                     echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
-					DEPLOY_TARGET = get_environment()/*t‰‰ pit‰‰ poistaa*/
+					/*n‰‰ pit‰‰ poistaa*/
+					ARTIFACT_ID = 1
+					DEPLOY_TARGET = get_environment()
+					ARTIFACT_VERSION = 1
+					GROUP_ID = 1
                  }
             }
         }

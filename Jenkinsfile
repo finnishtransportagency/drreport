@@ -23,6 +23,7 @@ pipeline {
             steps {
                 script {
                     echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
+					DEPLOY_TARGET = get_environment()/*t‰‰ pit‰‰ poistaa*/
                  }
             }
         }

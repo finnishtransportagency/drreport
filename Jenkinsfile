@@ -16,8 +16,6 @@ pipeline {
             }
             steps {
                 sh '''
-				printenv
-				echo ${env.NODE_NAME}
 				cd ./src/main/resources/static
 				npm install
 				npm run html

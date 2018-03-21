@@ -1,6 +1,6 @@
 def get_environment() {
-    if (env.BRANCH_NAME.equals("develop")) { return "dev" }
-    if (env.BRANCH_NAME.equals("master")) { return "prod" }
+    if (BRANCH_NAME.equals("develop") or NODE_NAME.equals"develop") { return "dev" }
+    if (BRANCH_NAME.equals("master") or NODE_NAME.equals"develop") { return "prod" }
     return ""
 }
 def notify(message,color) {

@@ -30,7 +30,6 @@ pipeline {
                 mvn -B -DskipTests clean package
 				cd target
 				ls -la
-				cd ${env.WORKSPACE}
 				pwd
 				'''
             }

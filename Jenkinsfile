@@ -37,7 +37,7 @@ pipeline {
 			when {
                 beforeAgent true 
                 expression { 
-                    prod 
+                    get_environment()?.trim() == 'prod'
                 } 
             }
             steps {

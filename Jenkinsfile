@@ -1,7 +1,6 @@
 def get_environment() {
     if (env.BRANCH_NAME.equals("develop")) { return "dev" }
     if (env.BRANCH_NAME.equals("master")) { return "prod" }
-    if (env.BRANCH_NAME.startsWith("release-")) { return "stg" }
     return ""
 }
 def notify(message,color) {

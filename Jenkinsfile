@@ -1,3 +1,9 @@
+def get_environment() {
+    if (BRANCH_NAME.equals("develop")) { return "dev" }
+    if (BRANCH_NAME.equals("master")) { return "prod" }
+    if (BRANCH_NAME.startsWith("release-")) { return "stg" }
+    return ""
+}
 pipeline {
     agent none
     stages {

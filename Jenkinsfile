@@ -40,7 +40,7 @@ pipeline {
 		stage("SetupProd") {
             when { 
                 expression { 
-                    get_environment()?.trim() && get_test()?.trim() == "test"
+                    get_environment()?.trim() && get_test()?.trim() == "prod"
                 } 
             }
             steps {

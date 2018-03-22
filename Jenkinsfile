@@ -5,7 +5,7 @@ def get_environment() {
     return ""
 }
 def get_computername() {
-    if (COMPUTERNAME.equals("WSLT34")) { return "test" }
+    if (1==1) { return "test" }
     return ""
 }
 def printParams() {

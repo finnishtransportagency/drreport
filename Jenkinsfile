@@ -166,7 +166,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression { 
-                    get_environment()?.trim() == "prod" && get_test()?.trim() == "prod"
+                    get_environment()?.trim() && get_test()?.trim() == "prod"
                 } 
             }
             steps {

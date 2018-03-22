@@ -14,10 +14,10 @@ pipeline {
         disableConcurrentBuilds()
     }
     stages {
-        stage("Setup") {
+        stage("SetupTest") {
             when { 
                 expression { 
-                    get_environment()?.trim() 
+                    get_environment()?.trim() == "Test"
                 } 
             }
             steps {

@@ -142,7 +142,7 @@ pipeline {
                 timeout(time: 5, unit: "MINUTES")
             }
             when {
-                get_environment()?.trim() == "prod" && get_test()?.trim() == "prod" 
+                get_test()?.trim() == "prod" 
             }
             steps {
                 notify("Stage 'Confirm': Waiting for user input!","warning")

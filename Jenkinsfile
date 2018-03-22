@@ -5,8 +5,7 @@ def get_environment() {
     return ""
 }
 def get_computername() {
-    if (1==1) { return "test" }
-    return ""
+    return "test"
 }
 def printParams() {
   env.getEnvironment().each { name, value -> println "Name: $name -> Value $value" }

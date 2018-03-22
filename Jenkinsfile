@@ -6,11 +6,9 @@ def get_environment() {
 }
 def get_test() {
     if (JENKINS_URL.equals("http://munjenkkins1/")) { return "test" }
-    return ""
+    return "prod"
 }
-def printParams() {
-  echo "MITÄÄ??"
-}
+
 def notify(message,color) {
     //slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
@@ -43,7 +41,7 @@ pipeline {
 		stage("SetupProd") {
             when { 
                 expression { 
-                    get_environment()?.trim()
+                    get_environment()?.trim() && get_test()?.trim() == "prod"
                 } 
             }
             steps {

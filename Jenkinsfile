@@ -8,6 +8,9 @@ def get_computername() {
     if (COMPUTERNAME.equals("WSLT34")) { return "test" }
     return ""
 }
+def printParams() {
+  env.getEnvironment().each { name, value -> println "Name: $name -> Value $value" }
+}
 def notify(message,color) {
     //slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
@@ -33,6 +36,7 @@ pipeline {
 					ARTIFACT_VERSION = "1"
 					GROUP_ID = "1"
 					TESTI = "TESTI"
+					printParams()
                  }
             }
         }

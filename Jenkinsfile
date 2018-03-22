@@ -1,6 +1,6 @@
 def get_environment() {
-    if (BRANCH_NAME.equals("develop")) { return "dev" }
-    if (BRANCH_NAME.equals("master")) { return "dev" }
+    if (BRANCH_NAME.equals("develop")) { return "test" }
+    if (BRANCH_NAME.equals("master")) { return "test" }
     if (BRANCH_NAME.startsWith("release-")) { return "stg" }
     return ""
 }
@@ -31,14 +31,14 @@ pipeline {
                  }
             }
         }
-        stage("Ack") {
+        stage("AckProd") {
             agent none
             options { 
                 timeout(time: 5, unit: "MINUTES")
             }
             when { 
                 expression { 
-                    DEPLOY_TARGET
+                    DEPLOY_TARGET == "dev"
                 } 
             }
             steps {
@@ -50,6 +50,18 @@ pipeline {
                         choice(choices: ARTIFACT_ID, description: "Artifact ID", name: "artifact_id"),
                         choice(choices: ARTIFACT_VERSION, description: "Artifact version", name: "artifact_version"),
                         choice(choices: GROUP_ID, description: "Group ID", name: "group_id")
+                    ]
+                )
+            }
+			stage("AckTest") {
+            agent none
+            when { 
+                expression { 
+                    DEPLOY_TARGET ==  "test"
+                } 
+            }
+            steps {
+                echo "TESTING!"
                     ]
                 )
             }

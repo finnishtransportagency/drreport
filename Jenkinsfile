@@ -8,12 +8,11 @@ def get_computername() {
     return "test"
 }
 def printParams() {
-  env.getEnvironment().each { name, value -> println "Name: $name -> Value $value" }
+  echo "MITÄÄ??"
 }
 def notify(message,color) {
     //slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
-printParams()
 pipeline {
     agent any
     options {
@@ -36,6 +35,7 @@ pipeline {
 					ARTIFACT_VERSION = "1"
 					GROUP_ID = "1"
 					TESTI = "TESTI"
+					printParams()
                  }
             }
         }

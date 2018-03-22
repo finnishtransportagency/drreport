@@ -21,13 +21,13 @@ pipeline {
     }
     stages {
         stage("SetupTest") {
+			printParams()
             when { 
                 expression { 
                     get_computername()?.trim() == "test"
                 } 
             }
             steps {
-				
                 script {
                     echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
 					/*n‰‰ pit‰‰ poistaa*/

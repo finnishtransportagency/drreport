@@ -35,8 +35,8 @@ pipeline {
 					ARTIFACT_VERSION = "1"
 					GROUP_ID = "1"
 					TESTI = "TESTI"
-					printParams()
                  }
+				 echo sh(script: 'env', returnStdout: true)
             }
         }
 		stage("SetupProd") {

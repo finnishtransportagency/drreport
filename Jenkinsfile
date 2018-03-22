@@ -32,7 +32,6 @@ pipeline {
 					DEPLOY_TARGET = get_environment()
 					ARTIFACT_VERSION = BUILD_ID
 					GROUP_ID = "1"
-					TESTI = "TESTI"
                  }
 				 echo sh(script: 'env', returnStdout: true)
             }
@@ -56,7 +55,7 @@ pipeline {
             }
             when { 
                 expression { 
-                    DEPLOY_TARGET
+                    DEPLOY_TARGET && get_test()?.trim() == "prod"
                 } 
             }
             steps {
@@ -76,7 +75,7 @@ pipeline {
             agent none
             when { 
                 expression { 
-                    TESTI ==  "TESTI"
+                    get_test()?.trim() == "test"
                 } 
             }
             steps {

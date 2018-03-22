@@ -1,7 +1,11 @@
 def get_environment() {
-    if (BRANCH_NAME.equals("develop")) { return "test" }
-    if (BRANCH_NAME.equals("master")) { return "test" }
+    if (BRANCH_NAME.equals("develop")) { return "dev" }
+    if (BRANCH_NAME.equals("master")) { return "dev" }
     if (BRANCH_NAME.startsWith("release-")) { return "stg" }
+    return ""
+}
+def get_computername() {
+    if (COMPUTERNAME.equals("WSLT34")) { return "test" }
     return ""
 }
 def notify(message,color) {
@@ -17,7 +21,7 @@ pipeline {
         stage("SetupTest") {
             when { 
                 expression { 
-                    get_environment()?.trim() == "Test"
+                    get_computername()?.trim() == "test"
                 } 
             }
             steps {
@@ -28,6 +32,19 @@ pipeline {
 					DEPLOY_TARGET = get_environment()
 					ARTIFACT_VERSION = "1"
 					GROUP_ID = "1"
+					TESTI = "TESTI"
+                 }
+            }
+        }
+		stage("SetupProd") {
+            when { 
+                expression { 
+                    get_environment()?.trim()
+                } 
+            }
+            steps {
+                script {
+                    echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
                  }
             }
         }
@@ -38,7 +55,7 @@ pipeline {
             }
             when { 
                 expression { 
-                    DEPLOY_TARGET == "dev"
+                    DEPLOY_TARGET
                 } 
             }
             steps {
@@ -58,7 +75,7 @@ pipeline {
             agent none
             when { 
                 expression { 
-                    DEPLOY_TARGET ==  "test"
+                    TESTI ==  "TESTI"
                 } 
             }
             steps {

@@ -1,6 +1,6 @@
 def get_environment() {
     if (BRANCH_NAME.equals("develop")) { return "dev" }
-    if (BRANCH_NAME.equals("master")) { return "dev" }
+    if (BRANCH_NAME.equals("master")) { return "prod" }
     if (BRANCH_NAME.startsWith("release-")) { return "stg" }
     return ""
 }
@@ -44,7 +44,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "t‰ss‰ tehd‰‰n Prod tarvittavat flow asetusleikit"
+                    echo "tassa tehdaan Prod tarvittavat flow asetusleikit"
                  }
             }
         }
@@ -55,7 +55,7 @@ pipeline {
             }
             when { 
                 expression { 
-                    DEPLOY_TARGET && get_test()?.trim() == "prod"
+                    DEPLOY_TARGET /*&& get_test()?.trim() == "prod"*/
                 } 
             }
             steps {

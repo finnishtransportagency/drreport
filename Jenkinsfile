@@ -22,7 +22,6 @@ pipeline {
     stages {
         stage("SetupTest") {
             when {
-				printParams()
                 expression { 
                     get_computername()?.trim() == "test"
                 } 
@@ -37,6 +36,7 @@ pipeline {
 					GROUP_ID = "1"
 					TESTI = "TESTI"
                  }
+				printParams()
             }
         }
 		stage("SetupProd") {

@@ -13,6 +13,7 @@ def printParams() {
 def notify(message,color) {
     //slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
+printParams()
 pipeline {
     agent any
     options {
@@ -36,7 +37,6 @@ pipeline {
 					GROUP_ID = "1"
 					TESTI = "TESTI"
                  }
-				printParams()
             }
         }
 		stage("SetupProd") {

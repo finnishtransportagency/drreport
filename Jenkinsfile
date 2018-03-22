@@ -28,6 +28,7 @@ pipeline {
                 } 
             }
             steps {
+				printParams()
                 script {
                     echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
 					/*n‰‰ pit‰‰ poistaa*/
@@ -36,7 +37,6 @@ pipeline {
 					ARTIFACT_VERSION = "1"
 					GROUP_ID = "1"
 					TESTI = "TESTI"
-					printParams()
                  }
             }
         }

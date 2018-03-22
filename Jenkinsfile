@@ -29,11 +29,11 @@ pipeline {
             }
             steps {
                 script {
-                    echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
+                    echo "t‰ss‰ tehd‰‰n test tarvittavat flow asetusleikit"
 					/*n‰‰ pit‰‰ poistaa*/
 					ARTIFACT_ID = "1"
 					DEPLOY_TARGET = get_environment()
-					ARTIFACT_VERSION = "1"
+					ARTIFACT_VERSION = BUILD_ID
 					GROUP_ID = "1"
 					TESTI = "TESTI"
                  }
@@ -48,7 +48,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
+                    echo "t‰ss‰ tehd‰‰n Prod tarvittavat flow asetusleikit"
                  }
             }
         }

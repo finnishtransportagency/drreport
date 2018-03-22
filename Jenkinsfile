@@ -181,7 +181,7 @@ pipeline {
         stage("Deploy") {
             when { 
                 expression { 
-                    get_environment()?.trim() 
+                    get_environment()?.trim() == "prod" 
                 }
             }
             steps {

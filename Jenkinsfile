@@ -142,7 +142,7 @@ pipeline {
                 timeout(time: 5, unit: "MINUTES")
             }
             when {
-                branch "master"
+                branch "master" && get_test()?.trim() == "prod" 
             }
             steps {
                 notify("Stage 'Confirm': Waiting for user input!","warning")

@@ -27,7 +27,7 @@ pipeline {
                 } 
             }
             steps {
-				printParams()
+				
                 script {
                     echo "t‰ss‰ tehd‰‰n tarvittavat flow asetusleikit"
 					/*n‰‰ pit‰‰ poistaa*/

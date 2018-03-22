@@ -4,8 +4,9 @@ def get_environment() {
     if (BRANCH_NAME.startsWith("release-")) { return "stg" }
     return ""
 }
-def get_computername() {
-    return "test"
+def get_test() {
+    if (JENKINS_URL.equals("http://munjenkkins1/")) { return "test" }
+    return ""
 }
 def printParams() {
   echo "MITÄÄ??"
@@ -23,7 +24,7 @@ pipeline {
         stage("SetupTest") {
             when {
                 expression { 
-                    get_computername()?.trim() == "test"
+                    get_test()?.trim() == "test"
                 } 
             }
             steps {

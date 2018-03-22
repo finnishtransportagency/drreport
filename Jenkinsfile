@@ -21,8 +21,8 @@ pipeline {
     }
     stages {
         stage("SetupTest") {
-			printParams()
-            when { 
+            when {
+				printParams()
                 expression { 
                     get_computername()?.trim() == "test"
                 } 

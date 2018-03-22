@@ -55,7 +55,7 @@ pipeline {
             }
             when { 
                 expression { 
-                    DEPLOY_TARGET /*&& get_test()?.trim() == "prod"*/
+                    DEPLOY_TARGET && get_test()?.trim() == "prod"
                 } 
             }
             steps {

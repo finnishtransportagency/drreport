@@ -62,7 +62,6 @@ pipeline {
             }
             steps {
                 echo "TESTING!"
-                )
             }
             post {
                 aborted { 

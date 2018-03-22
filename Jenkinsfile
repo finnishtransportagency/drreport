@@ -27,8 +27,7 @@ pipeline {
             }
             steps {
                 script {
-                    echo "t‰ss‰ tehd‰‰n test tarvittavat flow asetusleikit"
-					/*n‰‰ pit‰‰ poistaa*/
+                    echo "Testikaannos omalla koneella"
 					ARTIFACT_ID = "1"
 					DEPLOY_TARGET = get_environment()
 					ARTIFACT_VERSION = BUILD_ID
@@ -41,7 +40,7 @@ pipeline {
 		stage("SetupProd") {
             when { 
                 expression { 
-                    get_environment()?.trim() && get_test()?.trim() == "prod"
+                    get_environment()?.trim() && get_test()?.trim() == "test"
                 } 
             }
             steps {

@@ -47,7 +47,8 @@ pipeline {
                         "cd src/main/resources/static",
                         "npm install",
                         "npm run build",
-                        "cd ../../../.."
+                        "watchify src/js/main.js --outfile js/bundle.js -dv",
+                        "ls -ltraR"
                     ].join(" && ")
 
                     STAGE_BUILD_CMD = [

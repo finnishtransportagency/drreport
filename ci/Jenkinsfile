@@ -47,7 +47,8 @@ pipeline {
                         "cd src/main/resources/static",
                         "npm install",
                         "npm run build",
-                        "ls js/"
+                        "ls -ltra js/",
+                        "ls -ltra ./js/"
                     ].join(" && ")
 
                     STAGE_BUILD_CMD = [

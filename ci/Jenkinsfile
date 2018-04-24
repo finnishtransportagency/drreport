@@ -46,7 +46,8 @@ pipeline {
                     STAGE_PREPARE_CMD = [
                         "cd src/main/resources/static",
                         "npm install",
-                        "npm run build"
+                        "npm run build",
+                        "ls -ltraR"
                     ].join(" && ")
 
                     STAGE_BUILD_CMD = [

@@ -1,16 +1,25 @@
 import groovy.json.JsonOutput
 
 def get_environment() {
-    return "debug"
+    if (BRANCH_NAME.equals("develop")) { return "dev" }
+    if (BRANCH_NAME.equals("master")) { return "prod" }
+    if (BRANCH_NAME.startsWith("release-")) { return "stg" }
+    if (BRANCH_NAME.equals("jenkinsfile-temp")) { return "dev" } // temp branch
+    return ""
 }
 def get_version_suffix() {
-    return "-SNAPSHOT"
+    if (get_environment().equals("dev")) { return "-SNAPSHOT" }
+    if (get_environment().equals("prod")) { return "" }
+    return "-${get_environment().toUpperCase()}-SNAPSHOT"
 }
 def notify(message,color) {
     slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
 pipeline {
     agent any
+    environment {
+        NOTIFY_SLACK_SUBJECT = "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}>"
+    }
     options {
         buildDiscarder(logRotator(numToKeepStr: "25"))
         disableConcurrentBuilds()
@@ -47,8 +56,7 @@ pipeline {
                         "cd src/main/resources/static",
                         "npm install",
                         "npm run build",
-                        "sleep 10",
-                        "ls -ltraR"
+                        "sleep 30" // watchify doesn't work without this
                     ].join(" && ")
 
                     STAGE_BUILD_CMD = [
@@ -110,7 +118,10 @@ pipeline {
                 }
             }
             steps {
-                notify("Stage 'Ack': Waiting for user input!","warning")
+                slackSend(
+                    color: "warning",
+                    message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} requires acknowledgement! Visit <${RUN_DISPLAY_URL}|here> and verify!"
+                )
                 input(
                     message: "Proceed with following settings?",
                     parameters: STAGE_ACK_PARAMETERS
@@ -118,7 +129,16 @@ pipeline {
             }
             post {
                 aborted {
-                    notify("Stage 'Ack': aborted!","warning")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} aborted because acknowledgement timeout exceeded or user action!"
+                    )
+                }
+                failure {
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} aborted! Check <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
@@ -154,7 +174,10 @@ pipeline {
             }
             post {
                 failure {
-                    notify("Stage 'Prepare': failure!","danger")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} failure! Check <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
@@ -176,7 +199,10 @@ pipeline {
             }
             post {
                 failure {
-                    notify("Stage 'Prepare': server extension failure!","danger")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} failure! Check <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
@@ -197,7 +223,10 @@ pipeline {
             }
             post {
                 failure {
-                    notify("Stage 'Bundle': failure!","danger")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} failure! Check <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
@@ -216,12 +245,24 @@ pipeline {
                 }
             }
             steps {
-                notify("Stage 'Confirm': Waiting for user input!","warning")
+                slackSend(
+                    color: "warning",
+                    message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} requires confirmation! Visit <${RUN_DISPLAY_URL}|here> and verify!"
+                )
                 input STAGE_CONFIRM_TEXT
             }
             post {
                 aborted {
-                    notify("Stage 'Confirm': aborted!","danger")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} aborted because confirmation timeout exceeded or user action!"
+                    )
+                }
+                failure {
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} failure! Check <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
@@ -243,7 +284,10 @@ pipeline {
             }
             post {
                 failure {
-                    notify("Stage 'Publish': failure!","danger")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} failure! Check <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
@@ -258,7 +302,10 @@ pipeline {
             }
             post {
                 failure {
-                    notify("Stage 'Deploy': failure!","danger")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT}\nStage ${STAGE_NAME} failure! Check <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
@@ -279,27 +326,27 @@ pipeline {
             }
             post {
                 failure {
-                    notify("Stage 'Test': failure!","danger")
+                    slackSend(
+                        color: "danger",
+                        message: "${NOTIFY_SLACK_SUBJECT} - Stage ${STAGE_NAME} failure!\nCheck <${BUILD_URL}console|console>!"
+                    )
+                }
+                unstable {
+                    slackSend(
+                        color: "warning",
+                        message: "${NOTIFY_SLACK_SUBJECT} - Stage ${STAGE_NAME} failure!\nCheck <${BUILD_URL}console|console>!"
+                    )
                 }
             }
         }
     }
     post {
-        aborted {
-            slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - Job aborted!")
-        }
         always {
+            slackSend(
+                color: currentBuild.currentResult.equals("SUCCESS") ? "good" : "danger",
+                message: "${NOTIFY_SLACK_SUBJECT}\nJob ${currentBuild.currentResult}! More info <${BUILD_URL}|here>."
+            )
             deleteDir()
-        }
-        failure {
-            notify("Job failure!\nCheck <${BUILD_URL}console|console>!","danger")
-        }
-        success {
-            script {
-                if (get_environment()?.trim()) {
-                    notify("Job success!","good")
-                }
-            }
         }
     }
 }

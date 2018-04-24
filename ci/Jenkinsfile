@@ -47,7 +47,7 @@ pipeline {
                         "cd src/main/resources/static",
                         "npm install",
                         "npm run build",
-                        "find . -name 'bundle.js'"
+                        "find ${WORKSPACE}/. -name 'bundle.js'"
                     ].join(" && ")
 
                     STAGE_BUILD_CMD = [

@@ -46,8 +46,7 @@ pipeline {
                     STAGE_PREPARE_CMD = [
                         "cd src/main/resources/static",
                         "npm install",
-                        "npm run build",
-                        "find ${WORKSPACE}/. -name 'bundle.js'"
+                        "npm run build"
                     ].join(" && ")
 
                     STAGE_BUILD_CMD = [
@@ -130,11 +129,13 @@ pipeline {
             steps {
                 sh "cp /data1/ci/{maven,node,python}/* ci/confs/"
                 script {
+                    def jenkins_gid = sh(returnStdout: true, script: "id -g").trim()
                     def jenkins_uid = sh(returnStdout: true, script: "id -u").trim()
                     def build_args = [
                         "--build-arg http_proxy=${http_proxy}",
                         "--build-arg https_proxy=${http_proxy}",
                         "--build-arg no_proxy=${no_proxy}",
+                        "--build-arg JENKINS_UID=${jenkins_gid}"
                         "--build-arg JENKINS_UID=${jenkins_uid}"
                     ].join(" ")
                     docker.build(

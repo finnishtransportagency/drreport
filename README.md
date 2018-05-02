@@ -1,31 +1,32 @@
-## Synopsis
+## Digiroad OTH - Raportointityökalu
 
-At the top of the file there should be a short introduction and/ or overview that explains **what** the project is. This description should match descriptions added for package managers (Gemspec, package.json, etc.)
+Sovelluksella luodaan temporaalisia raportteja OTH kannan tietolajeista. Raportit suodatetaan kunnittain ja niillä voidaan seurata kannan ominaisuustietojen laatua.
 
-## Code Example
+## Kehitysympäristön pystyttäminen
 
-Show what the library does as concisely as possible, developers should be able to figure out **how** your project solves their problem by looking at the code example. Make sure the API you are showing off is obvious, and that your code is short and concise.
+Kloonaa projekti:
+$ git clone https://github.com/finnishtransportagency/drreport.git
+Käytä GIT Flow prosessin mukaista työtapaa.
 
-## Motivation
+NodeJS asennus:
+cd ./src/main/resources/static
+npm install
+npm run build
 
-A short description of the motivation behind the creation and maintenance of the project. This should explain **why** the project exists.
+Asennasenna Oraclen kannan ajurit jos ei ole jo repositoryssä:
+mvn install:install-file -Dfile=ojdbc14-10.2.0.4.0.jar -DgroupId=com.oracle -DartifactId=ojdbc14 -Dversion=10.2.0.4.0 -Dpackaging=jar
 
-## Installation
+Maven käännös:
+mvn -B clean package
 
-Provide code examples and explanations of how to get the project.
+## Rajapinta
 
-## API Reference
+Metodi: GET
+API: /raportit/graafi1/{startdate}/{stopdate}/{kunnat}/{tietolajit}/{hallinnollinenluokka}
+esimerkiksi: 
 
-Depending on the size of the project, if it is small and simple enough the reference docs can be added to the README. For medium size to larger projects it is important to at least provide a link to where the API reference docs live.
-
-## Tests
-
-Describe and show how to run the tests with code examples.
-
-## Contributors
-
-Let people know how they can dive into the project, include important links to things like issue trackers, irc, twitter accounts if applicable.
+## Testit
 
 ## License
 
-A short snippet describing the license (MIT, Apache, etc.)
+Copyright 2017 - present NLS under EUPL v1.1 (English version is included in https://github.com/finnishtransportagency/drreport/blob/develop/LICENSE).

@@ -121,10 +121,10 @@ pipeline {
                     STAGE_DEPLOY_PLAYBOOK = [
                         inventory: ansible_inventory,
                         playbook: ansible_playbook,
-                        limit: ansible_limit
+                        limit: ansible_limit,
                         become: true,
                         extras: '',
-                        vaultCredentialsId: ansible_vault_pass
+                        vaultCredentialsId: ansible_vault_pass,
                         credentialsId: ansible_credentials_id
                     ]
                 }

@@ -108,14 +108,7 @@ pipeline {
                         "--batch-mode"
                     ].join(" ")
 
-                    def ansible_drreport_extravars = JsonOutput.toJson(
-                        drreport_deploy: [
-                            artifact_id: artifact_id,
-                            group_id: group_id,
-                            extension: extension,
-                            version: artifact_version,
-                            repository_url: repository_url
-                    ])
+                    def ansible_drreport_extravars = "{\\\"artifact_id\\\":\\\"${artifact_id}\\\",\\\"group_id\\\":\\\"${group_id}\\\",\\\"extension\\\":\\\"${extension}\\\",\\\"version\\\":\\\"${artifact_version}\\\",\\\"repository_url\\\":\\\"${repository_url}\\\"}"
 
                     STAGE_DEPLOY_PLAYBOOK = [
                         inventory: ansible_inventory,

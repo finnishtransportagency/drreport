@@ -12,6 +12,13 @@ def get_version_suffix() {
     if (get_environment().equals("prod")) { return "" }
     return "-${get_environment().toUpperCase()}-SNAPSHOT"
 }
+def get_ansible_limit() {
+    if (BRANCH_NAME.equals("develop")) { return ["livisovt136l"] }
+    if (BRANCH_NAME.equals("master")) { return ["liviptpapp01l","liviptpapp02l"] }
+    if (BRANCH_NAME.startsWith("release-")) { return ["liviptpappt01l","liviptpappt02l"] }
+    if (BRANCH_NAME.equals("jenkinsfile-temp")) { return ["livisovt136l"] } // temp branch
+    return ""
+}
 def notify(message,color) {
     slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
@@ -44,6 +51,12 @@ pipeline {
                     def extension = pom.packaging
                     def filename = "target/${artifact_id}-${artifact_version}.${extension}"
                     def repository_url = "http://livibuild03.vally.local/nexus/repository/ptp"
+
+                    def ansible_inventory = '/data1/ansible/inventory'
+                    def ansible_playbook = "/data1/ansible/ptpapp-${get_environment()?.trim()}.yml"
+                    def ansible_limit = get_ansible_limit().join(',')
+                    def ansible_vault_pass = 'vaultpass-ptp'
+                    def ansible_credentials_id = 'a98f88e8-88ea-4f5e-bfe4-972725d7b72d'
 
                     STAGE_ACK_PARAMETERS = [
                         choice(choices: deploy_target, description: "Deploy target.", name: "deploy_target"),
@@ -103,6 +116,16 @@ pipeline {
                             version: artifact_version,
                             repository_url: repository_url
                         ])
+                    ]
+
+                    STAGE_DEPLOY_PLAYBOOK = [
+                        inventory: ansible_inventory,
+                        playbook: ansible_playbook,
+                        limit: ansible_limit
+                        become: true,
+                        extras: '',
+                        vaultCredentialsId: ansible_vault_pass
+                        credentialsId: ansible_credentials_id
                     ]
                 }
             }
@@ -298,7 +321,8 @@ pipeline {
                 }
             }
             steps {
-                echo "deploy"
+                // ansiblePlaybook(STAGE_DEPLOY_PLAYBOOK)
+                echo "${STAGE_DEPLOY_PLAYBOOK}"
             }
             post {
                 failure {

@@ -108,22 +108,21 @@ pipeline {
                         "--batch-mode"
                     ].join(" ")
 
-                    STAGE_DEPLOY_EXTRAVARS = [
-                        oskari_deploy: JsonOutput.toJson([
+                    def ansible_drreport_extravars = JsonOutput.toJson(
+                        drreport_deploy: [
                             artifact_id: artifact_id,
                             group_id: group_id,
                             extension: extension,
                             version: artifact_version,
                             repository_url: repository_url
-                        ])
-                    ]
+                    ])
 
                     STAGE_DEPLOY_PLAYBOOK = [
                         inventory: ansible_inventory,
                         playbook: ansible_playbook,
                         limit: ansible_limit,
                         become: true,
-                        extras: '',
+                        extras: "drreport_deploy=\"${ansible_drreport_extravars}\"",
                         vaultCredentialsId: ansible_vault_pass,
                         credentialsId: ansible_credentials_id
                     ]

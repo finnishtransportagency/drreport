@@ -122,7 +122,7 @@ pipeline {
                         playbook: ansible_playbook,
                         limit: ansible_limit,
                         become: true,
-                        extras: "drreport_deploy=\"${ansible_drreport_extravars}\"",
+                        extras: "-e drreport_deploy=\"${ansible_drreport_extravars}\"",
                         vaultCredentialsId: ansible_vault_pass,
                         credentialsId: ansible_credentials_id
                     ]

@@ -320,8 +320,7 @@ pipeline {
                 }
             }
             steps {
-                // ansiblePlaybook(STAGE_DEPLOY_PLAYBOOK)
-                echo "${STAGE_DEPLOY_PLAYBOOK}"
+                ansiblePlaybook(STAGE_DEPLOY_PLAYBOOK)
             }
             post {
                 failure {

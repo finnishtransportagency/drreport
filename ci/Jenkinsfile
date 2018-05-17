@@ -44,14 +44,13 @@ pipeline {
                     def pom = readMavenPom()
 
                     def deploy_target = get_environment()
-                    def filename = "target/${deploy.artifact_id}-${deploy.artifact_version}.${deploy.extension}"
-                    def repository_url = "http://livibuild03.vally.local/nexus/repository/ptp"
 
                     def ansible_inventory = '/data1/ansible/inventory'
                     def ansible_playbook = "/data1/ansible/ptpapp-${get_environment()?.trim()}.yml"
                     def ansible_limit = get_ansible_limit().join(',')
                     def ansible_vault_pass = 'vaultpass-ptp'
                     def ansible_credentials_id = 'a98f88e8-88ea-4f5e-bfe4-972725d7b72d'
+                    def repository_url = "http://livibuild03.vally.local/nexus/repository/ptp"
 
                     def deploy = [
                         artifact_id: pom.artifactId,
@@ -62,6 +61,7 @@ pipeline {
                     ]
                     def drreport_deploy=JsonOutput.toJson(deploy)
                     def ansible_extravars = "-e drreport_deploy='${drreport_deploy}'"
+                    def filename = "target/${deploy.artifact_id}-${deploy.artifact_version}.${deploy.extension}"
 
                     STAGE_ACK_PARAMETERS = [
                         choice(choices: deploy_target, description: "Deploy target.", name: "deploy_target"),

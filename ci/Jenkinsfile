@@ -61,7 +61,7 @@ pipeline {
                     ]
                     def drreport_deploy=JsonOutput.toJson(deploy)
                     def ansible_extravars = "-e drreport_deploy='${drreport_deploy}'"
-                    def filename = "target/${deploy.artifact_id}-${deploy.artifact_version}.${deploy.extension}"
+                    def filename = "target/${deploy.artifact_id}-${deploy.version}.${deploy.extension}"
 
                     STAGE_ACK_PARAMETERS = [
                         choice(choices: deploy_target, description: "Deploy target.", name: "deploy_target"),

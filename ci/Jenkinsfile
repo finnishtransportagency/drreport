@@ -44,12 +44,7 @@ pipeline {
                     def pom = readMavenPom()
 
                     def deploy_target = get_environment()
-
-                    def artifact_id = pom.artifactId
-                    def artifact_version = "${pom.version}${get_version_suffix()}"
-                    def group_id = pom.groupId
-                    def extension = pom.packaging
-                    def filename = "target/${artifact_id}-${artifact_version}.${extension}"
+                    def filename = "target/${deploy.artifact_id}-${deploy.artifact_version}.${deploy.extension}"
                     def repository_url = "http://livibuild03.vally.local/nexus/repository/ptp"
 
                     def ansible_inventory = '/data1/ansible/inventory'
@@ -58,11 +53,21 @@ pipeline {
                     def ansible_vault_pass = 'vaultpass-ptp'
                     def ansible_credentials_id = 'a98f88e8-88ea-4f5e-bfe4-972725d7b72d'
 
+                    def deploy = [
+                        artifact_id: pom.artifactId,
+                        extension: pom.packaging,
+                        group_id: pom.groupId,
+                        repository_url: repository_url,
+                        version: "${pom.version}${get_version_suffix()}"
+                    ]
+                    def drreport_deploy=JsonOutput.toJson(deploy)
+                    def ansible_extravars = "-e drreport_deploy='${drreport_deploy}'"
+
                     STAGE_ACK_PARAMETERS = [
                         choice(choices: deploy_target, description: "Deploy target.", name: "deploy_target"),
-                        choice(choices: artifact_id, description: "Artifact ID", name: "artifact_id"),
-                        choice(choices: artifact_version, description: "Artifact version", name: "artifact_version"),
-                        choice(choices: group_id, description: "Group ID", name: "group_id")
+                        choice(choices: deploy.artifact_id, description: "Artifact ID", name: "artifact_id"),
+                        choice(choices: deploy.version, description: "Artifact version", name: "artifact_version"),
+                        choice(choices: deploy.group_id, description: "Group ID", name: "group_id")
                     ]
 
                     STAGE_PREPARE_CMD = [
@@ -85,7 +90,7 @@ pipeline {
                         [
                             "mvn",
                             "versions:set",
-                            "-DnewVersion=${artifact_version}",
+                            "-DnewVersion=${deploy.artifact_version}",
                             "--batch-mode"
                         ].join(" "),
                         [
@@ -96,7 +101,7 @@ pipeline {
                         ].join(" ")
                     ].join(" && ")
 
-                    STAGE_CONFIRM_TEXT = "Create release ${group_id}:${artifact_id}@${artifact_version} and deploy to ${deploy_target}?"
+                    STAGE_CONFIRM_TEXT = "Create release ${deploy.group_id}:${deploy.artifact_id}@${deploy.artifact_version} and deploy to ${deploy_target}?"
 
                     STAGE_PUBLISH_CMD = [
                         "mvn",
@@ -108,14 +113,12 @@ pipeline {
                         "--batch-mode"
                     ].join(" ")
 
-                    def ansible_drreport_extravars = "{\\\"artifact_id\\\":\\\"${artifact_id}\\\",\\\"group_id\\\":\\\"${group_id}\\\",\\\"extension\\\":\\\"${extension}\\\",\\\"version\\\":\\\"${artifact_version}\\\",\\\"repository_url\\\":\\\"${repository_url}\\\"}"
-
                     STAGE_DEPLOY_PLAYBOOK = [
                         inventory: ansible_inventory,
                         playbook: ansible_playbook,
                         limit: ansible_limit,
                         become: true,
-                        extras: "-e drreport_deploy=\"${ansible_drreport_extravars}\"",
+                        extras: ansible_extravars,
                         vaultCredentialsId: ansible_vault_pass,
                         credentialsId: ansible_credentials_id
                     ]

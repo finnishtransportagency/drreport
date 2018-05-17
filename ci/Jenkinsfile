@@ -90,7 +90,7 @@ pipeline {
                         [
                             "mvn",
                             "versions:set",
-                            "-DnewVersion=${deploy.artifact_version}",
+                            "-DnewVersion=${deploy.version}",
                             "--batch-mode"
                         ].join(" "),
                         [
@@ -101,7 +101,7 @@ pipeline {
                         ].join(" ")
                     ].join(" && ")
 
-                    STAGE_CONFIRM_TEXT = "Create release ${deploy.group_id}:${deploy.artifact_id}@${deploy.artifact_version} and deploy to ${deploy_target}?"
+                    STAGE_CONFIRM_TEXT = "Create release ${deploy.group_id}:${deploy.artifact_id}@${deploy.version} and deploy to ${deploy_target}?"
 
                     STAGE_PUBLISH_CMD = [
                         "mvn",

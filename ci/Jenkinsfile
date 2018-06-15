@@ -47,7 +47,7 @@ pipeline {
                     def artifact_version = "${pom.version}${get_version_suffix()}"
                     def group_id = pom.groupId
                     def extension = pom.packaging
-                    def filename = "target/${artifactId}-${version}.${extension}"
+                    def filename = "target/${artifact_id}-${version}.${extension}"
                     def repository_url = "http://livibuild03.vally.local/nexus/repository/ptp"
 
                     STAGE_ACK_PARAMETERS = [

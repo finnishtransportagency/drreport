@@ -77,7 +77,7 @@ pipeline {
                         [
                             "mvn",
                             "versions:set",
-                            "-DnewVersion=${version}",
+                            "-DnewVersion=${artifact_version}",
                             "--batch-mode"
                         ].join(" "),
                         [
@@ -88,7 +88,7 @@ pipeline {
                         ].join(" ")
                     ].join(" && ")
 
-                    STAGE_CONFIRM_TEXT = "Create release ${group_id}:${artifact_id}@${version} and deploy to ${deploy_target}?"
+                    STAGE_CONFIRM_TEXT = "Create release ${group_id}:${artifact_id}@${artifact_version} and deploy to ${deploy_target}?"
 
                     STAGE_PUBLISH_CMD = [
                         "mvn",
@@ -101,7 +101,7 @@ pipeline {
                     ].join(" ")
 
                     STAGE_DEPLOY_PLAYBOOK = [
-                        inventory: "/data1/ansible/inventory/ptpapp",
+                        inventory: "/data1/ansible/inventories/ptpapp",
                         playbook: "/data1/ansible/ptpapp.yml",
                         limit: get_ansible_limit().join("."),
                         vaultCredentialsId: "vaultpass-ptp",

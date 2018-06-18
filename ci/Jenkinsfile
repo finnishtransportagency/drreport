@@ -105,7 +105,7 @@ pipeline {
                         playbook: "/data1/ansible/ptpapp.yml",
                         limit: get_ansible_limit().join("."),
                         vaultCredentialsId: "vaultpass-ptp",
-                        tags: "service-deploy",
+                        tags: "service-deploy-springboot",
                         extraVars: [
                             ptpapp_target: get_environment(),
                             ptpapp_deploy: JsonOutput.toJson([

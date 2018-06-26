@@ -11,12 +11,7 @@ def get_version_suffix() {
     if (get_environment().equals("prod")) { return "" }
     return "-${get_environment().toUpperCase()}-SNAPSHOT"
 }
-def get_ansible_limit() {
-    if (BRANCH_NAME.equals("develop")) { return ["livisovt136l"] }
-    if (BRANCH_NAME.equals("master")) { return ["liviptpapp01l","liviptpapp02l"] }
-    if (BRANCH_NAME.startsWith("release-")) { return ["liviptpappt01l","liviptpappt02l"] }
-    return ""
-}
+
 def notify(message,color) {
     slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
 }
@@ -103,7 +98,6 @@ pipeline {
                     STAGE_DEPLOY_PLAYBOOK = [
                         inventory: "/data1/ansible/inventories/ptpapp",
                         playbook: "/data1/ansible/ptpapp.yml",
-                        limit: get_ansible_limit().join("."),
                         vaultCredentialsId: "vaultpass-ptp",
                         tags: "service-deploy-springboot",
                         extraVars: [

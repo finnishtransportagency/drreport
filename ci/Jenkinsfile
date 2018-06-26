@@ -253,9 +253,6 @@ pipeline {
                 expression {
                     get_environment()?.trim()
                 }
-                not {
-                    branch "master"
-                }
             }
             steps {
                 slackSend(

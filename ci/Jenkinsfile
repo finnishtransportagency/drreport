@@ -127,7 +127,7 @@ pipeline {
             }
             when {
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && !get_pollSCM_trigger().trim()
                 }
             }
             steps {

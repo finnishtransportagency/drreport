@@ -172,7 +172,7 @@ pipeline {
                         "--build-arg JENKINS_UID=${jenkins_uid}"
                     ].join(" ")
                     docker.build(
-                        "dr-maven",
+                        "ptpapp-drreport-maven",
                         "${build_args} -f ci/Dockerfile.maven ci"
                     )
                     docker.build(
@@ -180,7 +180,7 @@ pipeline {
                         "${build_args} -f ci/Dockerfile.node ci"
                     )
                     docker.build(
-                        "dr-python",
+                        "ptpapp-drreport-python",
                         "${build_args} -f ci/Dockerfile.python ci"
                     )
                 }
@@ -222,7 +222,7 @@ pipeline {
         stage("Build") {
             agent {
                 docker {
-                    image "dr-maven"
+                    image "dptpapp-drreport-maven"
                     reuseNode true
                 }
             }
@@ -280,7 +280,7 @@ pipeline {
         stage("Publish") {
             agent {
                 docker {
-                    image "dr-maven"
+                    image "ptpapp-drreport-maven"
                     reuseNode true
                 }
             }
@@ -323,7 +323,7 @@ pipeline {
         stage("Test") {
             agent {
                 docker {
-                    image "dr-python"
+                    image "ptpapp-drreport-python"
                     reuseNode true
                 }
             }

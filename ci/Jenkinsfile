@@ -254,7 +254,7 @@ pipeline {
                     get_environment()?.trim()
                 }
                 not {
-                    branch "develop"
+                    branch "master"
                 }
             }
             steps {

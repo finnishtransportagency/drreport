@@ -1,5 +1,10 @@
 import groovy.json.JsonOutput
 
+def get_pollSCM_trigger() {
+    if (BRANCH_NAME.equals("develop")) { return "H/5 * * * *" }
+    return ""
+}
+
 def get_environment() {
     if (BRANCH_NAME.equals("develop")) { return "dev" }
     if (BRANCH_NAME.equals("master")) { return "prod" }

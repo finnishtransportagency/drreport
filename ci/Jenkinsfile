@@ -11,16 +11,14 @@ def get_environment() {
     if (BRANCH_NAME.startsWith("release-")) { return "test" }
     return ""
 }
-def get_version_suffix() {
-    if (get_environment().equals("dev")) { return "-SNAPSHOT" }
-    if (get_environment().equals("prod")) { return "" }
-	if (BRANCH_NAME.startsWith("release-")) { return "-RC-SNAPSHOT" }
-    return "-${get_environment().toUpperCase()}-SNAPSHOT"
+
+def get_version(version) {
+    if (get_environment().equals("dev")) { return "${version}-SNAPSHOT" }
+    if (get_environment().equals("prod")) { return "${version}" }
+	if (BRANCH_NAME.startsWith("release-")) { return "${version}-RC-SNAPSHOT" }
+    return "${version}-${get_environment().toUpperCase()}-SNAPSHOT"
 }
 
-def notify(message,color) {
-    slackSend(color: "${color}", message: "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}> - ${message}")
-}
 pipeline {
     agent any
     environment {
@@ -45,7 +43,7 @@ pipeline {
                     def deploy_target = get_environment()
                     
                     def artifact_id = pom.artifactId
-                    def artifact_version = "${pom.version}${get_version_suffix()}"
+					def artifact_version = get_version(pom.version)
                     def group_id = pom.groupId
                     def extension = pom.packaging
                     def filename = "target/${artifact_id}-${artifact_version}.${extension}"
@@ -176,7 +174,7 @@ pipeline {
                         "${build_args} -f ci/Dockerfile.maven ci"
                     )
                     docker.build(
-                        "dr-node",
+                        "ptpapp-drreport-node",
                         "${build_args} -f ci/Dockerfile.node ci"
                     )
                     docker.build(
@@ -197,7 +195,7 @@ pipeline {
         stage("Prepare") {
             agent {
                 docker {
-                    image "dr-node"
+                    image "ptpapp-drreport-node"
                     reuseNode true
                 }
             }
@@ -251,9 +249,8 @@ pipeline {
             when {
                 beforeAgent true
                 expression {
-                    get_environment()?.trim()
-                }
-                    branch "master"             
+					get_environment().equals("prod")
+				}            
             }
             steps {
                 slackSend(

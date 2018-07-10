@@ -220,7 +220,7 @@ pipeline {
         stage("Build") {
             agent {
                 docker {
-                    image "dptpapp-drreport-maven"
+                    image "ptpapp-drreport-maven"
                     reuseNode true
                 }
             }

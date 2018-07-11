@@ -21,5 +21,6 @@ global.jQuery(document).ready(function($) {
 	$('input[name="sw-abs-rel"]').bootstrapSwitch('state', true, true);//turns check box to toggle switch
 	$('input[name="sw-cumul"]').bootstrapSwitch('state', true, true);
 	$('input[name="sw-summary"]').bootstrapSwitch('state', false, true);
+	$('#myModal').modal('show');
 });
 

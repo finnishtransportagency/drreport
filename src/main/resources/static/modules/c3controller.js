@@ -46,7 +46,7 @@ updateChart: function() {
 	me.summary ? c3Controller.chart.groups([]) : c3Controller.chart.groups(me.chartData.groups);
     if (me.chartData.columnsCumulRel[0].length < 2) {
     	if(me.nid!=null) c3Controller.nid.close();
-    	me.nid = noty.createNoty("Ei tuloksia!", "alert");
+    	me.nid = noty.createNoty("Haku ei löytänyt tuloksia hakuparametreilla", "alert");
     	}
     else {
     	if(me.nid!=null) c3Controller.nid.close();

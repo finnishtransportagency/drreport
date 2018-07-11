@@ -29,10 +29,9 @@ config1 : function() {
           x: {
               type: 'timeseries',
               tick: {
-//                  count: 12,
                   format: '%d-%m-%Y',
                   rotate: -90,
-                  culling: false
+                  culling: true
               },
               height: 100
           },

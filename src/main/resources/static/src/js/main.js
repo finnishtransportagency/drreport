@@ -22,5 +22,6 @@ global.jQuery(document).ready(function($) {
 	$('input[name="sw-cumul"]').bootstrapSwitch('state', true, true);
 	$('input[name="sw-summary"]').bootstrapSwitch('state', false, true);
 	$('#myModal').modal('show');
+	$('[data-toggle="tooltip"]').tooltip();
 });
 

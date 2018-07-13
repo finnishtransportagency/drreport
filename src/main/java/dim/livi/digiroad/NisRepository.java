@@ -20,7 +20,7 @@ public class NisRepository {
 	protected JdbcTemplate jdbc;
 	
 	@Autowired
-    public NisRepository(JdbcTemplate jbc, JdbcTemplate jdbc) {
+    public NisRepository(JdbcTemplate jdbc) {
         this.jdbc=jdbc;
     }
 	 

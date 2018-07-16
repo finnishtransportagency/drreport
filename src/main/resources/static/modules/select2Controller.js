@@ -5,6 +5,7 @@ var select2controller = (function(){
 var activate = function(element, url, multi, pituus, oletusTeksti) {
 	
 	  $(element).select2({
+	  virhe: "",
 	  theme: "classic",
 	  maximumSelectionLength: 10,
 	  placeholder: oletusTeksti,
@@ -15,29 +16,33 @@ var activate = function(element, url, multi, pituus, oletusTeksti) {
 	    delay: 250,
 	    data: function (params) {
 	    	if(!params.term) {
-	    	params.term = '';}
+	    	params.term = '';
+			}
 	        var query = {
-	        q: params.term, // search term
-	        page: params.page
-	              }
-	        return query;},
+				q: params.term,
+				page: params.page
+				}
+			return query;},
 	    processResults: function (data, params) {
-	      // parse the results into the format expected by Select2
-	      // since we are using custom formatting functions we do not need to
-	      // alter the remote JSON data, except to indicate that infinite
-	      // scrolling can be used
 	      params.page = params.page || 1;
-
 	      return {
-	    	  results: $.map(data, function(obj) {
-	              return { id: obj.id, text: obj.text };
+			  results: $.map(data, function(obj) {
+				  return { id: obj.id, text: obj.text };
 	          }),
 	          pagination: {
 		          more: (params.page * 30) < data.total_count
 		        }
 	      };
 	    },
-	    cache: true
+	    cache: true,  
+		error: function(jqXHR, textStatus, errorThrown){
+			var results = {
+          hasError: true,
+          jqXHR: jqXHR,
+          textStatus: textStatus,
+          errorThrown: errorThrown
+		}
+		virhe = results.jqXHR.responseText==""?"":results.jqXHR.responseJSON.error;}
 	  },
 	  escapeMarkup: function (markup) { return markup; }, // let our custom formatter work
 	  minimumInputLength: pituus,
@@ -53,7 +58,7 @@ var activate = function(element, url, multi, pituus, oletusTeksti) {
 		      return "Kirjoitit liikaa";
 		    },
 		    errorLoading: function() {
-		      return "Virhe";
+		        return "Virhe: " + virhe;
 		    },
 		    loadingMore: function() {
 		      return "Loading more results";

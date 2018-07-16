@@ -9,6 +9,7 @@ var createNoty = function(text, type) {
 		    type: type,
 		    theme: 'bootstrapTheme',
 //		    modal: true,
+			killer: true,
 		    animation: {
 		        open: 'animated bounceInLeft', // Animate.css class names
 		        close: 'animated bounceOutLeft' // Animate.css class names

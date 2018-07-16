@@ -8,7 +8,16 @@ var get = function(loadUrl, dataString, callback) {
         url: loadUrl,
         data: dataString,
         dataType: 'json',
-//        error: ajaxError,
+		error: function(jqXHR, textStatus, errorThrown){
+			var results = {
+			hasError: true,
+			jqXHR: jqXHR,
+			textStatus: textStatus,
+			errorThrown: errorThrown,
+			}
+			virhe = "Moro";
+			callback(virhe);
+		},
         success: function(response) {
             callback(response);
         }

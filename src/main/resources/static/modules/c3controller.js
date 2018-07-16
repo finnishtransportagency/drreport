@@ -53,11 +53,19 @@ updateChart: function() {
     	}
 },
 updateChartData: function(response) {
+	var me = this;
+	if(response != "Moro"){
 	c3Controller.myStopFunction();
 	c3Controller.chartData = response;
 	c3Controller.updateChart();
 	$("#haeCSVBtn").show();
 	console.log("make CSV button visible");
+	}
+	else {
+		c3Controller.myStopFunction();
+		c3Controller.nid.close();
+		me.nid = noty.createNoty("Tapahtui virhe!", "error");
+	}
 },
 registerClick: function() {
 	var me = this;
@@ -71,9 +79,10 @@ registerClick: function() {
 		var hallinnollinenluokka = $(".js-data-hallinnollinenluokka-ajax").val() != null ? $(".js-data-hallinnollinenluokka-ajax").val() : "1,2,3,99";
 		var urli = "raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit + "/" + hallinnollinenluokka;
 		console.log("REST:" + urli);
-		if(me.nid!=null) c3Controller.nid.close();
+		//if(me.nid!=null) c3Controller.nid.close();
+		c3Controller.myStopFunction();
 		if(tietolajit == 0 || kunnat == 0){
-			me.nid = noty.createNoty("Anna tietolaji ja kunta!", "alert");
+			me.nid = noty.createNoty("Anna tietolaji ja kunta!", "error");
 		} 
 		else {
 			me.nid = noty.createNoty("Haetaan data...<span id=\"laskuri\"></span>", "alert");

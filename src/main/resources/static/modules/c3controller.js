@@ -81,6 +81,11 @@ registerClick: function() {
 		console.log("REST:" + urli);
 		//if(me.nid!=null) c3Controller.nid.close();
 		c3Controller.myStopFunction();
+		if(startdate > stopdate){
+			 var temp = startdate;
+			 startdate=stopdate;
+			 stopdate=temp;
+		}
 		if(tietolajit == 0 || kunnat == 0){
 			me.nid = noty.createNoty("Anna tietolaji ja kunta!", "error");
 		} 

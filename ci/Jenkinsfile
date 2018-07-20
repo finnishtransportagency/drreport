@@ -12,6 +12,46 @@ def get_pollSCM_trigger() {
     return ""
 }
 
+def get_robotframework_dmz() {
+    if (get_environment().equals("dev")) {
+        return [
+          "https://kehitysjulkinen.liikennevirasto.fi"
+        ]
+    }
+    if (get_environment().equals("prod")) {
+        return [
+          "https://julkinen.liikennevirasto.fi",
+          "http://oag.liikennevirasto.fi"
+        ]
+    }
+    if (get_environment().equals("test")) {
+      return [
+        "https://testijulkinen.liikennevirasto.fi",
+        "http://testioag.liikennevirasto.fi"
+      ]
+    }
+    return []
+}
+
+def get_robotframework_hosts()  {
+    if (get_environment().equals("dev")) {
+        return [ "http://livisovt136l.vally.local" ]
+    }
+    if (get_environment().equals("prod")) {
+        return [
+          "http://liviptpapp01l.vally.local",
+          "http://liviptpapp02l.vally.local"
+        ]
+    }
+    if (get_environment().equals("test")) {
+        return [
+          "http://liviptpappt01l.vally.local",
+          "http://liviptpappt02l.vally.local"
+        ]
+    }
+    return []
+}
+
 def get_version(version) {
     if (get_environment().equals("dev")) { return "${version}-SNAPSHOT" }
     if (get_environment().equals("prod")) { return "${version}" }

@@ -156,6 +156,77 @@ pipeline {
                             ])
                         ]
                     ]
+
+                    STAGE_TEST_CMD = [
+                        get_robotframework_hosts().collect {
+                            [
+                                "robot",
+                                "--critical=Requirement",
+                                "--include API",
+                                "--log NONE",
+                                "--name ${it.tokenize('/').last()}.9001",
+                                "--noncritical=Informative",
+                                "--nostatusrc",
+                                "--output output-9001-${it.tokenize('/').last()}.xml",
+                                "--report NONE",
+                                "--variable URL:${it}:9001",
+                                "test"
+                            ].join(" ")
+                        }.join(" && "),
+                        get_robotframework_hosts().collect {
+                            [
+                                "robot",
+                                "--critical=Requirement",
+                                "--include HTTPD",
+                                "--log NONE",
+                                "--name ${it.tokenize('/').last()}.80",
+                                "--noncritical=Informative",
+                                "--nostatusrc",
+                                "--output output-80-${it.tokenize('/').last()}.xml",
+                                "--report NONE",
+                                "--variable URL:${it}",
+                                "test"
+                            ].join(" ")
+                        }.join(" && "), 
+                        get_robotframework_dmz().collect {
+                            [
+                                "robot",
+                                "--critical=Requirement",
+                                "--include API",
+                                "--log NONE",
+                                "--name ${it.tokenize('/').last()}",
+                                "--noncritical=Informative",
+                                "--nostatusrc",
+                                "--output output-${it.tokenize('/').last()}.xml",
+                                "--report NONE",
+                                "--variable PROXY:${http_proxy}",
+                                "--variable URL:${it}",
+                                "test"
+                            ].join(" ")
+                        }.join(" && "),
+                        [
+                            "rebot",
+                            "--critical=Requirement",
+                            "--name ${artifact_id}/${get_environment()}",
+                            "--noncritical=Informative",
+                            "--nostatusrc",
+                            "--output output.xml",
+                            "output-*.xml"
+                        ].join(" ")
+                    ].minus('').join(" && ")
+
+                    STAGE_TEST_STEP = [
+                        $class: "RobotPublisher",
+                        disableArchiveOutput: false,
+                        logFileName: "log.html",
+                        onlyCritical: true,
+                        otherFiles: "",
+                        outputFileName: "output.xml",
+                        outputPath: ".",
+                        passThreshold: 100,
+                        reportFileName: "report.html",
+                        unstableThreshold: 0
+                    ]
                 }
             }
         }
@@ -371,7 +442,8 @@ pipeline {
                 }
             }
             steps {
-                sh "pip --version"
+                sh STAGE_TEST_CMD
+                step(STAGE_TEST_STEP)
             }
             post {
                 failure {

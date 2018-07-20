@@ -1,10 +1,5 @@
 import groovy.json.JsonOutput
 
-def get_pollSCM_trigger() {
-    if (BRANCH_NAME.equals("develop")) { return "H/5 * * * *" }
-    return ""
-}
-
 def get_environment() {
     if (BRANCH_NAME.equals("develop")) { return "dev" }
     if (BRANCH_NAME.equals("master")) { return "prod" }
@@ -12,10 +7,15 @@ def get_environment() {
     return ""
 }
 
+def get_pollSCM_trigger() {
+    if (get_environment().equals("dev")) { return "H/5 * * * *" }
+    return ""
+}
+
 def get_version(version) {
     if (get_environment().equals("dev")) { return "${version}-SNAPSHOT" }
     if (get_environment().equals("prod")) { return "${version}" }
-	if (BRANCH_NAME.startsWith("release-")) { return "${version}-RC-SNAPSHOT" }
+	if (get_environment().equals("test")) { return "${version}-RC-SNAPSHOT" }
     return "${version}-${get_environment().toUpperCase()}-SNAPSHOT"
 }
 

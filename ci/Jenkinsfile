@@ -170,7 +170,7 @@ pipeline {
                                 "--output output-9001-${it.tokenize('/').last()}.xml",
                                 "--report NONE",
                                 "--variable URL:${it}:9001",
-                                "test"
+                                "src/test"
                             ].join(" ")
                         }.join(" && "),
                         get_robotframework_hosts().collect {
@@ -185,7 +185,7 @@ pipeline {
                                 "--output output-80-${it.tokenize('/').last()}.xml",
                                 "--report NONE",
                                 "--variable URL:${it}",
-                                "test"
+                                "src/test"
                             ].join(" ")
                         }.join(" && "), 
                         get_robotframework_dmz().collect {
@@ -201,7 +201,7 @@ pipeline {
                                 "--report NONE",
                                 "--variable PROXY:${http_proxy}",
                                 "--variable URL:${it}",
-                                "test"
+                                "src/test"
                             ].join(" ")
                         }.join(" && "),
                         [

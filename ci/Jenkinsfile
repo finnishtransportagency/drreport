@@ -162,22 +162,6 @@ pipeline {
                             [
                                 "robot",
                                 "--critical=Requirement",
-                                "--include API",
-                                "--log NONE",
-                                "--name ${it.tokenize('/').last()}.9001",
-                                "--noncritical=Informative",
-                                "--nostatusrc",
-                                "--output output-9001-${it.tokenize('/').last()}.xml",
-                                "--report NONE",
-                                "--variable URL:${it}:9001",
-                                "src/test"
-                            ].join(" ")
-                        }.join(" && "),
-                        get_robotframework_hosts().collect {
-                            [
-                                "robot",
-                                "--critical=Requirement",
-                                "--include HTTPD",
                                 "--log NONE",
                                 "--name ${it.tokenize('/').last()}.80",
                                 "--noncritical=Informative",

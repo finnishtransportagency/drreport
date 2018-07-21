@@ -8,7 +8,7 @@ def get_environment() {
 }
 
 def get_pollSCM_trigger() {
-    if (BRANCH_NAME.equals("develop")) { return "H/5 * * * *" }
+    if (get_environment().equals("dev")) { return "H/5 * * * *" }
     return ""
 }
 

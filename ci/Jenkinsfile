@@ -68,6 +68,9 @@ pipeline {
         buildDiscarder(logRotator(numToKeepStr: "25"))
         disableConcurrentBuilds()
     }
+    triggers {
+        pollSCM(get_pollSCM_trigger())
+    }
     stages {
         stage("Setup") {
             when {

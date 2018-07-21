@@ -433,6 +433,7 @@ pipeline {
             agent {
                 docker {
                     image "ptpapp-drreport-python"
+                    args "--network host"
                     reuseNode true
                 }
             }

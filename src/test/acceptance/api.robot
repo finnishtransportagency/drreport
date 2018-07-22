@@ -11,7 +11,7 @@ Test Teardown  Delete All Sessions
 *** Test Cases ***
 
 Check API
-  [Tags]  API  Informative
+  [Tags]  API  Requirement
   Check API  /dr-report/koodistot/tietolajit  nop
   Check API  /dr-report/koodistot/hallinnollinenluokka
   Check API  /dr-report/koodistot/kunnat  salo

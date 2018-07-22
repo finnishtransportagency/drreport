@@ -24,7 +24,6 @@ Get API Request
 Get API Request Should Have Succeed
   [Arguments]  ${expected_status_code}=200 
   Should Be Equal As Strings  ${STATUS_CODE}  ${expected_status_code}
-  Should Not Be Empty  ${RESPONSE.json()} 
 
 Get API Request Should Have Failed
   [Arguments]  ${expected_status_code}=404

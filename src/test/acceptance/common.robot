@@ -17,7 +17,7 @@ ${SESSION_TIMEOUT}  10
 *** Keywords ***
 Get API Request
   [Arguments]  ${path}  ${params}=${EMPTY_DICT}
-  ${response}  Get Request  api  ${path}  params=&{params}
+  ${response}  Get Request  api  ${path}  params=&{params}  allow_redirects=True
   Set Test Variable  ${RESPONSE}  ${response}
   Set Test Variable  ${STATUS_CODE}  ${response.status_code}
 
@@ -41,7 +41,7 @@ Initialize
   Run Keyword If  '${path}' == '/'  Set Variable  ${path}  ${EMPTY}
   &{proxies}  Create Dictionary
   Run Keyword If  '${PROXY}' != 'None'  Set To Dictionary  ${proxies}  http=${PROXY}  https=${PROXY}
-  Create Session  api  ${host}  proxies=${proxies}  verify=True  max_retries=0  timeout=30  allow_redirects=True
+  Create Session  api  ${host}  proxies=${proxies}  verify=True  max_retries=0  timeout=30
   Set Global Variable  ${URL_HOST}  ${host}
   Set Global Variable  ${URL_PATH}  ${path}
   Run Keyword If  '${path}' != '${EMPTY}'  Set Global Variable  ${URL_CTX}  ${path.split('/')[1]}

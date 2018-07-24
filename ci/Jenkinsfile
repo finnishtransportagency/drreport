@@ -62,6 +62,9 @@ def get_version(version) {
 pipeline {
     agent any
     environment {
+        DB_CRED = credentials("db-cred-prod")
+        DB_HOST = credentials("db-host-prod")
+        DB_NAME = credentials("db-name-prod")
         NOTIFY_SLACK_SUBJECT = "${JOB_NAME} - <${RUN_DISPLAY_URL}|${BUILD_DISPLAY_NAME}>"
     }
     options {
@@ -106,7 +109,13 @@ pipeline {
                         "sleep 30" // watchify doesn't work without this
                     ].join(" && ")
 
+                    def config = "src/main/resources/application.properties"
+
                     STAGE_BUILD_CMD = [
+                        "sed -i 's/DB_CRED_USR/${DB_CRED_USR}/g' ${config}",
+                        "sed -i 's/DB_CRED_PSW/${DB_CRED_PSW}/g' ${config}",
+                        "sed -i 's/DB_HOST/${DB_HOST}/g' ${config}",
+                        "sed -i 's/DB_NAME/${DB_NAME}/g' ${config}",
                         [
                             "mvn",
                             "install:install-file",

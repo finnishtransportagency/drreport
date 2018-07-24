@@ -55,7 +55,7 @@ def get_robotframework_hosts()  {
 def get_version(version) {
     if (get_environment().equals("dev")) { return "${version}-SNAPSHOT" }
     if (get_environment().equals("prod")) { return "${version}" }
-	if (get_environment().equals("test")) { return "${version}-RC-SNAPSHOT" }
+    if (get_environment().equals("test")) { return "${version}-RC-SNAPSHOT" }
     return "${version}-${get_environment().toUpperCase()}-SNAPSHOT"
 }
 
@@ -89,7 +89,7 @@ pipeline {
                     def deploy_target = get_environment()
                     
                     def artifact_id = pom.artifactId
-					def artifact_version = get_version(pom.version)
+                    def artifact_version = get_version(pom.version)
                     def group_id = pom.groupId
                     def extension = pom.packaging
                     def filename = "target/${artifact_id}-${artifact_version}.${extension}"

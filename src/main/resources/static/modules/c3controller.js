@@ -72,20 +72,22 @@ registerClick: function() {
 	$("#haeGraafiBtn").click(function(e){
 		e.preventDefault();
 		$("#haeCSVBtn").hide();
-		var startdate = $("#startdate").val() != "" ? $("#startdate").val().replace(/\./g, "-") : "01-01-1970";
-		var stopdate = $("#stopdate").val() != "" ? $("#stopdate").val().replace(/\./g, "-") : "01-01-1970";
+		var startdate = $("#startdate").val() != "" ? $("#startdate").val().replace(/\./g, "-") : "01-01-2015";
+		var stopdate = $("#stopdate").val() != "" ? $("#stopdate").val().replace(/\./g, "-") : "01-01-2015";
 		var kunnat = $(".js-data-kunta-ajax").val() != null ? $(".js-data-kunta-ajax").val() : "0";
 		var start = startdate.split("-");
 		var stop = stopdate.split("-");
-		var startjoin = start[2]+start[1]+start[0];
+		var startjoin = start[2]+start[1]+start[0]
 		var stopjoin = stop[2]+stop[1]+stop[0];
 		if(startjoin > stopjoin){
 			 var temp = startdate;
-			 startdate=stopdate;
-			 stopdate=temp;
+			 startdate=stopdate.replace(/-/g, ".");
+			 stopdate=temp.replace(/-/g, ".");
 			 $("#startdate").val(startdate);
 			 $("#stopdate").val(stopdate); 
 		}
+		startdate = $("#startdate").val().replace(/\./g, "-");
+		stopdate = $("#stopdate").val().replace(/\./g, "-");
 		var tietolajit = $(".js-data-tietolaji-ajax").val() != null ? $(".js-data-tietolaji-ajax").val() : "0";
 		var hallinnollinenluokka = $(".js-data-hallinnollinenluokka-ajax").val() != null ? $(".js-data-hallinnollinenluokka-ajax").val() : "1,2,3,99";
 		var urli = "raportit/graafi1/" + startdate + "/" + stopdate + "/" + kunnat + "/" + tietolajit + "/" + hallinnollinenluokka;

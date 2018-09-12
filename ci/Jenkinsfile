@@ -20,14 +20,12 @@ def get_robotframework_dmz_external() {
     }
     if (get_environment().equals("prod")) {
         return [
-          "https://julkinen.liikennevirasto.fi",
-          "http://oag.liikennevirasto.fi"
+          "https://julkinen.liikennevirasto.fi"
         ]
     }
     if (get_environment().equals("test")) {
       return [
-        "https://testijulkinen.liikennevirasto.fi",
-        "http://testioag.liikennevirasto.fi"
+        "https://testijulkinen.liikennevirasto.fi"
       ]
     }
     return []

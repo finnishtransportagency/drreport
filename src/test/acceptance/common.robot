@@ -10,7 +10,7 @@ Library  XML
 *** Variables ***
 &{EMPTY_DICT}
 
-${PROXY}  None
+${PROXY}  ${None}
 
 ${SESSION_TIMEOUT}  30
 

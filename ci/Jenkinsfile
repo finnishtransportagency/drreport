@@ -12,7 +12,7 @@ def get_pollSCM_trigger() {
     return ""
 }
 
-def get_robotframework_dmz() {
+def get_robotframework_dmz_external() {
     if (get_environment().equals("dev")) {
         return [
           "https://kehitysjulkinen.liikennevirasto.fi"
@@ -27,6 +27,22 @@ def get_robotframework_dmz() {
     if (get_environment().equals("test")) {
       return [
         "https://testijulkinen.liikennevirasto.fi",
+        "http://testioag.liikennevirasto.fi"
+      ]
+    }
+    return []
+}
+def get_robotframework_dmz_internal() {
+    if (get_environment().equals("dev")) {
+        return []
+    }
+    if (get_environment().equals("prod")) {
+        return [
+          "http://oag.liikennevirasto.fi"
+        ]
+    }
+    if (get_environment().equals("test")) {
+      return [
         "http://testioag.liikennevirasto.fi"
       ]
     }
@@ -184,7 +200,22 @@ pipeline {
                                 "src/test"
                             ].join(" ")
                         }.join(" && "), 
-                        get_robotframework_dmz().collect {
+                        get_robotframework_dmz_internal().collect {
+                            [
+                                "robot",
+                                "--critical=Requirement",
+                                "--include API",
+                                "--log NONE",
+                                "--name ${it.tokenize('/').last()}",
+                                "--noncritical=Informative",
+                                "--nostatusrc",
+                                "--output output-${it.tokenize('/').last()}.xml",
+                                "--report NONE",
+                                "--variable URL:${it}",
+                                "src/test"
+                            ].join(" ")
+                        }.join(" && "),
+                        get_robotframework_dmz_external().collect {
                             [
                                 "robot",
                                 "--critical=Requirement",

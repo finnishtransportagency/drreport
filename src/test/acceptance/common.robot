@@ -10,7 +10,7 @@ Library  XML
 *** Variables ***
 &{EMPTY_DICT}
 
-${PROXY}  ${None}
+${PROXY}  ${EMPTY}
 
 ${SESSION_TIMEOUT}  30
 
@@ -39,7 +39,7 @@ Initialize
   ${path}  Evaluate  "{0.path}".format(urlparse.urlsplit('${URL}'))  modules=urlparse
   Run Keyword If  '${path}' == '/'  Set Variable  ${path}  ${EMPTY}
   &{proxies}  Create Dictionary
-  Run Keyword If  '${PROXY}' != None  Set To Dictionary  ${proxies}  http=${PROXY}  https=${PROXY}
+  Run Keyword If  '${PROXY}' != '${EMPTY}'  Set To Dictionary  ${proxies}  http=${PROXY}  https=${PROXY}
   Create Session  api  ${host}  proxies=${proxies}  verify=True  max_retries=5  timeout=${SESSION_TIMEOUT}
   Set Global Variable  ${URL_HOST}  ${host}
   Set Global Variable  ${URL_PATH}  ${path}

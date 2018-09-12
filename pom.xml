@@ -79,6 +79,7 @@
 					<include>static/styles/style.css</include>
 					<include>static/js/bundle.js</include>
 					<include>static/fonts/*</include>
+					<include>static/images/logo_Digiroad_png.png</include>
 				</includes>
 			</resource>
         </resources>

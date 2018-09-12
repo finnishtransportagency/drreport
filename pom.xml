@@ -80,6 +80,7 @@
 					<include>static/js/bundle.js</include>
 					<include>static/fonts/*</include>
 					<include>static/images/logo_Digiroad_png.png</include>
+					<include>static/images/kuva_ohje_gray.png</include>
 				</includes>
 			</resource>
         </resources>

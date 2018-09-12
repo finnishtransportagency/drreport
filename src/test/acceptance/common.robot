@@ -12,7 +12,7 @@ Library  XML
 
 ${PROXY}  None
 
-${SESSION_TIMEOUT}  10
+${SESSION_TIMEOUT}  30
 
 *** Keywords ***
 Get API Request

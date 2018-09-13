@@ -44,3 +44,9 @@ Initialize
   Set Global Variable  ${URL_HOST}  ${host}
   Set Global Variable  ${URL_PATH}  ${path}
   Run Keyword If  '${path}' != '${EMPTY}'  Set Global Variable  ${URL_CTX}  ${path.split('/')[1]}
+  Wait Until Keyword Succeeds  3x  10 sec  Ensure that service is responsive
+
+Ensure that service is responsive
+  Get API Request  ${URL_CTX}
+  Get API Request Should Have Succeed
+

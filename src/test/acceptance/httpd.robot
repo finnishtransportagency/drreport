@@ -16,7 +16,7 @@ Check HTTPD Headers
 
 Check HTTPD Routes
   [Tags]  HTTPD  Requirement
-  Check HTTPD Route Exists  /dr-report
+  Check HTTPD Route Exists  ${URL_CTX}
 
 *** Keywords ***
 

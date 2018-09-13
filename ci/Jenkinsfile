@@ -194,7 +194,7 @@ pipeline {
                                 "--nostatusrc",
                                 "--output output-80-${it.tokenize('/').last()}.xml",
                                 "--report NONE",
-                                "--variable URL:${it}",
+                                "--variable URL:${it}/dr-report",
                                 "src/test"
                             ].join(" ")
                         }.join(" && "), 
@@ -209,7 +209,7 @@ pipeline {
                                 "--nostatusrc",
                                 "--output output-${it.tokenize('/').last()}.xml",
                                 "--report NONE",
-                                "--variable URL:${it}",
+                                "--variable URL:${it}/dr-report",
                                 "src/test"
                             ].join(" ")
                         }.join(" && "),
@@ -225,7 +225,7 @@ pipeline {
                                 "--output output-${it.tokenize('/').last()}.xml",
                                 "--report NONE",
                                 "--variable PROXY:${http_proxy}",
-                                "--variable URL:${it}",
+                                "--variable URL:${it}/dr-report",
                                 "src/test"
                             ].join(" ")
                         }.join(" && "),

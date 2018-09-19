@@ -133,16 +133,14 @@ pipeline {
                         ])
 
                         def ansible_deploy = [
-                            [
-                                artifact_id: artifact_id,
-                                extension: extension,
-                                group_id: group_id,
-                                repository_url: repository_url,
-                                version: artifact_version
-                            ]
+                            artifact_id: artifact_id,
+                            extension: extension,
+                            group_id: group_id,
+                            repository_url: repository_url,
+                            version: artifact_version
                         ]
 
-                        STAGE_ANSIBLE_PARAMETERS.put("extraVars", [
+                        STAGE_ANSIBLE_PARAMETERS.put("extraVars", 
                             ptpapp_target: get_environment(),
                             ptpapp_deploy_springboot: JsonOutput.toJson(ansible_deploy)
                         ])

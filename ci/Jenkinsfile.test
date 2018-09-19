@@ -78,6 +78,9 @@ pipeline {
             }
             steps {
                 script {
+                    
+                    def pom = readMavenPom()
+                    def artifact_id = pom.artifactId
 
                     STAGE_TEST_CMD = [
                         get_robotframework_hosts().collect {

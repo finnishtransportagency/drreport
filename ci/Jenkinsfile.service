@@ -140,7 +140,7 @@ pipeline {
                             version: artifact_version
                         ]
 
-                        STAGE_ANSIBLE_PARAMETERS.put("extraVars", 
+                        STAGE_ANSIBLE_PARAMETERS.put("extraVars", [ 
                             ptpapp_target: get_environment(),
                             ptpapp_deploy_springboot: JsonOutput.toJson(ansible_deploy)
                         ])

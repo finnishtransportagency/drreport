@@ -143,7 +143,7 @@ pipeline {
                         ]
 
                         STAGE_ANSIBLE_PARAMETERS.put("extraVars", [
-                            ptpapp_target: get_environment(),
+                            ptpapp_target: "ptpapp-${get_environment()}",
                             ptpapp_deploy_springboot: JsonOutput.toJson(ansible_deploy)
                         ])
                     }

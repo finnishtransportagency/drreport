@@ -356,7 +356,7 @@ pipeline {
                 build(
                     job: "ptpapp/drreport/test/${BRANCH_NAME}",
                     propagate: false,
-                    wait: params.action.endsWith("start") || params.action.startsWith("service-deploy"( ? true : false
+                    wait: params.action.endsWith("start") || params.action.startsWith("service-deploy") ? true : false
                 )
             }
             post {

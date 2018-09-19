@@ -160,6 +160,7 @@ pipeline {
                 timeout(time: 5, unit: "MINUTES")
             }
             when {
+                beforeAgent true
                 expression {
                     (get_environment()?.trim() && !get_pollSCM_trigger().trim()) ||
                     (get_environment()?.trim() && !params.action.equals("service-deploy-springboot"))
@@ -192,8 +193,9 @@ pipeline {
         }
         stage("Docker") {
             when {
+                beforeAgent true
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
@@ -258,6 +260,7 @@ pipeline {
                 }
             }
             when {
+                beforeAgent true
                 expression {
                     get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }

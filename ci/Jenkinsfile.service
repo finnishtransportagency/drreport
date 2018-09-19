@@ -124,6 +124,12 @@ pipeline {
                         vaultCredentialsId: "vaultpass-ptp",
                         tags: params.action
                     ]
+                    
+                    def ansible_extravars = [
+                        ptpapp_service_springboot: artifact_id,
+                        ptpapp_target: get_environment()
+                    ]
+
                     if (params.action.equals("service-deploy-springboot")) {
 
                         STAGE_ACK_PARAMETERS.addAll([
@@ -140,17 +146,9 @@ pipeline {
                             version: artifact_version
                         ]
 
-                        STAGE_ANSIBLE_PARAMETERS.put("extraVars", [ 
-                            ptpapp_target: get_environment(),
-                            ptpapp_deploy_springboot: JsonOutput.toJson(ansible_deploy)
-                        ])
-                    } else {
-
-                        STAGE_ANSIBLE_PARAMETERS.put("extraVars", [
-                            ptpapp_target: get_environment(),
-                            ptpapp_service_springboot: artifact_id
-                        ])
+                        extravars.put("ptpapp_deploy_springboot", JsonOutput.toJson(ansible_deploy)
                     }
+                    STAGE_ANSIBLE_PARAMETERS.put("extraVars", ansible_extravars)
                 }
             }
         }

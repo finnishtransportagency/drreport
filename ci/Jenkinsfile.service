@@ -124,7 +124,7 @@ pipeline {
                         vaultCredentialsId: "vaultpass-ptp",
                         tags: params.action
                     ]
-                    if (params.action.equals("service-deploy")) {
+                    if (params.action.equals("service-deploy-springboot")) {
 
                         STAGE_ACK_PARAMETERS.addAll([
                             choice(choices: artifact_id, description: "Artifact ID", name: "artifact_id"),
@@ -157,7 +157,8 @@ pipeline {
             }
             when {
                 expression {
-                    get_environment()?.trim() && !get_pollSCM_trigger().trim()
+                    (get_environment()?.trim() && !get_pollSCM_trigger().trim()) ||
+                    (get_environment()?.trim() && !params.action.equals("service-deploy-springboot"))
                 }
             }
             steps {
@@ -230,7 +231,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
@@ -254,7 +255,7 @@ pipeline {
             }
             when {
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
@@ -277,7 +278,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression {
-					get_environment().equals("prod")
+                    get_environment().equals("prod") && params.action.equals("service-deploy-springboot")
 				}            
             }
             steps {
@@ -312,7 +313,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
@@ -327,7 +328,7 @@ pipeline {
                 }
             }
         }
-        stage("Deploy") {
+        stage("Ansible") {
             when {
                 expression {
                     get_environment()?.trim()
@@ -355,7 +356,7 @@ pipeline {
                 build(
                     job: "ptpapp/drreport/test/${BRANCH_NAME}",
                     propagate: false,
-                    wait: params.action.endsWith("start") ? true : false
+                    wait: params.action.endsWith("start") || params.action.startsWith("service-deploy"( ? true : false
                 )
             }
             post {

@@ -156,6 +156,7 @@ pipeline {
         }
         stage("Docker") {
             when {
+                beforeAgent true
                 expression {
                     get_environment()?.trim()
                 }
@@ -194,6 +195,7 @@ pipeline {
                 }
             }
             when {
+                beforeAgent true
                 expression {
                     get_environment()?.trim()
                 }

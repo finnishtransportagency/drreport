@@ -14,10 +14,11 @@ def get_pollSCM_trigger() {
 }
 
 def get_version(version) {
-    if (get_environment().equals("dev")) { return "${version}-SNAPSHOT" }
-    if (get_environment().equals("prod")) { return "${version}" }
-    if (get_environment().equals("test")) { return "${version}-RC-SNAPSHOT" }
-    return "${version}-${get_environment().toUpperCase()}-SNAPSHOT"
+    def version_xyz = version.tokenize("-").first()
+    if (get_environment().equals("dev")) { return "${version_xyz}-SNAPSHOT" }
+    if (get_environment().equals("prod")) { return "${version_xyz}" }
+    if (get_environment().equals("test")) { return "${version_xyz}-RC-SNAPSHOT" }
+    return "${version_xyz}-${get_environment().toUpperCase()}-SNAPSHOT"
 }
 
 pipeline {

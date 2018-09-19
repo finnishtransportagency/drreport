@@ -334,7 +334,7 @@ pipeline {
                 }
             }
             steps {
-                ansiblePlaybook(STAGE_DEPLOY_PLAYBOOK)
+                ansiblePlaybook(STAGE_ANSIBLE_PARAMETERS)
             }
             post {
                 failure {

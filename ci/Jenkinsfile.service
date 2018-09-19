@@ -144,6 +144,12 @@ pipeline {
                             ptpapp_target: get_environment(),
                             ptpapp_deploy_springboot: JsonOutput.toJson(ansible_deploy)
                         ])
+                    } else {
+
+                        STAGE_ANSIBLE_PARAMETERS.put("extraVars", [
+                            ptpapp_target: get_environment(),
+                            ptpapp_service_springboot: artifact_id
+                        ])
                     }
                 }
             }

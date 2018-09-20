@@ -12,65 +12,12 @@ def get_pollSCM_trigger() {
     return ""
 }
 
-def get_robotframework_dmz_external() {
-    if (get_environment().equals("dev")) {
-        return [
-          "https://kehitysjulkinen.liikennevirasto.fi"
-        ]
-    }
-    if (get_environment().equals("prod")) {
-        return [
-          "https://julkinen.liikennevirasto.fi"
-        ]
-    }
-    if (get_environment().equals("test")) {
-      return [
-        "https://testijulkinen.liikennevirasto.fi"
-      ]
-    }
-    return []
-}
-def get_robotframework_dmz_internal() {
-    if (get_environment().equals("dev")) {
-        return []
-    }
-    if (get_environment().equals("prod")) {
-        return [
-          "http://oag.liikennevirasto.fi"
-        ]
-    }
-    if (get_environment().equals("test")) {
-      return [
-        "http://testioag.liikennevirasto.fi"
-      ]
-    }
-    return []
-}
-
-def get_robotframework_hosts()  {
-    if (get_environment().equals("dev")) {
-        return [ "http://livisovt136l.vally.local" ]
-    }
-    if (get_environment().equals("prod")) {
-        return [
-          "http://liviptpapp01l.vally.local",
-          "http://liviptpapp02l.vally.local"
-        ]
-    }
-    if (get_environment().equals("test")) {
-        return [
-          "http://liviptpappt01l.vally.local",
-          "http://liviptpappt02l.vally.local"
-        ]
-    }
-    return []
-}
-
 def get_version(version) {
-    if (get_environment().equals("dev")) { return "${version}-SNAPSHOT" }
-    if (get_environment().equals("prod")) { return "${version}" }
-    if (get_environment().equals("test")) { return "${version}-RC-SNAPSHOT" }
-    return "${version}-${get_environment().toUpperCase()}-SNAPSHOT"
+    def version_xyz = version.tokenize("-").first()
+    if (get_environment().equals("dev")) { return "${version_xyz}-SNAPSHOT" }
+    if (get_environment().equals("prod")) { return "${version_xyz}" }
+    if (get_environment().equals("test")) { return "${version_xyz}-RC-SNAPSHOT" }
+    return "${version_xyz}-${get_environment().toUpperCase()}-SNAPSHOT"
 }
 
 pipeline {
@@ -84,6 +31,13 @@ pipeline {
     options {
         buildDiscarder(logRotator(numToKeepStr: "25"))
         disableConcurrentBuilds()
+    }
+    parameters {
+        choice(
+            choices: "service-deploy-springboot\nservice-restart\nservice-start\nservice-stop",
+            description: "Action to execute.",
+            name: "action"
+        )
     }
     triggers {
         pollSCM(get_pollSCM_trigger())
@@ -100,7 +54,7 @@ pipeline {
 
                     def pom = readMavenPom()
 
-                    def deploy_target = get_environment()
+                    def target_environment = get_environment()
                     
                     def artifact_id = pom.artifactId
                     def artifact_version = get_version(pom.version)
@@ -110,10 +64,8 @@ pipeline {
                     def repository_url = "http://livibuild03.vally.local/nexus/repository/ptp"
 
                     STAGE_ACK_PARAMETERS = [
-                        choice(choices: deploy_target, description: "Deploy target.", name: "deploy_target"),
-                        choice(choices: artifact_id, description: "Artifact ID", name: "artifact_id"),
-                        choice(choices: artifact_version, description: "Artifact version", name: "artifact_version"),
-                        choice(choices: group_id, description: "Group ID", name: "group_id")
+                        choice(choices: target_environment, description: "Environment", name: "target_environment"),
+                        choice(choices: params.action, description: "Action", name: "action")
                     ]
 
                     STAGE_PREPARE_CMD = [
@@ -154,7 +106,7 @@ pipeline {
                         ].join(" ")
                     ].join(" && ")
 
-                    STAGE_CONFIRM_TEXT = "Create release ${group_id}:${artifact_id}@${artifact_version} and deploy to ${deploy_target}?"
+                    STAGE_CONFIRM_TEXT = "Create release ${group_id}:${artifact_id}@${artifact_version} and deploy to ${target_environment}?"
 
                     STAGE_PUBLISH_CMD = [
                         "mvn",
@@ -166,92 +118,37 @@ pipeline {
                         "--batch-mode"
                     ].join(" ")
 
-                    STAGE_DEPLOY_PLAYBOOK = [
+                    STAGE_ANSIBLE_PARAMETERS = [
                         inventory: "/data1/ansible/inventories/ptpapp",
                         playbook: "/data1/ansible/ptpapp.yml",
                         vaultCredentialsId: "vaultpass-ptp",
-                        tags: "service-deploy-springboot",
-                        extraVars: [
-                            ptpapp_target: get_environment(),
-                            ptpapp_deploy_springboot: JsonOutput.toJson([
-                                artifact_id: artifact_id,
-                                group_id: group_id,
-                                extension: extension,
-                                version: artifact_version,
-                                repository_url: repository_url
-                            ])
+                        tags: params.action
+                    ]
+                    
+                    def ansible_extravars = [
+                        ptpapp_service_springboot: artifact_id,
+                        ptpapp_target: get_environment()
+                    ]
+
+                    if (params.action.equals("service-deploy-springboot")) {
+
+                        STAGE_ACK_PARAMETERS.addAll([
+                            choice(choices: artifact_id, description: "Artifact ID", name: "artifact_id"),
+                            choice(choices: artifact_version, description: "Artifact version", name: "artifact_version"),
+                            choice(choices: group_id, description: "Group ID", name: "group_id")
+                        ])
+
+                        def ansible_deploy = [
+                            artifact_id: artifact_id,
+                            extension: extension,
+                            group_id: group_id,
+                            repository_url: repository_url,
+                            version: artifact_version
                         ]
-                    ]
 
-                    STAGE_TEST_CMD = [
-                        get_robotframework_hosts().collect {
-                            [
-                                "robot",
-                                "--critical=Requirement",
-                                "--log NONE",
-                                "--name ${it.tokenize('/').last()}.80",
-                                "--noncritical=Informative",
-                                "--nostatusrc",
-                                "--output output-80-${it.tokenize('/').last()}.xml",
-                                "--report NONE",
-                                "--variable URL:${it}/dr-report",
-                                "src/test"
-                            ].join(" ")
-                        }.join(" && "), 
-                        get_robotframework_dmz_internal().collect {
-                            [
-                                "robot",
-                                "--critical=Requirement",
-                                "--include API",
-                                "--log NONE",
-                                "--name ${it.tokenize('/').last()}",
-                                "--noncritical=Informative",
-                                "--nostatusrc",
-                                "--output output-${it.tokenize('/').last()}.xml",
-                                "--report NONE",
-                                "--variable URL:${it}/dr-report",
-                                "src/test"
-                            ].join(" ")
-                        }.join(" && "),
-                        get_robotframework_dmz_external().collect {
-                            [
-                                "robot",
-                                "--critical=Requirement",
-                                "--include API",
-                                "--log NONE",
-                                "--name ${it.tokenize('/').last()}",
-                                "--noncritical=Informative",
-                                "--nostatusrc",
-                                "--output output-${it.tokenize('/').last()}.xml",
-                                "--report NONE",
-                                "--variable PROXY:${http_proxy}",
-                                "--variable URL:${it}/dr-report",
-                                "src/test"
-                            ].join(" ")
-                        }.join(" && "),
-                        [
-                            "rebot",
-                            "--critical=Requirement",
-                            "--name ${artifact_id}/${get_environment()}",
-                            "--noncritical=Informative",
-                            "--nostatusrc",
-                            "--output output.xml",
-                            "output-*.xml"
-                        ].join(" ")
-                    ].minus('').join(" && ")
-
-                    STAGE_TEST_STEP = [
-                        $class: "RobotPublisher",
-                        disableArchiveOutput: false,
-                        logFileName: "log.html",
-                        onlyCritical: true,
-                        otherFiles: "",
-                        outputFileName: "output.xml",
-                        outputPath: ".",
-                        passThreshold: 100,
-                        reportFileName: "report.html",
-                        unstableThreshold: 0
-                    ]
+                        ansible_extravars.put("ptpapp_deploy_springboot", JsonOutput.toJson(ansible_deploy))
+                    }
+                    STAGE_ANSIBLE_PARAMETERS.put("extraVars", ansible_extravars)
                 }
             }
         }
@@ -261,8 +158,10 @@ pipeline {
                 timeout(time: 5, unit: "MINUTES")
             }
             when {
+                beforeAgent true
                 expression {
-                    get_environment()?.trim() && !get_pollSCM_trigger().trim()
+                    (get_environment()?.trim() && !get_pollSCM_trigger().trim()) ||
+                    (get_environment()?.trim() && !params.action.equals("service-deploy-springboot"))
                 }
             }
             steps {
@@ -292,12 +191,13 @@ pipeline {
         }
         stage("Docker") {
             when {
+                beforeAgent true
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
-                sh "cp /data1/ci/{maven,node,python}/* ci/confs/"
+                sh "cp /data1/ci/{maven,node}/* ci/confs/"
                 script {
                     def jenkins_uid = sh(returnStdout: true, script: "id -u").trim()
                     def build_args = [
@@ -313,10 +213,6 @@ pipeline {
                     docker.build(
                         "ptpapp-drreport-node",
                         "${build_args} -f ci/Dockerfile.node ci"
-                    )
-                    docker.build(
-                        "ptpapp-drreport-python",
-                        "${build_args} -f ci/Dockerfile.python ci"
                     )
                 }
             }
@@ -339,7 +235,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
@@ -362,8 +258,9 @@ pipeline {
                 }
             }
             when {
+                beforeAgent true
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
@@ -386,7 +283,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression {
-					get_environment().equals("prod")
+                    get_environment().equals("prod") && params.action.equals("service-deploy-springboot")
 				}            
             }
             steps {
@@ -421,7 +318,7 @@ pipeline {
             when {
                 beforeAgent true
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && params.action.equals("service-deploy-springboot")
                 }
             }
             steps {
@@ -436,14 +333,14 @@ pipeline {
                 }
             }
         }
-        stage("Deploy") {
+        stage("Ansible") {
             when {
                 expression {
                     get_environment()?.trim()
                 }
             }
             steps {
-                ansiblePlaybook(STAGE_DEPLOY_PLAYBOOK)
+                ansiblePlaybook(STAGE_ANSIBLE_PARAMETERS)
             }
             post {
                 failure {
@@ -455,32 +352,22 @@ pipeline {
             }
         }
         stage("Test") {
-            agent {
-                docker {
-                    image "ptpapp-drreport-python"
-                    args "--network host"
-                    reuseNode true
-                }
-            }
             when {
                 expression {
-                    get_environment()?.trim()
+                    get_environment()?.trim() && !params.action.equals("service-stop")
                 }
             }
             steps {
-                sh STAGE_TEST_CMD
-                step(STAGE_TEST_STEP)
+                build(
+                    job: "ptpapp/drreport/test/${BRANCH_NAME}",
+                    propagate: false,
+                    wait: params.action.endsWith("start") ? true : false
+                )
             }
             post {
                 failure {
                     slackSend(
                         color: "danger",
-                        message: "${NOTIFY_SLACK_SUBJECT} - Stage ${STAGE_NAME} failure!\nCheck <${BUILD_URL}console|console>!"
-                    )
-                }
-                unstable {
-                    slackSend(
-                        color: "warning",
                         message: "${NOTIFY_SLACK_SUBJECT} - Stage ${STAGE_NAME} failure!\nCheck <${BUILD_URL}console|console>!"
                     )
                 }

@@ -22,9 +22,8 @@
   "author": "Mika Lehtonen / Dimenteq Oy",
   "license": "ISC",
   "dependencies": {
-    "bootstrap": "^4.1.2",
+    "bootstrap": "^3.3.6",
     "bootstrap-switch": "^3.3.2",
-    "popper.js": "^1.12.9",
     "c3": "^0.4.11",
     "d3": "^3.5.17",
     "eonasdan-bootstrap-datetimepicker-custom": "^4.17.39",

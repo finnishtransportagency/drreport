@@ -15,7 +15,7 @@ Check API
   Check API path   koodistot/tietolajit  nop
   Check API path   koodistot/hallinnollinenluokka
   Check API path   koodistot/kunnat  salo
-  Check API path   raportit/graafi1/20-07-2018/20-07-2018/734/190/1,2,3,99
+# Check API path   raportit/graafi1/20-07-2018/20-07-2018/734/190/1,2,3,99
 
 *** Keywords ***
 

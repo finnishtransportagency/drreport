@@ -5,7 +5,11 @@
 
 	<groupId>fi.livi.digiroad</groupId>
 	<artifactId>drreport</artifactId>
+<<<<<<< HEAD
 	<version>1.0.1</version>
+=======
+	<version>1.0.2</version>
+>>>>>>> release-1.0.2
 	<packaging>jar</packaging>
 
 	<name>DRReport2017</name>
